@@ -3,7 +3,7 @@ page 73030637 "GMO ABC Worksheet"
     PageType = Worksheet;
     SourceTable = "GMO ABC Preview Line";
     SourceTableTemporary = true;
-    Caption = 'GMO ABC Worksheet';
+    Caption = 'ABC Worksheet';
     ApplicationArea = All;
     UsageCategory = Tasks;
 
@@ -51,11 +51,11 @@ page 73030637 "GMO ABC Worksheet"
                 ToolTip = 'Build the preview worksheet for a selected model and date range.';
                 trigger OnAction()
                 var
-                    Mgt: Codeunit "GMO Analysis Mgt.";
-                    StatsMgt: Codeunit "GMO Worksheet Stats";
+                    Mgt: Codeunit "GMO ABC Analysis Mgt.";
+                    StatsMgt: Codeunit "GMO ABC Worksheet Stats";
                     StartDate: Date;
                     EndDate: Date;
-                    Model: Option Revenue,"Gross Profit",COGS;
+                    Model: Enum "GMO ABC Model";
                     TempStats: Record "GMO ABC Stats" temporary;
                 begin
                     if not GetParams(Model, StartDate, EndDate) then
@@ -85,8 +85,8 @@ page 73030637 "GMO ABC Worksheet"
                 ToolTip = 'Write the previewed ABC classes to Items/SKUs.';
                 trigger OnAction()
                 var
-                    Mgt: Codeunit "GMO Analysis Mgt.";
-                    Model: Option Revenue,"Gross Profit",COGS;
+                    Mgt: Codeunit "GMO ABC Analysis Mgt.";
+                    Model: Enum "GMO ABC Model";
                     StartDate: Date;
                     EndDate: Date;
                     Lines: Integer;
@@ -114,14 +114,14 @@ page 73030637 "GMO ABC Worksheet"
     }
 
     var
-        LastModel: Option Revenue,"Gross Profit",COGS;
+        LastModel: Enum "GMO ABC Model";
         LastStartDate: Date;
         LastEndDate: Date;
         HasLastParams: Boolean;
 
-  local procedure GetParams(var Model: Option Revenue,"Gross Profit",COGS; var StartDate: Date; var EndDate: Date): Boolean
+  local procedure GetParams(var Model: Enum "GMO ABC Model"; var StartDate: Date; var EndDate: Date): Boolean
 var
-    Dlg: Page "GMO Worksheet Params";
+    Dlg: Page "GMO ABC Worksheet Params";
 begin
     if Dlg.RunModal() = Action::OK then begin
         Dlg.GetParams(Model, StartDate, EndDate);
@@ -130,11 +130,11 @@ begin
     exit(false);
 end;
 
-    local procedure GetModelText(Model: Option Revenue,"Gross Profit",COGS): Text
+    local procedure GetModelText(Model: Enum "GMO ABC Model"): Text
     begin
         case Model of
             Model::Revenue:        exit('Revenue');
-            Model::"Gross Profit": exit('Gross Profit');
+            Model::"GrossProfit": exit('Gross Profit');
             Model::COGS:           exit('COGS');
         end;
         exit('');

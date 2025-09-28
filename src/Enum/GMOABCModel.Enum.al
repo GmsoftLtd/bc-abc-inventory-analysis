@@ -1,7 +1,7 @@
 enum 73030591 "GMO ABC Model"
 {
     Extensible = true;
-    Caption = 'GMO ABC Model';
+    Caption = 'ABC Model';
 
     value(0; Revenue)     { Caption = 'Revenue'; }
     value(1; GrossProfit) { Caption = 'Gross Profit'; }

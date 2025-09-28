@@ -1,6 +1,6 @@
-table 73030577 "GMO Analysis Setup"
+table 73030577 "GMO ABC Analysis Setup"
 {
-    Caption = 'Analysis Setup';
+    Caption = 'ABC Analysis Setup';
     DataClassification = SystemMetadata;
 
     fields
@@ -36,7 +36,7 @@ table 73030577 "GMO Analysis Setup"
         // Counting policy
         field(130; "Update Counting Codes"; Boolean) { Caption = 'Update Warehouse Counting Codes'; }
         field(131; "Update SKU"; Boolean) { Caption = 'Update SKU as well'; }
-        field(132; "Counting Code Mapping ID"; Code[10]) { Caption = 'Counting Policy Mapping ID'; TableRelation = "GMO Counting Policy Header".Code; }
+        field(132; "Counting Code Mapping ID"; Code[10]) { Caption = 'Counting Policy Mapping ID'; TableRelation = "GMO ABC Counting Policy Header".Code; }
     }
     keys { key(PK; "Primary Key") { Clustered = true; } }
 }

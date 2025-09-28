@@ -1,9 +1,9 @@
-codeunit 73030584 "GMO Install"
+codeunit 73030584 "GMO ABC Install"
 {
     Subtype = Install;
 
     trigger OnInstallAppPerCompany()
-    var Setup: Record "GMO Analysis Setup"; Tlm: Codeunit "GMO Telemetry";
+    var Setup: Record "GMO ABC Analysis Setup"; Tlm: Codeunit "GMO ABC Telemetry";
     begin
         if not Setup.Get('SETUP') then begin
             Setup.Init();

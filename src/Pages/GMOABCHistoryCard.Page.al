@@ -1,4 +1,4 @@
-page 73030646 "GMO History Card"
+page 73030646 "GMO ABC History Card"
 {
     Caption = 'ABC History';
     PageType = Card;
@@ -127,7 +127,7 @@ page 73030646 "GMO History Card"
                     ToolTip = 'Specifies the value of the C % of Amount field.';
                 }
             }
-            part(Lines; "GMO History Lines")
+            part(Lines; "GMO ABC History Lines")
             {
                 SubPageLink = "Entry No." = field("Entry No.");
                 ApplicationArea = All;

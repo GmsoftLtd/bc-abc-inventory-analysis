@@ -1,4 +1,4 @@
-page 73030638 "GMO Worksheet Params"
+page 73030638 "GMO ABC Worksheet Params"
 {
     PageType = StandardDialog;
     Caption = 'ABC Calculation Parameters';
@@ -14,16 +14,19 @@ page 73030638 "GMO Worksheet Params"
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the Model field.';
+                    Caption = 'ABC Model';
                 }
                 field(StartDate; StartDate)
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the StartDate field.';
+                    Caption = 'Start Date';
                 }
                 field(EndDate; EndDate)
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the EndDate field.';
+                    Caption = 'Start Date';
                 }
             }
         }

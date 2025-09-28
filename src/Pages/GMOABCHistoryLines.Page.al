@@ -1,4 +1,4 @@
-page 73030645 "GMO History Lines"
+page 73030645 "GMO ABC History Lines"
 {
     Caption = 'ABC History Lines';
     PageType = ListPart;

@@ -1,7 +1,7 @@
-enum 73030575 "GMO Class"
+enum 73030575 "GMO ABC Class"
 {
     Extensible = true;
-    Caption = 'GMO Class';
+    Caption = 'ABCClass';
 
     value(0; Unknown) { Caption = ' '; }
     value(1; A)       { Caption = 'A'; }

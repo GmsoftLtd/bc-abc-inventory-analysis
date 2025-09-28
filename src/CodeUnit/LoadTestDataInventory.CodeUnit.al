@@ -146,7 +146,7 @@ codeunit 73030576 "GMO Load Test Data - Inventory"
         ItemJnlLine.Reset();
         ItemJnlLine.SetRange("Journal Template Name", TemplateName);
         ItemJnlLine.SetRange("Journal Batch Name", BatchName);
-        if ItemJnlLine.FindSet(true, false) then
+        if ItemJnlLine.FindSet(true) then
             ItemJnlLine.DeleteAll(true);
 
         for i := 1 to ItemNos.Count() do begin

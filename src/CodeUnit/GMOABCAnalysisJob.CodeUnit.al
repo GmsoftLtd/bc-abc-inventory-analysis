@@ -1,10 +1,10 @@
-codeunit 73030583 "GMO Analysis Job"
+codeunit 73030583 "GMO ABC Analysis Job"
 {
    
 
     trigger OnRun()
     var
-        Mgt: Codeunit "GMO Analysis Mgt.";
+        Mgt: Codeunit "GMO ABC Analysis Mgt.";
     begin
         // Recalculate each model using its own Setup window and APPLY results
         Mgt.RecalculateAllDistinctWindows(true);
@@ -14,7 +14,7 @@ codeunit 73030583 "GMO Analysis Job"
     [EventSubscriber(ObjectType::Table, Database::"Value Entry", 'OnAfterInsertEvent', '', true, true)]
     local procedure ValueEntry_OnAfterInsert(var Rec: Record "Value Entry"; RunTrigger: Boolean)
     var
-        Mgt: Codeunit "GMO Analysis Mgt.";
+        Mgt: Codeunit "GMO ABC Analysis Mgt.";
     begin
         if not IsAutoRecalcEnabled() then
             exit;
@@ -29,7 +29,7 @@ codeunit 73030583 "GMO Analysis Job"
     // and it is set to TRUE. If the field does not exist, returns FALSE (safe, compile-proof).
     local procedure IsAutoRecalcEnabled(): Boolean
     var
-        Setup: Record "GMO Analysis Setup";
+        Setup: Record "GMO ABC Analysis Setup";
         RRef: RecordRef;
         FRef: FieldRef;
         FNo: Integer;

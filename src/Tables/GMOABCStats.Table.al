@@ -7,7 +7,7 @@ table 73030641 "GMO ABC Stats"
     fields
     {
         field(1; "Line No."; Integer) { }
-        field(2; Class; Enum "GMO Class") { }
+        field(2; Class; Enum "GMO ABC Class") { }
         field(3; "Item Count"; Integer) { }
         field(4; "Count %"; Decimal) { DecimalPlaces = 0:5; }
         field(5; Amount; Decimal) { DecimalPlaces = 0:2; }

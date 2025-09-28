@@ -3,13 +3,13 @@ report 73030587 "GMO ABC Analysis"
     UsageCategory = ReportsAndAnalysis;
     ApplicationArea = All;
     Caption = 'ABC Analysis';
+    DefaultLayout = RDLC;
     RDLCLayout = './src/reports/GMOAnalysis.rdl';
 
     dataset
     {
         dataitem(Item; Item)
         {
-            DataItemTableView = sorting("GMO Class (COGS)") order(ascending);
             RequestFilterFields = "No.", "GMO Class (Revenue)", "GMO Class (Gross Profit)", "GMO Class (COGS)";
 
             column(No_; "No.") { }

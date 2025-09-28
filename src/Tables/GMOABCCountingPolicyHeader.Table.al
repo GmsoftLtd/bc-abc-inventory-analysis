@@ -1,6 +1,6 @@
-table 73030592 "GMO Counting Policy Header"
+table 73030592 "GMO ABC Counting Policy Header"
 {
-    Caption = 'Counting Policy';
+    Caption = 'ABC Counting Policy';
     DataClassification = SystemMetadata;
 
     fields

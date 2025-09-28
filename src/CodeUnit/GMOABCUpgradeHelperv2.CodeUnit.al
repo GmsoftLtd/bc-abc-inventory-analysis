@@ -1,6 +1,6 @@
-codeunit 73030648 "GMO Upgrade Helper v2"
+codeunit 73030648 "GMO ABC Upgrade Helper v2"
 {
- 
+
 
     procedure ApplyV2()
     begin
@@ -41,7 +41,7 @@ codeunit 73030648 "GMO Upgrade Helper v2"
 
     local procedure EnsureSetupExists()
     var
-        Setup: Record "GMO Analysis Setup";
+        Setup: Record "GMO ABC Analysis Setup";
     begin
         if Setup.Get('SETUP') then
             exit;
@@ -49,9 +49,15 @@ codeunit 73030648 "GMO Upgrade Helper v2"
         Setup.Init();
         Setup."Primary Key" := 'SETUP';
         // sensible defaults (customer can change later)
-        Setup."Rev A %" := 80;     Setup."Rev B %" := 95;     Setup."Rev Period (Days)" := 365;
-        Setup."GP A %" := 80;     Setup."GP B %" := 95;     Setup."GP Period (Days)" := 365;
-        Setup."COGS A %" := 80;     Setup."COGS B %" := 95;     Setup."COGS Period (Days)" := 365;
+        Setup."Rev A %" := 80;
+        Setup."Rev B %" := 95;
+        Setup."Rev Period (Days)" := 365;
+        Setup."GP A %" := 80;
+        Setup."GP B %" := 95;
+        Setup."GP Period (Days)" := 365;
+        Setup."COGS A %" := 80;
+        Setup."COGS B %" := 95;
+        Setup."COGS Period (Days)" := 365;
         Setup."Counting Code Mapping ID" := 'DEFAULT';
         Setup."Last Upgraded To" := '';
         Setup.Insert(true);
@@ -62,7 +68,7 @@ codeunit 73030648 "GMO Upgrade Helper v2"
     [TryFunction]
     local procedure Try_InitNewSetupFields()
     var
-        Setup: Record "GMO Analysis Setup";
+        Setup: Record "GMO ABC Analysis Setup";
     begin
         if not Setup.Get('SETUP') then
             exit; // EnsureSetupExists already attempted
@@ -86,51 +92,76 @@ codeunit 73030648 "GMO Upgrade Helper v2"
     end;
 
     [TryFunction]
-local procedure Try_EnsureDefaultCountingPolicy()
-var
-    Setup: Record "GMO Analysis Setup";
-    Mgt: Codeunit "GMO Analysis Mgt.";
-    HeaderCode: Code[20];
-begin
-    if not Setup.Get('SETUP') then
-        exit;
+    local procedure Try_EnsureDefaultCountingPolicy()
+    var
+        Setup: Record "GMO ABC Analysis Setup";
+        Mgt: Codeunit "GMO ABC Analysis Mgt.";
+        HeaderCode: Code[10];
+    begin
+        if not Setup.Get('SETUP') then
+            exit;
 
-    if Setup."Counting Code Mapping ID" = '' then begin
-        Setup."Counting Code Mapping ID" := 'DEFAULT';
-        Setup.Modify(true);
+        if Setup."Counting Code Mapping ID" = '' then begin
+            Setup."Counting Code Mapping ID" := 'DEFAULT';
+            Setup.Modify(true);
+        end;
+
+        HeaderCode := Setup."Counting Code Mapping ID";
+        // Create header + lines if missing
+        Mgt.EnsurePolicyExists(HeaderCode);
     end;
 
-    HeaderCode := Setup."Counting Code Mapping ID";
-    // Create header + lines if missing
-    Mgt.EnsurePolicyExists(HeaderCode);
-end;
-    local procedure EnsureGrossProfitLines(HeaderCode: Code[20])
+    local procedure EnsureGrossProfitLines(HeaderCode: Code[10])
     var
-        L: Record "GMO Counting Policy Line";
+        L: Record "GMO ABC Counting Policy Line";
     begin
         if not L.Get(HeaderCode, L.Model::GrossProfit, L.Class::A) then begin
-            L.Init(); L."Header Code" := HeaderCode; L.Model := L.Model::GrossProfit; L.Class := L.Class::A; L.Insert(true);
+            L.Init();
+            L."Header Code" := HeaderCode;
+            L.Model := L.Model::GrossProfit;
+            L.Class := L.Class::A;
+            L.Insert(true);
         end;
         if not L.Get(HeaderCode, L.Model::GrossProfit, L.Class::B) then begin
-            L.Init(); L."Header Code" := HeaderCode; L.Model := L.Model::GrossProfit; L.Class := L.Class::B; L.Insert(true);
+            L.Init();
+            L."Header Code" := HeaderCode;
+            L.Model := L.Model::GrossProfit;
+            L.Class := L.Class::B;
+            L.Insert(true);
         end;
         if not L.Get(HeaderCode, L.Model::GrossProfit, L.Class::C) then begin
-            L.Init(); L."Header Code" := HeaderCode; L.Model := L.Model::GrossProfit; L.Class := L.Class::C; L.Insert(true);
+            L.Init();
+            L."Header Code" := HeaderCode;
+            L.Model := L.Model::GrossProfit;
+            L.Class := L.Class::C;
+            L.Insert(true);
         end;
     end;
 
-    local procedure EnsureCOGSLines(HeaderCode: Code[20])
+    local procedure EnsureCOGSLines(HeaderCode: Code[10])
     var
-        L: Record "GMO Counting Policy Line";
+        L: Record "GMO ABC Counting Policy Line";
     begin
         if not L.Get(HeaderCode, L.Model::COGS, L.Class::A) then begin
-            L.Init(); L."Header Code" := HeaderCode; L.Model := L.Model::COGS; L.Class := L.Class::A; L.Insert(true);
+            L.Init();
+            L."Header Code" := HeaderCode;
+            L.Model := L.Model::COGS;
+            L.Class := L.Class::A;
+            L.Insert(true);
         end;
         if not L.Get(HeaderCode, L.Model::COGS, L.Class::B) then begin
-            L.Init(); L."Header Code" := HeaderCode; L.Model := L.Model::COGS; L.Class := L.Class::B; L.Insert(true);
+            L.Init();
+            L."Header Code" := HeaderCode;
+            L.Model := L.Model::COGS;
+            L.Class := L.Class::B;
+            L.Insert(true);
         end;
         if not L.Get(HeaderCode, L.Model::COGS, L.Class::C) then begin
-            L.Init(); L."Header Code" := HeaderCode; L.Model := L.Model::COGS; L.Class := L.Class::C; L.Insert(true);
+            L.Init();
+            L."Header Code" := HeaderCode;
+            L.Model := L.Model::COGS;
+            L.Class := L.Class::C;
+            L.Insert(true);
         end;
     end;
 
@@ -215,7 +246,7 @@ end;
     [TryFunction]
     local procedure Try_UpdateSetupVersion(NewVersion: Text[30])
     var
-        Setup: Record "GMO Analysis Setup";
+        Setup: Record "GMO ABC Analysis Setup";
     begin
         if Setup.Get('SETUP') then
             if Setup."Last Upgraded To" <> NewVersion then begin
@@ -228,7 +259,7 @@ end;
 
     local procedure HasTag(Tag: Code[250]): Boolean
     var
-        T: Record "GMO Upgrade Tag";
+        T: Record "GMO ABC Upgrade Tag";
         ModInfo: ModuleInfo;
     begin
         NavApp.GetCurrentModuleInfo(ModInfo);
@@ -241,7 +272,7 @@ end;
 
     local procedure SetTag(Tag: Code[250])
     var
-        T: Record "GMO Upgrade Tag";
+        T: Record "GMO ABC Upgrade Tag";
         ModInfo: ModuleInfo;
     begin
         if HasTag(Tag) then
@@ -257,9 +288,28 @@ end;
 
     // ----------------- TAG CONSTANTS -----------------
 
-    local procedure Tag_InitSetup(): Code[250]      begin exit('GMO/V2/InitSetup'); end;
-    local procedure Tag_CountingPolicy(): Code[250] begin exit('GMO/V2/CountingPolicy'); end;
-    local procedure Tag_BackfillItem(): Code[250]   begin exit('GMO/V2/BackfillItem'); end;
-    local procedure Tag_BackfillSKU(): Code[250]    begin exit('GMO/V2/BackfillSKU'); end;
-    local procedure Tag_Complete(): Code[250]       begin exit('GMO/V2/Complete'); end;
+    local procedure Tag_InitSetup(): Code[250]
+    begin
+        exit('GMO/V2/InitSetup');
+    end;
+
+    local procedure Tag_CountingPolicy(): Code[250]
+    begin
+        exit('GMO/V2/CountingPolicy');
+    end;
+
+    local procedure Tag_BackfillItem(): Code[250]
+    begin
+        exit('GMO/V2/BackfillItem');
+    end;
+
+    local procedure Tag_BackfillSKU(): Code[250]
+    begin
+        exit('GMO/V2/BackfillSKU');
+    end;
+
+    local procedure Tag_Complete(): Code[250]
+    begin
+        exit('GMO/V2/Complete');
+    end;
 }

@@ -1,10 +1,10 @@
-page 73030578 "GMO Analysis Setup"
+page 73030578 "GMO ABC Analysis Setup"
 {
     Caption = 'ABC Analysis Setup';
     PageType = Card;
     ApplicationArea = All;
     UsageCategory = Administration;
-    SourceTable = "GMO Analysis Setup";
+    SourceTable = "GMO ABC Analysis Setup";
 
     layout
     {
@@ -136,11 +136,12 @@ page 73030578 "GMO Analysis Setup"
                 {
                     ApplicationArea = All;
                     Caption = 'Counting Code Mapping ID';
-                    TableRelation = "GMO Counting Policy Header".Code;
+                    TableRelation = "GMO ABC Counting Policy Header".Code;
+                    ToolTip = 'Specifies the value of the Counting Code Mapping ID field.';
 
                     trigger OnAssistEdit()
                     var
-                        H: Record "GMO Counting Policy Header";
+                        H: Record "GMO ABC Counting Policy Header";
                     begin
                         // Ensure a code is present
                         if Rec."Counting Code Mapping ID" = '' then begin
@@ -157,15 +158,15 @@ page 73030578 "GMO Analysis Setup"
                         end;
 
                         // Open the policy card
-                        PAGE.RunModal(PAGE::"GMO Counting Policy Card", H);
+                        PAGE.RunModal(PAGE::"GMO ABC Counting Policy Card", H);
                     end;
 
                     // (Optional) Proper lookup to choose a different mapping
                     trigger OnLookup(var Text: Text): Boolean
                     var
-                        H: Record "GMO Counting Policy Header";
+                        H: Record "GMO ABC Counting Policy Header";
                     begin
-                        if PAGE.RunModal(PAGE::"GMO Counting Policy Card", H) = ACTION::LookupOK then begin
+                        if PAGE.RunModal(PAGE::"GMO ABC Counting Policy Card", H) = ACTION::LookupOK then begin
                             Rec.Validate("Counting Code Mapping ID", H.Code);
                             Rec.Modify(true);
                             exit(true);
@@ -176,7 +177,7 @@ page 73030578 "GMO Analysis Setup"
                     // (Optional) Auto-create when user types a new code and leaves the field
                     trigger OnValidate()
                     var
-                        H: Record "GMO Counting Policy Header";
+                        H: Record "GMO ABC Counting Policy Header";
                     begin
                         if Rec."Counting Code Mapping ID" = '' then
                             exit;
@@ -227,7 +228,7 @@ page 73030578 "GMO Analysis Setup"
                 ToolTip = 'Executes the Create/Enable Job Queue action.';
                 trigger OnAction()
                 var
-                    Helper: Codeunit "GMO Job Queue Helper";
+                    Helper: Codeunit "GMO ABC Job Queue Helper";
                 begin
                     Helper.CreateOrEnableJob();
                 end;
@@ -248,14 +249,15 @@ page 73030578 "GMO Analysis Setup"
                 Caption = 'Open Counting Policy';
                 ApplicationArea = All;
                 Image = Setup;
+                ToolTip = 'Opens the Counting Policy Card for the selected Counting Code Mapping ID.';
                 trigger OnAction()
                 var
-                    H: Record "GMO Counting Policy Header";
+                    H: Record "GMO ABC Counting Policy Header";
                 begin
                     if Rec."Counting Code Mapping ID" = '' then
                         Error('Select a Counting Code Mapping ID first.');
                     H.Get(Rec."Counting Code Mapping ID");
-                    Page.Run(Page::"GMO Counting Policy Card", H);
+                    Page.Run(Page::"GMO ABC Counting Policy Card", H);
                 end;
             }
         }
@@ -263,7 +265,7 @@ page 73030578 "GMO Analysis Setup"
 
     trigger OnOpenPage()
     var
-        Mgt: Codeunit "GMO Analysis Mgt.";
+        Mgt: Codeunit "GMO ABC Analysis Mgt.";
     begin
         if not Rec.Get('SETUP') then begin
             // (your existing setup seeding) ...

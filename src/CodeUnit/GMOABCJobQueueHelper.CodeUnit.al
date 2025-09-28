@@ -1,4 +1,4 @@
-codeunit 73030589 "GMO Job Queue Helper"
+codeunit 73030589 "GMO ABC Job Queue Helper"
 {
 procedure CreateOrEnableJob()
 var
@@ -7,7 +7,7 @@ var
     CodeunitId: Integer;
     Created: Boolean;
 begin
-    CodeunitId := Codeunit::"GMO Analysis Job";
+    CodeunitId := Codeunit::"GMO ABC Analysis Job";
 
     // Reuse any existing entry for this codeunit
     JQ.Reset();

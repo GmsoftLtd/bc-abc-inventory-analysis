@@ -1,4 +1,4 @@
-codeunit 73030620 "GMO Analysis Mgt."
+codeunit 73030620 "GMO ABC Analysis Mgt."
 {
 
 
@@ -9,9 +9,9 @@ codeunit 73030620 "GMO Analysis Mgt."
     /// Build the temporary preview for the selected model and period.
     /// - Fills TempPreview with one line per Item having non-zero value.
     /// - Computes Value %, Cum. %, and Class (A/B/C) based on Setup thresholds.
-    procedure CalculatePreview(Model: Option Revenue,"Gross Profit",COGS; StartDate: Date; EndDate: Date; var TempPreview: Record "GMO ABC Preview Line" temporary)
+    procedure CalculatePreview(Model: Enum "GMO ABC Model"; StartDate: Date; EndDate: Date; var TempPreview: Record "GMO ABC Preview Line" temporary)
     var
-        Setup: Record "GMO Analysis Setup";
+        Setup: Record "GMO ABC Analysis Setup";
         Item: Record Item;
         TotalValue: Decimal;
         CumPct: Decimal;
@@ -73,9 +73,9 @@ codeunit 73030620 "GMO Analysis Mgt."
     /// Apply preview lines to Item and SKUs for the given model/period.
     /// - Writes per-model class and timestamps.
     /// - Optionally maps to Physical Inventory Counting Period Code via policy lines.
-    procedure ApplyPreview(var TempPreview: Record "GMO ABC Preview Line" temporary; Model: Option Revenue,"Gross Profit",COGS; StartDate: Date; EndDate: Date)
+    procedure ApplyPreview(var TempPreview: Record "GMO ABC Preview Line" temporary; Model: Enum "GMO ABC Model"; StartDate: Date; EndDate: Date)
     var
-        Setup: Record "GMO Analysis Setup";
+        Setup: Record "GMO ABC Analysis Setup";
         Item: Record Item;
         SKU: Record "Stockkeeping Unit";
         NowDT: DateTime;
@@ -100,7 +100,7 @@ codeunit 73030620 "GMO Analysis Mgt."
                             Item.Validate("GMO Class (Revenue)", TempPreview.Class);
                             Item.Validate("GMO Last Calc (Revenue)", NowDT);
                         end;
-                    Model::"Gross Profit":
+                    Model::"GrossProfit":
                         begin
                             Item.Validate("GMO Class (Gross Profit)", TempPreview.Class);
                             Item.Validate("GMO Last Calc (GP)", NowDT);
@@ -127,7 +127,7 @@ codeunit 73030620 "GMO Analysis Mgt."
                                     SKU.Validate("GMO Class (Revenue)", TempPreview.Class);
                                     SKU.Validate("GMO Last Calc (Revenue)", NowDT);
                                 end;
-                            Model::"Gross Profit":
+                            Model::"GrossProfit":
                                 begin
                                     SKU.Validate("GMO Class (Gross Profit)", TempPreview.Class);
                                     SKU.Validate("GMO Last Calc (GP)", NowDT);
@@ -146,9 +146,9 @@ codeunit 73030620 "GMO Analysis Mgt."
     /// Batch: recalc each model using its own Setup period; optionally apply.
     procedure RecalculateAllDistinctWindows(ApplyChanges: Boolean)
     var
-        Setup: Record "GMO Analysis Setup";
+        Setup: Record "GMO ABC Analysis Setup";
         Preview: Record "GMO ABC Preview Line" temporary;
-        Model: Option Revenue,"Gross Profit",COGS;
+        Model: Enum "GMO ABC Model";
         S, E : Date;
     begin
         EnsureSetup(Setup);
@@ -162,7 +162,7 @@ codeunit 73030620 "GMO Analysis Mgt."
 
         // Gross Profit
         Preview.DeleteAll();
-        Model := Model::"Gross Profit";
+        Model := Model::"GrossProfit";
         CalcDatesFromSetup(Model, Setup, WorkDate(), S, E);
         CalculatePreview(Model, S, E, Preview);
         if ApplyChanges and not Preview.IsEmpty() then
@@ -197,7 +197,7 @@ codeunit 73030620 "GMO Analysis Mgt."
     // =========================================================
 
     /// Ensure Setup exists; seed conservative defaults.
-    local procedure EnsureSetup(var Setup: Record "GMO Analysis Setup")
+    local procedure EnsureSetup(var Setup: Record "GMO ABC Analysis Setup")
     begin
         if Setup.Get('SETUP') then
             exit;
@@ -218,7 +218,7 @@ codeunit 73030620 "GMO Analysis Mgt."
     end;
 
     /// Compute model value per item for date window using Value Entry.
-    local procedure CalcItemAmount(Model: Option Revenue,"Gross Profit",COGS; StartDate: Date; EndDate: Date; ItemNo: Code[20]): Decimal
+    local procedure CalcItemAmount(Model:Enum "GMO ABC Model"; StartDate: Date; EndDate: Date; ItemNo: Code[20]): Decimal
     var
         VE: Record "Value Entry";
         amt: Decimal;
@@ -240,7 +240,7 @@ codeunit 73030620 "GMO Analysis Mgt."
                             s := VE."Sales Amount (Actual)";
                             amt += s; // returns reduce revenue via negative sales
                         end;
-                    Model::"Gross Profit":
+                    Model::"GrossProfit":
                         begin
                             s := VE."Sales Amount (Actual)";
                             c := VE."Cost Amount (Actual)";
@@ -259,7 +259,7 @@ codeunit 73030620 "GMO Analysis Mgt."
     end;
 
     /// Translate cumulative % into A/B/C using model thresholds from Setup.
-    local procedure ClassFromCumPercent(Model: Option Revenue,"Gross Profit",COGS; Setup: Record "GMO Analysis Setup"; CumPct: Decimal): Option A,B,C
+    local procedure ClassFromCumPercent(Model:Enum "GMO ABC Model"; Setup: Record "GMO ABC Analysis Setup"; CumPct: Decimal): Enum "GMO ABC Class"
     var
         ATh: Decimal;
         BTh: Decimal;
@@ -270,7 +270,7 @@ codeunit 73030620 "GMO Analysis Mgt."
                     ATh := Setup."Rev A %";
                     BTh := Setup."Rev B %";
                 end;
-            Model::"Gross Profit":
+            Model::"GrossProfit":
                 begin
                     ATh := Setup."GP A %";
                     BTh := Setup."GP B %";
@@ -290,15 +290,15 @@ codeunit 73030620 "GMO Analysis Mgt."
     end;
 
     /// Local option scope helper (A/B/C).
-    local procedure ABC(): Option A,B,C
+    local procedure ABC(): Enum "GMO ABC Class"
     begin
         exit(0);
     end;
 
     /// Set Item/SKU Phys. Invt. Counting Period Code from policy mapping (if configured).
-    local procedure MaybeUpdateCountingCode(ItemNo: Code[20]; ClassOpt: Option A,B,C; Model: Option Revenue,"Gross Profit",COGS; Setup: Record "GMO Analysis Setup")
+    local procedure MaybeUpdateCountingCode(ItemNo: Code[20]; ClassOpt: Enum "GMO ABC Class"; Model: Enum "GMO ABC Model"; Setup: Record "GMO ABC Analysis Setup")
     var
-        Line: Record "GMO Counting Policy Line";
+        Line: Record "GMO ABC Counting Policy Line";
         Item: Record Item;
         SKU: Record "Stockkeeping Unit";
         PeriodCode: Code[10];
@@ -342,7 +342,7 @@ codeunit 73030620 "GMO Analysis Mgt."
     /// Create policy header (HeaderCode) and default 9 lines (A/B/C × 3 models) if missing.
     procedure EnsurePolicyExists(HeaderCode: Code[10]): Boolean
     var
-        H: Record "GMO Counting Policy Header";
+        H: Record "GMO ABC Counting Policy Header";
     begin
         if HeaderCode = '' then
             exit(false);
@@ -359,56 +359,56 @@ codeunit 73030620 "GMO Analysis Mgt."
         exit(true);
     end;
 
-    local procedure EnsureDefaultPolicyLines(HeaderCode: Code[20])
+    local procedure EnsureDefaultPolicyLines(HeaderCode: Code[10])
     begin
         EnsurePolicyLine(HeaderCode, ModelOpt() ::Revenue, ClassOpt() ::A);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::Revenue, ClassOpt() ::B);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::Revenue, ClassOpt() ::C);
 
-        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Gross Profit", ClassOpt() ::A);
-        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Gross Profit", ClassOpt() ::B);
-        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Gross Profit", ClassOpt() ::C);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"GrossProfit", ClassOpt() ::A);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"GrossProfit", ClassOpt() ::B);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"GrossProfit", ClassOpt() ::C);
 
         EnsurePolicyLine(HeaderCode, ModelOpt() ::COGS, ClassOpt() ::A);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::COGS, ClassOpt() ::B);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::COGS, ClassOpt() ::C);
     end;
 
-    local procedure EnsurePolicyLine(HeaderCode: Code[10]; Model:enum "GMO ABC Model"; Class: enum "GMO Class")
+    local procedure EnsurePolicyLine(HeaderCode: Code[10]; Model:enum "GMO ABC Model"; Class: enum "GMO ABC Class")
     var
-        L: Record "GMO Counting Policy Line";
+        L: Record "GMO ABC Counting Policy Line";
     begin
-        if L.Get(HeaderCode, Model, ClassOpt) then
+        if L.Get(HeaderCode, Model, ClassOpt()) then
             exit;
 
         L.Init();
         L."Header Code" := HeaderCode;
         L.Model := Model;
-        L.Class := ClassOpt;
+        L.Class := ClassOpt();
         // "Counting Period Code" left blank by default; admin may fill it
         L.Insert(true);
     end;
 
     // option scope helpers for policy creation
-    local procedure ModelOpt(): Option Revenue,"Gross Profit",COGS
+    local procedure ModelOpt(): Enum "GMO ABC Model"
     begin
         exit(0);
     end;
 
-    local procedure ClassOpt(): Option A,B,C
+    local procedure ClassOpt(): Enum "GMO ABC Class"
     begin
         exit(0);
     end;
 
     /// Calculate S/E from Setup for a given model with an anchor date (usually WorkDate()).
-    local procedure CalcDatesFromSetup(Model: Option Revenue,"Gross Profit",COGS; Setup: Record "GMO Analysis Setup"; AnchorDate: Date; var StartDate: Date; var EndDate: Date)
+    local procedure CalcDatesFromSetup(Model:Enum "GMO ABC Model"; Setup: Record "GMO ABC Analysis Setup"; AnchorDate: Date; var StartDate: Date; var EndDate: Date)
     var
         DaysBack: Integer;
     begin
         case Model of
             Model::Revenue:
                 DaysBack := Setup."Rev Period (Days)";
-            Model::"Gross Profit":
+            Model::"GrossProfit":
                 DaysBack := Setup."GP Period (Days)";
             Model::COGS:
                 DaysBack := Setup."COGS Period (Days)";

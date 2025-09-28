@@ -1,19 +1,33 @@
-codeunit 73030643 "GMO Worksheet Stats"
+codeunit 73030643 "GMO ABC Worksheet Stats"
 {
-    
+
     procedure BuildStats(var TempPreview: Record "GMO ABC Preview Line" temporary; var TempStats: Record "GMO ABC Stats" temporary)
-    var ACount,BCount,CCount,TotCount: Integer; AAmount,BAmount,CAmount,TotAmount: Decimal; LineNo: Integer; CumCntPct, CumAmtPct: Decimal;
+    var
+        ACount, BCount, CCount, TotCount : Integer; AAmount, BAmount, CAmount, TotAmount : Decimal; LineNo: Integer;
+        CumCntPct, CumAmtPct : Decimal;
     begin
         TempStats.DeleteAll();
         TempPreview.Reset();
         if TempPreview.FindSet() then
             repeat
                 case TempPreview.Class of
-                    TempPreview.Class::A: begin ACount += 1; AAmount += TempPreview.Value; end;
-                    TempPreview.Class::B: begin BCount += 1; BAmount += TempPreview.Value; end;
-                    else                 begin CCount += 1; CAmount += TempPreview.Value; end;
+                    TempPreview.Class::A:
+                        begin
+                            ACount += 1;
+                            AAmount += TempPreview.Value;
+                        end;
+                    TempPreview.Class::B:
+                        begin
+                            BCount += 1;
+                            BAmount += TempPreview.Value;
+                        end;
+                    else begin
+                        CCount += 1;
+                        CAmount += TempPreview.Value;
+                    end;
                 end;
-                TotCount += 1; TotAmount += TempPreview.Value;
+                TotCount += 1;
+                TotAmount += TempPreview.Value;
             until TempPreview.Next() = 0;
 
         AddLine(TempStats, LineNo, TempPreview.Class::A, ACount, AAmount, TotCount, TotAmount, CumCntPct, CumAmtPct);
@@ -21,8 +35,9 @@ codeunit 73030643 "GMO Worksheet Stats"
         AddLine(TempStats, LineNo, TempPreview.Class::C, CCount, CAmount, TotCount, TotAmount, CumCntPct, CumAmtPct);
     end;
 
-    local procedure AddLine(var TempStats: Record "GMO ABC Stats" temporary; var LineNo: Integer; C: Enum "GMO Class"; Cnt: Integer; Amt: Decimal; TotCnt: Integer; TotAmt: Decimal; var CumCntPct: Decimal; var CumAmtPct: Decimal)
-    var CntPct, AmtPct: Decimal;
+    local procedure AddLine(var TempStats: Record "GMO ABC Stats" temporary; var LineNo: Integer; C: Enum "GMO ABC Class"; Cnt: Integer; Amt: Decimal; TotCnt: Integer; TotAmt: Decimal; var CumCntPct: Decimal; var CumAmtPct: Decimal)
+    var
+        CntPct, AmtPct : Decimal;
     begin
         LineNo += 1;
         if TotCnt > 0 then CntPct := Round(Cnt / TotCnt * 100, 0.00001);
@@ -44,6 +59,7 @@ codeunit 73030643 "GMO Worksheet Stats"
 
     local procedure AmountSafe(v: Decimal): Decimal
     begin
-        if v < 0 then exit(0); exit(v);
+        if v < 0 then exit(0);
+        exit(v);
     end;
 }

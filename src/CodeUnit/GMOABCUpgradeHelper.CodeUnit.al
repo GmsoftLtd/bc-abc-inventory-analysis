@@ -1,10 +1,10 @@
-codeunit 73030586 "GMO Upgrade Helper"
+codeunit 73030586 "GMO ABC Upgrade Helper"
 {
    
 
     procedure ApplyInitialUpgrade()
     var
-        Setup: Record "GMO Analysis Setup";
+        Setup: Record "GMO ABC Analysis Setup";
         TagTxt: Code[50];
     begin
         TagTxt := 'GMO-Init-1.0.0';
@@ -24,13 +24,13 @@ codeunit 73030586 "GMO Upgrade Helper"
     end;
 
     local procedure HasUpgradeTag(Tag: Code[50]): Boolean
-    var T: Record "GMO Upgrade Tag";
+    var T: Record "GMO ABC Upgrade Tag";
     begin
         exit(T.Get(Tag));
     end;
 
     local procedure SetUpgradeTag(Tag: Code[50])
-    var T: Record "GMO Upgrade Tag";
+    var T: Record "GMO ABC Upgrade Tag";
     begin
         if not T.Get(Tag) then begin
             T.Init(); T.Tag := Tag; T."Applied On" := CurrentDateTime; T.Insert(true);

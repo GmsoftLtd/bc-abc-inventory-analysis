@@ -11,15 +11,15 @@ page 73030596  "GMO Load Test Runner"
         {
             group(Setup)
             {
-                field(ItemsToCreate; ItemsToCreate) { ApplicationArea = All; ToolTip = 'Number of INVENTORY items to create.'; }
-                field(InvoicesToPost; InvoicesToPost) { ApplicationArea = All; ToolTip = 'Number of sales invoices to post.'; }
-                field(MinLinesPerInv; MinLinesPerInv) { ApplicationArea = All; ToolTip = 'Minimum lines per invoice.'; }
-                field(MaxLinesPerInv; MaxLinesPerInv) { ApplicationArea = All; ToolTip = 'Maximum lines per invoice.'; }
+                field(ItemsToCreate; ItemsToCreate) { ApplicationArea = All; ToolTip = 'Number of INVENTORY items to create.';Caption = 'Items to Create';}
+                field(InvoicesToPost; InvoicesToPost) { ApplicationArea = All; ToolTip = 'Number of sales invoices to post.';Caption = 'Invoices to Post';}
+                field(MinLinesPerInv; MinLinesPerInv) { ApplicationArea = All; ToolTip = 'Minimum lines per invoice.';Caption = 'Min Lines per Invoice';}
+                field(MaxLinesPerInv; MaxLinesPerInv) { ApplicationArea = All; ToolTip = 'Maximum lines per invoice.';Caption = 'Max Lines per Invoice';}
             }
             group(Stocking)
             {
-                field(StockQtyPerItem; StockQtyPerItem) { ApplicationArea = All; ToolTip = 'Quantity to add as positive adjustment for each item.'; }
-                field(LocationCode; LocationCode) { ApplicationArea = All; ToolTip = 'Optional location code for stock. Leave blank for no location.'; }
+                field(StockQtyPerItem; StockQtyPerItem) { ApplicationArea = All; Caption = 'Stock Qty Per Item'; ToolTip = 'Quantity to add as positive adjustment for each item.'; }
+                field(LocationCode; LocationCode) { ApplicationArea = All; Caption = 'Location Code'; ToolTip = 'Optional location code for stock. Leave blank for no location.'; }
             }
         }
     }
@@ -33,6 +33,7 @@ page 73030596  "GMO Load Test Runner"
                 Caption = 'Run Load Test';
                 Image = Start;
                 ApplicationArea = All;
+                ToolTip = 'Create items, post sales invoices, and adjust inventory as per the specified parameters.';
                 trigger OnAction()
                 var
                     Loader: Codeunit "gmo Load Test Data - Inventory";

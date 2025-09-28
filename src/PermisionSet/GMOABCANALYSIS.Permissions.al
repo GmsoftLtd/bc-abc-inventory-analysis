@@ -1,0 +1,41 @@
+permissionset 73030575 "GMO ABC ANALYSIS"
+{
+    Assignable = true;
+    Caption = 'ABC ANALYSIS', MaxLength = 30;
+    Permissions =
+        table "GMO ABC Upgrade Tag" = X,
+        tabledata "GMO ABC Upgrade Tag" = RMID,
+        table "GMO ABC Analysis Setup" = X,
+        tabledata "GMO ABC Analysis Setup" = RMID,
+        table "GMO ABC Counting Policy Header" = X,
+        tabledata "GMO ABC Counting Policy Header" = RMID,
+        table "GMO ABC Counting Policy Line" = X,
+        tabledata "GMO ABC Counting Policy Line" = RMID,
+        table "GMO ABC History Header" = X,
+        tabledata "GMO ABC History Header" = RMID,
+        table "GMO ABC History Line" = X,
+        tabledata "GMO ABC History Line" = RMID,
+        table "GMO ABC Stats" = X,
+        tabledata "GMO ABC Stats" = RMID,
+        table "GMO ABC Preview Line" = X,
+        tabledata "GMO ABC Preview Line" = RMID,
+        page "GMO ABC Analysis Setup" = X,
+        page "GMO ABC Worksheet Params" = X,
+        page "GMO ABC Stats Part" = X,
+        page "GMO ABC Worksheet" = X,
+        page "GMO ABC History" = X,
+        page "GMO ABC History Lines" = X,
+        page "GMO ABC History Card" = X,
+        report "GMO ABC Analysis" = X,
+        codeunit "GMO ABC Analysis Mgt." = X,
+        codeunit "GMO ABC Analysis Job" = X,
+        codeunit "GMO ABC Install" = X,
+        codeunit "GMO ABC Upgrade Helper" = X,
+        codeunit "GMO ABC Upgrade" = X,
+        codeunit "GMO ABC Upgrade Helper v2" = X,
+        codeunit "GMO ABC Upgrade v2" = X,
+        codeunit "GMO ABC Job Queue Helper" = X,
+        codeunit "GMO ABC Telemetry" = X,
+        codeunit "GMO ABC Worksheet Stats" = X,
+        codeunit "GMO ABC Worksheet Export" = X;
+}
