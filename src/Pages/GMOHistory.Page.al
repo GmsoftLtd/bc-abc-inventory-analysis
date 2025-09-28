@@ -68,7 +68,7 @@ page 73030644 "GMO ABC History"
                 ToolTip = 'Executes the Open action.';
                 trigger OnAction()
                 begin
-                    PAGE.Run(PAGE::"GMO ABC History Card", Rec);
+                    PAGE.Run(PAGE::"GMO History Card", Rec);
                 end;
             }
         }

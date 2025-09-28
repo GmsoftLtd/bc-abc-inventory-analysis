@@ -1,5 +1,6 @@
 codeunit 73030643 "GMO Worksheet Stats"
 {
+    
     procedure BuildStats(var TempPreview: Record "GMO ABC Preview Line" temporary; var TempStats: Record "GMO ABC Stats" temporary)
     var ACount,BCount,CCount,TotCount: Integer; AAmount,BAmount,CAmount,TotAmount: Decimal; LineNo: Integer; CumCntPct, CumAmtPct: Decimal;
     begin

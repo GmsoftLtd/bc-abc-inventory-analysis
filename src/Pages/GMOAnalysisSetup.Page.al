@@ -132,28 +132,61 @@ page 73030578 "GMO Analysis Setup"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the Update SKU as well field.';
                 }
-                 field("Counting Code Mapping ID"; Rec."Counting Code Mapping ID")
+                field("Counting Code Mapping ID"; Rec."Counting Code Mapping ID")
                 {
                     ApplicationArea = All;
                     Caption = 'Counting Code Mapping ID';
-                    ToolTip = 'Select the counting policy header used to map ABC classes to Physical Inventory Counting Period Codes.';
                     TableRelation = "GMO Counting Policy Header".Code;
 
                     trigger OnAssistEdit()
                     var
                         H: Record "GMO Counting Policy Header";
                     begin
-                        if Rec."Counting Code Mapping ID" <> '' then
-                            H.Get(Rec."Counting Code Mapping ID")
-                        else begin
-                            H.Init();
-                            H.Code := 'DEFAULT';
-                            H.Description := 'Default ABC → Counting Period mapping';
-                            if not H.Insert() then; // ignore if already exists
-                            Rec.Validate("Counting Code Mapping ID", H.Code);
+                        // Ensure a code is present
+                        if Rec."Counting Code Mapping ID" = '' then begin
+                            Rec.Validate("Counting Code Mapping ID", 'DEFAULT');
                             Rec.Modify(true);
                         end;
-                        Page.Run(Page::"GMO Counting Policy Card", H);
+
+                        // Create header if missing (idempotent)
+                        if not H.Get(Rec."Counting Code Mapping ID") then begin
+                            H.Init();
+                            H.Code := Rec."Counting Code Mapping ID";
+                            H.Description := 'Default ABC → Counting Period mapping';
+                            H.Insert(true);
+                        end;
+
+                        // Open the policy card
+                        PAGE.RunModal(PAGE::"GMO Counting Policy Card", H);
+                    end;
+
+                    // (Optional) Proper lookup to choose a different mapping
+                    trigger OnLookup(var Text: Text): Boolean
+                    var
+                        H: Record "GMO Counting Policy Header";
+                    begin
+                        if PAGE.RunModal(PAGE::"GMO Counting Policy Card", H) = ACTION::LookupOK then begin
+                            Rec.Validate("Counting Code Mapping ID", H.Code);
+                            Rec.Modify(true);
+                            exit(true);
+                        end;
+                        exit(false);
+                    end;
+
+                    // (Optional) Auto-create when user types a new code and leaves the field
+                    trigger OnValidate()
+                    var
+                        H: Record "GMO Counting Policy Header";
+                    begin
+                        if Rec."Counting Code Mapping ID" = '' then
+                            exit;
+
+                        if not H.Get(Rec."Counting Code Mapping ID") then begin
+                            H.Init();
+                            H.Code := Rec."Counting Code Mapping ID";
+                            H.Description := StrSubstNo('%1 ABC → Counting Period mapping', H.Code);
+                            H.Insert(true);
+                        end;
                     end;
                 }
             }
@@ -183,7 +216,7 @@ page 73030578 "GMO Analysis Setup"
                 ToolTip = 'Executes the Run ABC Analysis Report action.';
                 trigger OnAction()
                 begin
-                    Report.RunModal(Report::"GMO Analysis");
+                    Report.RunModal(Report::"GMO ABC Analysis");
                 end;
             }
             action(CreateJobQueue)
@@ -211,20 +244,36 @@ page 73030578 "GMO Analysis Setup"
                 end;
             }
             action(OpenCountingPolicy)
-                {
-                    Caption = 'Open Counting Policy';
-                    ApplicationArea = All;
-                    Image = Setup;
-                    trigger OnAction()
-                    var
-                        H: Record "GMO Counting Policy Header";
-                    begin
-                        if Rec."Counting Code Mapping ID" = '' then
-                            Error('Select a Counting Code Mapping ID first.');
-                        H.Get(Rec."Counting Code Mapping ID");
-                        Page.Run(Page::"GMO Counting Policy Card", H);
-                    end;
-                }
+            {
+                Caption = 'Open Counting Policy';
+                ApplicationArea = All;
+                Image = Setup;
+                trigger OnAction()
+                var
+                    H: Record "GMO Counting Policy Header";
+                begin
+                    if Rec."Counting Code Mapping ID" = '' then
+                        Error('Select a Counting Code Mapping ID first.');
+                    H.Get(Rec."Counting Code Mapping ID");
+                    Page.Run(Page::"GMO Counting Policy Card", H);
+                end;
+            }
         }
     }
+
+    trigger OnOpenPage()
+    var
+        Mgt: Codeunit "GMO Analysis Mgt.";
+    begin
+        if not Rec.Get('SETUP') then begin
+            // (your existing setup seeding) ...
+        end;
+
+        if Rec."Counting Code Mapping ID" = '' then begin
+            Rec.Validate("Counting Code Mapping ID", 'DEFAULT');
+            Rec.Modify(true);
+        end;
+
+        Mgt.EnsurePolicyExists(Rec."Counting Code Mapping ID");
+    end;
 }

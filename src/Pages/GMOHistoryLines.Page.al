@@ -1,6 +1,6 @@
-page 73030645 "GMO ABC History Lines"
+page 73030645 "GMO History Lines"
 {
-    Caption = 'History Lines';
+    Caption = 'ABC History Lines';
     PageType = ListPart;
     SourceTable = "GMO ABC History Line";
     ApplicationArea = All;

@@ -1,6 +1,6 @@
 table 73030635 "GMO ABC History Line"
 {
-    Caption = 'GMO ABC History Line';
+    Caption = 'ABC History Line';
     DataClassification = CustomerContent;
 
     fields

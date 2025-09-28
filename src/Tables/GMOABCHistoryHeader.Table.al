@@ -1,6 +1,6 @@
 table 73030634 "GMO ABC History Header"
 {
-    Caption = 'GMO ABC History';
+    Caption = 'ABC History';
     DataClassification = CustomerContent;
 
     fields

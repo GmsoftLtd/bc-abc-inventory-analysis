@@ -86,38 +86,24 @@ codeunit 73030648 "GMO Upgrade Helper v2"
     end;
 
     [TryFunction]
-    local procedure Try_EnsureDefaultCountingPolicy()
-    var
-        H: Record "GMO Counting Policy Header";
-    begin
-        if not H.Get('DEFAULT') then begin
-            H.Init();
-            H.Code := 'DEFAULT';
-            H.Description := 'Default ABC → Counting Period mapping';
-            H.Insert(true);
-        end;
+local procedure Try_EnsureDefaultCountingPolicy()
+var
+    Setup: Record "GMO Analysis Setup";
+    Mgt: Codeunit "GMO Analysis Mgt.";
+    HeaderCode: Code[20];
+begin
+    if not Setup.Get('SETUP') then
+        exit;
 
-        EnsureRevenueLines(H.Code);
-        EnsureGrossProfitLines(H.Code);
-        EnsureCOGSLines(H.Code);
+    if Setup."Counting Code Mapping ID" = '' then begin
+        Setup."Counting Code Mapping ID" := 'DEFAULT';
+        Setup.Modify(true);
     end;
 
-    // Uses the table field's own Option members (no enums required)
-    local procedure EnsureRevenueLines(HeaderCode: Code[20])
-    var
-        L: Record "GMO Counting Policy Line";
-    begin
-        if not L.Get(HeaderCode, L.Model::Revenue, L.Class::A) then begin
-            L.Init(); L."Header Code" := HeaderCode; L.Model := L.Model::Revenue; L.Class := L.Class::A; L.Insert(true);
-        end;
-        if not L.Get(HeaderCode, L.Model::Revenue, L.Class::B) then begin
-            L.Init(); L."Header Code" := HeaderCode; L.Model := L.Model::Revenue; L.Class := L.Class::B; L.Insert(true);
-        end;
-        if not L.Get(HeaderCode, L.Model::Revenue, L.Class::C) then begin
-            L.Init(); L."Header Code" := HeaderCode; L.Model := L.Model::Revenue; L.Class := L.Class::C; L.Insert(true);
-        end;
-    end;
-
+    HeaderCode := Setup."Counting Code Mapping ID";
+    // Create header + lines if missing
+    Mgt.EnsurePolicyExists(HeaderCode);
+end;
     local procedure EnsureGrossProfitLines(HeaderCode: Code[20])
     var
         L: Record "GMO Counting Policy Line";

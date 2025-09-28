@@ -1,6 +1,6 @@
 table 73030577 "GMO Analysis Setup"
 {
-    Caption = 'GMO Analysis Setup';
+    Caption = 'Analysis Setup';
     DataClassification = SystemMetadata;
 
     fields

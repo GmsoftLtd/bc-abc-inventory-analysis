@@ -1,19 +1,23 @@
-table 73030633 "GMO ABC Preview Line"
+table 73030610 "GMO ABC Preview Line"
 {
     Caption = 'GMO ABC Preview Line';
     DataClassification = CustomerContent;
-    TableType = Temporary;
 
     fields
     {
-        field(1; "Line No."; Integer) { }
-        field(2; "Item No."; Code[20]) { TableRelation = Item."No."; }
-        field(3; Description; Text[100]) { }
-        field(4; Model; Enum "GMO ABC Model") { }
-        field(5; Value; Decimal) { Caption = 'Calc. Value'; DecimalPlaces = 0 : 2; }
-        field(6; "Value %"; Decimal) { DecimalPlaces = 0 : 5; }
-        field(7; "Cum. %"; Decimal) { DecimalPlaces = 0 : 5; }
-        field(8; Class; Enum "GMO Class") { }
+        field(1; "Line No."; Integer) { Caption = 'Line No.'; }
+        field(10; "Item No."; Code[20]) { Caption = 'Item No.'; TableRelation = Item."No."; }
+        field(11; Description; Text[100]) { Caption = 'Description'; }
+        field(12; Model; Option) { Caption = 'Model'; OptionMembers = Revenue,"Gross Profit",COGS; }
+        field(13; Value; Decimal) { Caption = 'Value'; }
+        field(14; "Value %"; Decimal) { Caption = 'Value %'; }
+        field(15; "Cum. %"; Decimal) { Caption = 'Cumulative %'; }
+        field(16; Class; Option) { Caption = 'Class'; OptionMembers = A,B,C; }
     }
-    keys { key(PK; "Line No.") { Clustered = true; } }
+
+    keys
+    {
+        key(PK; "Line No.") { Clustered = true; }
+        key(ValueKey; Value) { } // for descending sort during cum%
+    }
 }
