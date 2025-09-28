@@ -11,7 +11,7 @@ table 73030634 "GMO ABC History Header"
         field(4; "End Date"; Date) { }
         field(5; "Created By"; Code[50]) { }
         field(6; "Created At"; DateTime) { }
-        field(7; "Total Amount"; Decimal) { DecimalPlaces = 0:2; }
+        field(7; "Total Amount"; Decimal) { DecimalPlaces = 0 : 2; }
         field(8; "Items Count"; Integer) { }
     }
     keys { key(PK; "Entry No.") { Clustered = true; } }

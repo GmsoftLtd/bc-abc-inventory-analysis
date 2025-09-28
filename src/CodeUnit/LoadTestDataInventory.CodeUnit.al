@@ -53,7 +53,7 @@ codeunit 73030576 "GMO Load Test Data - Inventory"
     end;
 
     // --- Ensure PCS UoM
-  
+
     // --- Customer helper (unchanged)
     local procedure EnsureOrCreateCustomer(GenBusPGCode: Code[20]; CustPGCode: Code[20]; VatBusPGCode: Code[20]) TestCustomerNo: Code[20]
     var

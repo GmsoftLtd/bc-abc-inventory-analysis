@@ -2,6 +2,7 @@ table 73030593 "GMO ABC Counting Policy Line"
 {
     Caption = 'Counting Policy Line';
     DataClassification = SystemMetadata;
+    DataCaptionFields = Model, Class;
 
     fields
     {
@@ -10,7 +11,7 @@ table 73030593 "GMO ABC Counting Policy Line"
         field(3; Class; Enum "GMO ABC Class") { Caption = 'Class'; }
         field(4; "Counting Period Code"; Code[10]) { TableRelation = "Phys. Invt. Counting Period".Code; } // <— REQUIRED NAME
         field(10; "Item Period Code"; Code[10]) { Caption = 'Item Counting Period Code'; TableRelation = "Phys. Invt. Counting Period".Code; }
-        field(11; "SKU Period Code"; Code[10])  { Caption = 'SKU Counting Period Code';  TableRelation = "Phys. Invt. Counting Period".Code; }
+        field(11; "SKU Period Code"; Code[10]) { Caption = 'SKU Counting Period Code'; TableRelation = "Phys. Invt. Counting Period".Code; }
     }
     keys { key(PK; "Header Code", Model, Class) { Clustered = true; } }
 }

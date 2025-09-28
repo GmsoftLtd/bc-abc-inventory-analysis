@@ -1,25 +1,71 @@
-report 73030587 "GMO ABC Analysis"
+report 73030640 "GMO ABC Analysis"
 {
     UsageCategory = ReportsAndAnalysis;
     ApplicationArea = All;
-    Caption = 'ABC Analysis';
-    DefaultLayout = RDLC;
-    RDLCLayout = './src/reports/GMOAnalysis.rdl';
+    Caption = 'GMO ABC Analysis';
+
+    // Point to the RDLC layout shipped below (add the .rdl file to your project)
+    RDLCLayout = 'Layouts/GMO_ABC_Analysis.rdl';
 
     dataset
     {
-        dataitem(Item; Item)
+        dataitem(Previewabc; "GMO ABC Preview Line")
         {
-            RequestFilterFields = "No.", "GMO Class (Revenue)", "GMO Class (Gross Profit)", "GMO Class (COGS)";
+            UseTemporary = true;
+            DataItemTableView = sorting(Value) order(Descending);
 
-            column(No_; "No.") { }
+            column(LineNo; "Line No.") { }
+            column(Item_No_; "Item No.") { }
             column(Description; Description) { }
-            column(ClassRevenue; "GMO Class (Revenue)") { }
-            column(ClassGP; "GMO Class (Gross Profit)") { }
-            column(ClassCOGS; "GMO Class (COGS)") { }
-            column(LastRev; "GMO Last Calc (Revenue)") { }
-            column(LastGP; "GMO Last Calc (GP)") { }
-            column(LastCOGS; "GMO Last Calc (COGS)") { }
+            column(Model; Model) { }
+            column(Value; Value) { }
+            column(ValuePct; "Value %") { }
+            column(CumPct; "Cum. %") { }
+            column(Class; Class) { }
+
+            trigger OnPreDataItem()
+            var
+                Mgt: Codeunit "GMO ABC Analysis Mgt.";
+            begin
+                // Build the temp dataset according to the request page parameters
+                Mgt.CalculatePreview(gModel, gStartDate, gEndDate, PreviewABC);
+            end;
         }
     }
+
+    requestpage
+    {
+        layout
+        {
+            area(content)
+            {
+                group(Options)
+                {
+                    field(Model; gModel)
+                    {
+                        ApplicationArea = All;
+                        Caption = 'Model';
+                        ToolTip = 'Specifies the value of the Model field.';
+                    }
+                    field(StartDate; gStartDate)
+                    {
+                        ApplicationArea = All;
+                        Caption = 'Start Date';
+                        ToolTip = 'Specifies the value of the Start Date field.';
+                    }
+                    field(EndDate; gEndDate)
+                    {
+                        ApplicationArea = All;
+                        Caption = 'End Date';
+                        ToolTip = 'Specifies the value of the End Date field.';
+                    }
+                }
+            }
+        }
+    }
+
+    var
+        gModel: Option Revenue,"Gross Profit",COGS;
+        gStartDate: Date;
+        gEndDate: Date;
 }

@@ -1,6 +1,6 @@
 codeunit 73030583 "GMO ABC Analysis Job"
 {
-   
+
 
     trigger OnRun()
     var

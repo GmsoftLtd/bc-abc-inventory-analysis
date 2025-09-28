@@ -2,6 +2,7 @@ table 73030592 "GMO ABC Counting Policy Header"
 {
     Caption = 'ABC Counting Policy';
     DataClassification = SystemMetadata;
+    DataCaptionFields = Code, Description;
 
     fields
     {

@@ -3,9 +3,11 @@ page 73030637 "GMO ABC Worksheet"
     PageType = Worksheet;
     SourceTable = "GMO ABC Preview Line";
     SourceTableTemporary = true;
-    Caption = 'ABC Worksheet';
+    Caption = 'GMO ABC Worksheet';
     ApplicationArea = All;
     UsageCategory = Tasks;
+
+    SourceTableView = sorting(Value) order(Descending);
 
     Editable = false;
     InsertAllowed = false;
@@ -20,21 +22,28 @@ page 73030637 "GMO ABC Worksheet"
             {
                 ShowCaption = false;
 
+                field("Line No."; Rec."Line No.")
+                {
+                    ApplicationArea = All;
+                    Visible = false;
+                    ToolTip = 'Specifies the value of the Line No. field.';
+                }
                 field("Item No."; Rec."Item No.") { ApplicationArea = All; ToolTip = 'Item number.'; }
                 field(Description; Rec.Description) { ApplicationArea = All; ToolTip = 'Item description.'; }
                 field(Model; Rec.Model) { ApplicationArea = All; ToolTip = 'ABC model used for this line.'; }
                 field(Value; Rec.Value) { ApplicationArea = All; ToolTip = 'Calculated value for the selected model and period.'; }
                 field("Value %"; Rec."Value %") { ApplicationArea = All; ToolTip = 'Share of the item value against the total (%).'; }
                 field("Cum. %"; Rec."Cum. %") { ApplicationArea = All; ToolTip = 'Cumulative percentage used for class breakpoints.'; }
-                field(Class; Rec.Class) { ApplicationArea = All; ToolTip = 'Proposed ABC class.'; }
-            }
-        }
-        area(FactBoxes)
-        {
-            part(Stats; "GMO ABC Stats Part")
-            {
-                ApplicationArea = All;
-                Caption = 'Statistics';
+
+                // Single visual Class column (emoji + bold)
+                field(ClassDisplay; GetClassDisplayText())
+                {
+                    ApplicationArea = All;
+                    Caption = 'Class';
+                    ToolTip = 'ABC Class (colored and bold).';
+                    Style = Strong;
+                    StyleExpr = true;
+                }
             }
         }
     }
@@ -52,11 +61,9 @@ page 73030637 "GMO ABC Worksheet"
                 trigger OnAction()
                 var
                     Mgt: Codeunit "GMO ABC Analysis Mgt.";
-                    StatsMgt: Codeunit "GMO ABC Worksheet Stats";
                     StartDate: Date;
                     EndDate: Date;
-                    Model: Enum "GMO ABC Model";
-                    TempStats: Record "GMO ABC Stats" temporary;
+                    Model: Option Revenue,"Gross Profit",COGS;
                 begin
                     if not GetParams(Model, StartDate, EndDate) then
                         exit;
@@ -64,13 +71,10 @@ page 73030637 "GMO ABC Worksheet"
                     Rec.DeleteAll();
                     Mgt.CalculatePreview(Model, StartDate, EndDate, Rec);
 
-                    // Remember parameters for Apply
-                    LastModel := Model;  LastStartDate := StartDate;  LastEndDate := EndDate;  HasLastParams := true;
-
-                    // Build & show stats
-                    TempStats.DeleteAll();
-                    StatsMgt.BuildStats(Rec, TempStats);
-                    CurrPage.Stats.Page.SetStats(TempStats);
+                    LastModel := Model;
+                    LastStartDate := StartDate;
+                    LastEndDate := EndDate;
+                    HasLastParams := true;
 
                     CurrPage.Update(false);
                     Message('Preview calculated: %1 lines.', GetTempCount());
@@ -86,27 +90,37 @@ page 73030637 "GMO ABC Worksheet"
                 trigger OnAction()
                 var
                     Mgt: Codeunit "GMO ABC Analysis Mgt.";
-                    Model: Enum "GMO ABC Model";
+                    Model: Option Revenue,"Gross Profit",COGS;
                     StartDate: Date;
                     EndDate: Date;
                     Lines: Integer;
+                    Tmp: Record "GMO ABC Preview Line" temporary;
                 begin
                     Lines := GetTempCount();
                     if Lines = 0 then
                         Error('No preview lines. Run Calculate first.');
 
+                    // Reuse last used params; otherwise ask once
                     if HasLastParams then begin
-                        Model := LastModel;  StartDate := LastStartDate;  EndDate := LastEndDate;
+                        Model := LastModel;
+                        StartDate := LastStartDate;
+                        EndDate := LastEndDate;
                     end else begin
                         if not GetParams(Model, StartDate, EndDate) then
                             exit;
-                        LastModel := Model;  LastStartDate := StartDate;  LastEndDate := EndDate;  HasLastParams := true;
+                        LastModel := Model;
+                        LastStartDate := StartDate;
+                        LastEndDate := EndDate;
+                        HasLastParams := true;
                     end;
 
                     if not Confirm('Apply the %1 preview (%2..%3) to Item/SKU?', false, GetModelText(Model), StartDate, EndDate) then
                         exit;
 
-                    Mgt.ApplyPreview(Rec, Model, StartDate, EndDate);
+                    // 🔒 IMPORTANT: Copy page temp buffer to local temp before calling codeunit
+                    Tmp.Copy(Rec, true); // ShareTable = true keeps it lightweight, but temp → temp in same session
+                    Mgt.ApplyPreview(Tmp, Model, StartDate, EndDate);
+
                     Message('Applied successfully: %1 items updated.', Lines);
                 end;
             }
@@ -114,28 +128,33 @@ page 73030637 "GMO ABC Worksheet"
     }
 
     var
-        LastModel: Enum "GMO ABC Model";
+        LastModel: Option Revenue,"Gross Profit",COGS;
         LastStartDate: Date;
         LastEndDate: Date;
         HasLastParams: Boolean;
 
-  local procedure GetParams(var Model: Enum "GMO ABC Model"; var StartDate: Date; var EndDate: Date): Boolean
-var
-    Dlg: Page "GMO ABC Worksheet Params";
-begin
-    if Dlg.RunModal() = Action::OK then begin
-        Dlg.GetParams(Model, StartDate, EndDate);
-        exit(true);
-    end;
-    exit(false);
-end;
+    // ===================== Helpers =====================
 
-    local procedure GetModelText(Model: Enum "GMO ABC Model"): Text
+    local procedure GetParams(var Model: Option Revenue,"Gross Profit",COGS; var StartDate: Date; var EndDate: Date): Boolean
+    var
+        Dlg: Page "GMO ABC Worksheet Params";
+    begin
+        if Dlg.RunModal() = Action::OK then begin
+            Dlg.GetParams(Model, StartDate, EndDate);
+            exit(true);
+        end;
+        exit(false);
+    end;
+
+    local procedure GetModelText(Model: Option Revenue,"Gross Profit",COGS): Text
     begin
         case Model of
-            Model::Revenue:        exit('Revenue');
-            Model::"GrossProfit": exit('Gross Profit');
-            Model::COGS:           exit('COGS');
+            Model::Revenue:
+                exit('Revenue');
+            Model::"Gross Profit":
+                exit('Gross Profit');
+            Model::COGS:
+                exit('COGS');
         end;
         exit('');
     end;
@@ -147,5 +166,17 @@ end;
         Buf.Copy(Rec, true);
         Buf.Reset();
         exit(Buf.Count());
+    end;
+
+    local procedure GetClassDisplayText(): Text
+    begin
+        case Rec.Class of
+            Rec.Class::A:
+                exit('🟢 A');
+            Rec.Class::B:
+                exit('🟡 B');
+            else
+                exit('🔴 C');
+        end;
     end;
 }

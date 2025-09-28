@@ -2,11 +2,11 @@ pageextension 73030650 "GMO SKU Card Ext." extends "Stockkeeping Unit Card"
 {
     layout
     {
-        addlast(General)
+        addafter(Replenishment)
         {
-            group("GMO Classification")
+            group("GMO ABC Classification")
             {
-                Caption = 'GMO Classification';
+                Caption = 'ABC Classification';
                 field("GMO Class (Revenue)"; Rec."GMO Class (Revenue)")
                 {
                     ApplicationArea = All;

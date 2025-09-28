@@ -4,9 +4,9 @@ pageextension 73030580 "GMO Item Card Ext." extends "Item Card"
     {
         addafter(Planning)
         {
-            group("GMO Classification")
+            group("GMO ABC Classification")
             {
-                Caption = 'GMO Classification';
+                Caption = 'ABC Classification';
                 field("GMO Class (Revenue)"; Rec."GMO Class (Revenue)")
                 {
                     ApplicationArea = All;
