@@ -137,8 +137,8 @@ page 73030646 "GMO ABC History Card"
 
     var
         AmtA, AmtB, AmtC : Decimal;
-        CntA, CntB, CntC : Integer;
         ShareA, ShareB, ShareC : Decimal;
+        CntA, CntB, CntC : Integer;
 
     trigger OnAfterGetRecord()
     var

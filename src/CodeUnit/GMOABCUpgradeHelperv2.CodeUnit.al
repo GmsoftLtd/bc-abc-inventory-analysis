@@ -115,24 +115,24 @@ codeunit 73030648 "GMO ABC Upgrade Helper v2"
     var
         L: Record "GMO ABC Counting Policy Line";
     begin
-        if not L.Get(HeaderCode, L.Model::GrossProfit, L.Class::A) then begin
+        if not L.Get(HeaderCode, L.Model::"Gross Profit", L.Class::A) then begin
             L.Init();
             L."Header Code" := HeaderCode;
-            L.Model := L.Model::GrossProfit;
+            L.Model := L.Model::"Gross Profit";
             L.Class := L.Class::A;
             L.Insert(true);
         end;
-        if not L.Get(HeaderCode, L.Model::GrossProfit, L.Class::B) then begin
+        if not L.Get(HeaderCode, L.Model::"Gross Profit", L.Class::B) then begin
             L.Init();
             L."Header Code" := HeaderCode;
-            L.Model := L.Model::GrossProfit;
+            L.Model := L.Model::"Gross Profit";
             L.Class := L.Class::B;
             L.Insert(true);
         end;
-        if not L.Get(HeaderCode, L.Model::GrossProfit, L.Class::C) then begin
+        if not L.Get(HeaderCode, L.Model::"Gross Profit", L.Class::C) then begin
             L.Init();
             L."Header Code" := HeaderCode;
-            L.Model := L.Model::GrossProfit;
+            L.Model := L.Model::"Gross Profit";
             L.Class := L.Class::C;
             L.Insert(true);
         end;
@@ -169,8 +169,8 @@ codeunit 73030648 "GMO ABC Upgrade Helper v2"
     local procedure Try_BackfillItemModelClasses()
     var
         Item: Record Item;
-        NowDT: DateTime;
         Modified: Boolean;
+        NowDT: DateTime;
     begin
         NowDT := CurrentDateTime;
 
@@ -206,10 +206,10 @@ codeunit 73030648 "GMO ABC Upgrade Helper v2"
     [TryFunction]
     local procedure Try_BackfillSkuModelClasses()
     var
-        SKU: Record "Stockkeeping Unit";
         Item: Record Item;
-        NowDT: DateTime;
+        SKU: Record "Stockkeeping Unit";
         Modified: Boolean;
+        NowDT: DateTime;
     begin
         NowDT := CurrentDateTime;
 

@@ -2,13 +2,13 @@ codeunit 73030620 "GMO ABC Analysis Mgt."
 {
 
 
-    procedure CalculatePreview(Model: Option Revenue,"Gross Profit",COGS; StartDate: Date; EndDate: Date; var TempPreview: Record "GMO ABC Preview Line" temporary)
+    procedure CalculatePreview(Model: Enum "GMO ABC Model"; StartDate: Date; EndDate: Date; var TempPreview: Record "GMO ABC Preview Line" temporary)
     var
         Setup: Record "GMO ABC Analysis Setup";
         Item: Record Item;
-        TotalValue: Decimal;
-        CumPct: Decimal;
         Amount: Decimal;
+        CumPct: Decimal;
+        TotalValue: Decimal;
         LNo: Integer;
     begin
         EnsureSetup(Setup);
@@ -60,13 +60,13 @@ codeunit 73030620 "GMO ABC Analysis Mgt."
             until TempPreview.Next() = 0;
     end;
 
-    procedure ApplyPreview(var TempPreview: Record "GMO ABC Preview Line" temporary; Model: Option Revenue,"Gross Profit",COGS; StartDate: Date; EndDate: Date)
+    procedure ApplyPreview(var TempPreview: Record "GMO ABC Preview Line" temporary; Model: enum "GMO ABC Model"; StartDate: Date; EndDate: Date)
     var
         Setup: Record "GMO ABC Analysis Setup";
+        Buf: Record "GMO ABC Preview Line" temporary;
         Item: Record Item;
         SKU: Record "Stockkeeping Unit";
         NowDT: DateTime;
-        Buf: Record "GMO ABC Preview Line" temporary;
         Updated: Integer;
     begin
         EnsureSetup(Setup);
@@ -143,8 +143,8 @@ codeunit 73030620 "GMO ABC Analysis Mgt."
     var
         Setup: Record "GMO ABC Analysis Setup";
         Preview: Record "GMO ABC Preview Line" temporary;
-        Model: Option Revenue,"Gross Profit",COGS;
-        S, E : Date;
+        E, S : Date;
+        Model: Enum "GMO ABC Model";
     begin
         EnsureSetup(Setup);
 
@@ -208,12 +208,12 @@ codeunit 73030620 "GMO ABC Analysis Mgt."
         Setup.Insert(true);
     end;
 
-    local procedure CalcItemAmount(Model: Option Revenue,"Gross Profit",COGS; StartDate: Date; EndDate: Date; ItemNo: Code[20]): Decimal
+    local procedure CalcItemAmount(Model: Enum "GMO ABC Model"; StartDate: Date; EndDate: Date; ItemNo: Code[20]): Decimal
     var
         VE: Record "Value Entry";
         amt: Decimal;
-        s: Decimal;
         c: Decimal;
+        s: Decimal;
     begin
         amt := 0;
         VE.Reset();
@@ -247,7 +247,7 @@ codeunit 73030620 "GMO ABC Analysis Mgt."
         exit(amt);
     end;
 
-    local procedure ClassFromCumPercent(Model: Option Revenue,"Gross Profit",COGS; Setup: Record "GMO ABC Analysis Setup"; CumPct: Decimal): Option A,B,C
+    local procedure ClassFromCumPercent(Model: Enum "GMO ABC Model"; Setup: Record "GMO ABC Analysis Setup"; CumPct: Decimal): Enum "GMO ABC Class"
     var
         ATh: Decimal;
         BTh: Decimal;
@@ -275,18 +275,18 @@ codeunit 73030620 "GMO ABC Analysis Mgt."
         exit(ABC() ::C);
     end;
 
-    local procedure ABC(): Option A,B,C
+    local procedure ABC(): Enum "GMO ABC Class"
     begin
         exit(0);
     end;
 
-    local procedure MaybeUpdateCountingCode(ItemNo: Code[20]; ClassOpt: Option A,B,C; Model: Option Revenue,"Gross Profit",COGS; Setup: Record "GMO ABC Analysis Setup")
+    local procedure MaybeUpdateCountingCode(ItemNo: Code[20]; ClassOpt: Enum "GMO ABC Class"; Model: Enum "GMO ABC Model"; Setup: Record "GMO ABC Analysis Setup")
     var
         Line: Record "GMO ABC Counting Policy Line";
         Item: Record Item;
         SKU: Record "Stockkeeping Unit";
         PeriodCode: Code[10];
-        HeaderCode: Code[20];
+        HeaderCode: Code[10];
     begin
         HeaderCode := Setup."Counting Code Mapping ID";
         if HeaderCode = '' then HeaderCode := 'DEFAULT';
@@ -297,12 +297,12 @@ codeunit 73030620 "GMO ABC Analysis Mgt."
         PeriodCode := Line."Counting Period Code";
         if PeriodCode = '' then exit;
 
-        if Item.Get(ItemNo) then begin
+        if Item.Get(ItemNo) then 
             if Item."Phys Invt Counting Period Code" <> PeriodCode then begin
                 Item.Validate("Phys Invt Counting Period Code", PeriodCode);
                 Item.Modify(true);
             end;
-        end;
+
 
         SKU.Reset();
         SKU.SetRange("Item No.", ItemNo);
@@ -315,7 +315,7 @@ codeunit 73030620 "GMO ABC Analysis Mgt."
             until SKU.Next() = 0;
     end;
 
-    procedure EnsurePolicyExists(HeaderCode: Code[20]): Boolean
+    procedure EnsurePolicyExists(HeaderCode: Code[10]): Boolean
     var
         H: Record "GMO ABC Counting Policy Header";
     begin
@@ -332,7 +332,7 @@ codeunit 73030620 "GMO ABC Analysis Mgt."
         exit(true);
     end;
 
-    local procedure EnsureDefaultPolicyLines(HeaderCode: Code[20])
+    local procedure EnsureDefaultPolicyLines(HeaderCode: Code[10])
     begin
         EnsurePolicyLine(HeaderCode, ModelOpt() ::Revenue, ClassOpt() ::A);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::Revenue, ClassOpt() ::B);
@@ -345,7 +345,7 @@ codeunit 73030620 "GMO ABC Analysis Mgt."
         EnsurePolicyLine(HeaderCode, ModelOpt() ::COGS, ClassOpt() ::C);
     end;
 
-    local procedure EnsurePolicyLine(HeaderCode: Code[20]; Model: Option Revenue,"Gross Profit",COGS; ClassOpt: Option A,B,C)
+    local procedure EnsurePolicyLine(HeaderCode: Code[10]; Model: enum "GMO ABC Model"; ClassOpt: enum "GMO ABC Class")
     var
         L: Record "GMO ABC Counting Policy Line";
     begin
@@ -359,17 +359,17 @@ codeunit 73030620 "GMO ABC Analysis Mgt."
         L.Insert(true);
     end;
 
-    local procedure ModelOpt(): Option Revenue,"Gross Profit",COGS
+    local procedure ModelOpt(): enum "GMO ABC Model"
     begin
         exit(0);
     end;
 
-    local procedure ClassOpt(): Option A,B,C
+    local procedure ClassOpt(): enum "GMO ABC Class"
     begin
         exit(0);
     end;
 
-    local procedure CalcDatesFromSetup(Model: Option Revenue,"Gross Profit",COGS; Setup: Record "GMO ABC Analysis Setup"; AnchorDate: Date; var StartDate: Date; var EndDate: Date)
+    local procedure CalcDatesFromSetup(Model: enum "GMO ABC Model"; Setup: Record "GMO ABC Analysis Setup"; AnchorDate: Date; var StartDate: Date; var EndDate: Date)
     var
         DaysBack: Integer;
     begin

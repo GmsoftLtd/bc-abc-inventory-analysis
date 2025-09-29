@@ -5,7 +5,7 @@ report 73030640 "GMO ABC Analysis"
     Caption = 'GMO ABC Analysis';
 
     // Point to the RDLC layout shipped below (add the .rdl file to your project)
-    RDLCLayout = 'Layouts/GMO_ABC_Analysis.rdl';
+    RDLCLayout = './src/Reports/Layouts/GMOAnalysis.rdl';
 
     dataset
     {
@@ -65,7 +65,7 @@ report 73030640 "GMO ABC Analysis"
     }
 
     var
-        gModel: Option Revenue,"Gross Profit",COGS;
-        gStartDate: Date;
         gEndDate: Date;
+        gStartDate: Date;
+        gModel: Enum "GMO ABC Model";
 }

@@ -49,8 +49,8 @@ codeunit 73030583 "GMO ABC Analysis Job"
 
     local procedure FindFieldNoByName(var RecRef: RecordRef; FieldName: Text): Integer
     var
-        i: Integer;
         FRef: FieldRef;
+        i: Integer;
     begin
         for i := 1 to RecRef.FieldCount do begin
             FRef := RecRef.FieldIndex(i);

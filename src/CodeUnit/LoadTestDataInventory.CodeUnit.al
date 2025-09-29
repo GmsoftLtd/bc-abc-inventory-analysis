@@ -5,15 +5,15 @@ codeunit 73030576 "GMO Load Test Data - Inventory"
 
     procedure RunLoadTestWithStock(ItemsToCreate: Integer; InvoicesToPost: Integer; MinLinesPerInv: Integer; MaxLinesPerInv: Integer; StockQtyPerItem: Decimal; LocationCode: Code[10])
     var
-        GenBusPG: Record "Gen. Business Posting Group";
         CustPG: Record "Customer Posting Group";
-        VatBusPG: Record "VAT Business Posting Group";
+        GenBusPG: Record "Gen. Business Posting Group";
         GenProdPG: Record "Gen. Product Posting Group";
+        VatBusPG: Record "VAT Business Posting Group";
         VatProdPG: Record "VAT Product Posting Group";
-        TestCustomerNo: Code[20];
-        ItemNos: List of [Code[20]];
-        Dialog: Dialog;
         UoMCode: Code[10];
+        TestCustomerNo: Code[20];
+        Dialog: Dialog;
+        ItemNos: List of [Code[20]];
     begin
         // --- Guard: required setups
         if not GenBusPG.FindFirst() then Error('No Gen. Business Posting Groups found.');
@@ -58,8 +58,8 @@ codeunit 73030576 "GMO Load Test Data - Inventory"
     local procedure EnsureOrCreateCustomer(GenBusPGCode: Code[20]; CustPGCode: Code[20]; VatBusPGCode: Code[20]) TestCustomerNo: Code[20]
     var
         Cust: Record Customer;
-        NoSeriesMgt: Codeunit "No. Series";
         SalesSetup: Record "Sales & Receivables Setup";
+        NoSeriesMgt: Codeunit "No. Series";
         No: Code[20];
     begin
         if Cust.Get('LOADTEST') then
@@ -85,14 +85,14 @@ codeunit 73030576 "GMO Load Test Data - Inventory"
     // --- Create Inventory Items (now receives UoMCode, use PCS)
     local procedure CreateInventoryItems(Count: Integer; GenProdPGCode: Code[20]; VatProdPGCode: Code[20]; UoMCode: Code[10]) ItemNos: List of [Code[20]]
     var
-        Item: Record Item;
         InvSetup: Record "Inventory Setup";
+        Item: Record Item;
         NoSeriesMgt: Codeunit "No. Series";
         No: Code[20];
-        n: Integer;
-        Desc: Text[100];
         UnitCost: Decimal;
         UnitPrice: Decimal;
+        n: Integer;
+        Desc: Text[100];
     begin
         InvSetup.Get();
         InvSetup.TestField("Item Nos.");
@@ -129,17 +129,17 @@ codeunit 73030576 "GMO Load Test Data - Inventory"
     // --- Stock up items (unchanged)
     local procedure StockUpItems(ItemNos: List of [Code[20]]; QtyPerItem: Decimal; LocationCode: Code[10]; var Dialog: Dialog)
     var
-        ItemJnlLine: Record "Item Journal Line";
-        ItemJnlBatch: Record "Item Journal Batch";
-        ItemJnlTemplate: Record "Item Journal Template";
         Item: Record Item;
+        ItemJnlBatch: Record "Item Journal Batch";
+        ItemJnlLine: Record "Item Journal Line";
+        ItemJnlTemplate: Record "Item Journal Template";
         PostLine: Codeunit "Item Jnl.-Post Line";
-        TemplateName: Code[10];
         BatchName: Code[10];
-        i: Integer;
+        TemplateName: Code[10];
         CurItemNo: Code[20];
-        PostedCount: Integer;
         UnitAmount: Decimal;
+        i: Integer;
+        PostedCount: Integer;
     begin
         EnsureItemJournalBatch(TemplateName, BatchName);
 
@@ -182,8 +182,8 @@ codeunit 73030576 "GMO Load Test Data - Inventory"
 
     local procedure EnsureItemJournalBatch(var TemplateName: Code[10]; var BatchName: Code[10])
     var
-        ItemJnlTemplate: Record "Item Journal Template";
         ItemJnlBatch: Record "Item Journal Batch";
+        ItemJnlTemplate: Record "Item Journal Template";
     begin
         if ItemJnlTemplate.Get('ITEM') then
             TemplateName := ItemJnlTemplate.Name
@@ -208,12 +208,12 @@ codeunit 73030576 "GMO Load Test Data - Inventory"
     var
         SalesHeader: Record "Sales Header";
         SalesLine: Record "Sales Line";
+        Ok: Boolean;
+        itemNo: Code[20];
         i: Integer;
+        itemIdx: Integer;
         j: Integer;
         LinesThisInvoice: Integer;
-        itemIdx: Integer;
-        itemNo: Code[20];
-        Ok: Boolean;
     begin
         if ItemNos.Count() = 0 then
             Error('No items to use for invoices.');

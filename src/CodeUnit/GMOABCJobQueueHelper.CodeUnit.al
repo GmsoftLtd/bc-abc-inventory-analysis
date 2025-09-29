@@ -4,8 +4,8 @@ codeunit 73030589 "GMO ABC Job Queue Helper"
     var
         JQ: Record "Job Queue Entry";
         Enqueue: Codeunit "Job Queue - Enqueue"; // CU exposes EnqueueJobQueueEntry(...)
-        CodeunitId: Integer;
         Created: Boolean;
+        CodeunitId: Integer;
     begin
         CodeunitId := Codeunit::"GMO ABC Analysis Job";
 

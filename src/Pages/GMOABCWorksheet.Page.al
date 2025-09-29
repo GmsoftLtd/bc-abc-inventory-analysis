@@ -61,9 +61,9 @@ page 73030637 "GMO ABC Worksheet"
                 trigger OnAction()
                 var
                     Mgt: Codeunit "GMO ABC Analysis Mgt.";
-                    StartDate: Date;
                     EndDate: Date;
-                    Model: Option Revenue,"Gross Profit",COGS;
+                    StartDate: Date;
+                    Model: Enum "GMO ABC Model";
                 begin
                     if not GetParams(Model, StartDate, EndDate) then
                         exit;
@@ -89,12 +89,12 @@ page 73030637 "GMO ABC Worksheet"
                 ToolTip = 'Write the previewed ABC classes to Items/SKUs.';
                 trigger OnAction()
                 var
-                    Mgt: Codeunit "GMO ABC Analysis Mgt.";
-                    Model: Option Revenue,"Gross Profit",COGS;
-                    StartDate: Date;
-                    EndDate: Date;
-                    Lines: Integer;
                     Tmp: Record "GMO ABC Preview Line" temporary;
+                    Mgt: Codeunit "GMO ABC Analysis Mgt.";
+                    EndDate: Date;
+                    StartDate: Date;
+                    Lines: Integer;
+                    Model: Enum "GMO ABC Model";
                 begin
                     Lines := GetTempCount();
                     if Lines = 0 then
@@ -128,14 +128,14 @@ page 73030637 "GMO ABC Worksheet"
     }
 
     var
-        LastModel: Option Revenue,"Gross Profit",COGS;
-        LastStartDate: Date;
-        LastEndDate: Date;
         HasLastParams: Boolean;
+        LastEndDate: Date;
+        LastStartDate: Date;
+        LastModel: Enum "GMO ABC Model";
 
     // ===================== Helpers =====================
 
-    local procedure GetParams(var Model: Option Revenue,"Gross Profit",COGS; var StartDate: Date; var EndDate: Date): Boolean
+    local procedure GetParams(var Model: Enum "GMO ABC Model"; var StartDate: Date; var EndDate: Date): Boolean
     var
         Dlg: Page "GMO ABC Worksheet Params";
     begin
@@ -146,7 +146,7 @@ page 73030637 "GMO ABC Worksheet"
         exit(false);
     end;
 
-    local procedure GetModelText(Model: Option Revenue,"Gross Profit",COGS): Text
+    local procedure GetModelText(Model: Enum "GMO ABC Model"): Text
     begin
         case Model of
             Model::Revenue:

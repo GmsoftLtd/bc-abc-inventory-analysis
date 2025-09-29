@@ -3,8 +3,10 @@ codeunit 73030643 "GMO ABC Worksheet Stats"
 
     procedure BuildStats(var TempPreview: Record "GMO ABC Preview Line" temporary; var TempStats: Record "GMO ABC Stats" temporary)
     var
-        ACount, BCount, CCount, TotCount : Integer; AAmount, BAmount, CAmount, TotAmount : Decimal; LineNo: Integer;
-        CumCntPct, CumAmtPct : Decimal;
+        AAmount, BAmount, CAmount, TotAmount : Decimal;
+        CumAmtPct, CumCntPct : Decimal;
+        ACount, BCount, CCount, TotCount : Integer;
+        LineNo: Integer;
     begin
         TempStats.DeleteAll();
         TempPreview.Reset();
@@ -37,7 +39,7 @@ codeunit 73030643 "GMO ABC Worksheet Stats"
 
     local procedure AddLine(var TempStats: Record "GMO ABC Stats" temporary; var LineNo: Integer; C: Enum "GMO ABC Class"; Cnt: Integer; Amt: Decimal; TotCnt: Integer; TotAmt: Decimal; var CumCntPct: Decimal; var CumAmtPct: Decimal)
     var
-        CntPct, AmtPct : Decimal;
+        AmtPct, CntPct : Decimal;
     begin
         LineNo += 1;
         if TotCnt > 0 then CntPct := Round(Cnt / TotCnt * 100, 0.00001);

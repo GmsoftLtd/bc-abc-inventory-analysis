@@ -45,12 +45,12 @@ page 73030896 "GMO Load Test Runner"
     }
 
     var
-        ItemsToCreate: Integer;
-        InvoicesToPost: Integer;
-        MinLinesPerInv: Integer;
-        MaxLinesPerInv: Integer;
-        StockQtyPerItem: Decimal;
         LocationCode: Code[10];
+        StockQtyPerItem: Decimal;
+        InvoicesToPost: Integer;
+        ItemsToCreate: Integer;
+        MaxLinesPerInv: Integer;
+        MinLinesPerInv: Integer;
 
     trigger OnOpenPage()
     begin

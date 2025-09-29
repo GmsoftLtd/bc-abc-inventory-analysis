@@ -33,9 +33,9 @@ page 73030638 "GMO ABC Worksheet Params"
     }
 
     var
-        Model: Enum "GMO ABC Model";
-        StartDate: Date;
         EndDate: Date;
+        StartDate: Date;
+        Model: Enum "GMO ABC Model";
 
     procedure GetParams(var pModel: Enum "GMO ABC Model"; var pStartDate: Date; var pEndDate: Date)
     begin
