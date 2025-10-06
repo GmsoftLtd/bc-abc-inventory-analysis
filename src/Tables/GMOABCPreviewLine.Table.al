@@ -1,4 +1,4 @@
-table 73030610 "GMO ABC Preview Line"
+table 73030579 "GMO ABC Preview Line"
 {
     Caption = 'GMO ABC Preview Line';
     DataClassification = CustomerContent;

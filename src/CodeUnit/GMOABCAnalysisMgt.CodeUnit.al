@@ -1,4 +1,4 @@
-codeunit 73030620 "GMO ABC Analysis Mgt."
+codeunit 73030582 "GMO ABC Analysis Mgt."
 {
 
 
@@ -66,8 +66,11 @@ codeunit 73030620 "GMO ABC Analysis Mgt."
         Buf: Record "GMO ABC Preview Line" temporary;
         Item: Record Item;
         SKU: Record "Stockkeeping Unit";
+        HistHdr: Record "GMO ABC History Header";
+        HistLine: Record "GMO ABC History Line";
         NowDT: DateTime;
         Updated: Integer;
+        TotalAmt: Decimal;
     begin
         EnsureSetup(Setup);
 
@@ -80,6 +83,16 @@ codeunit 73030620 "GMO ABC Analysis Mgt."
 
         NowDT := CurrentDateTime;
         Updated := 0;
+        TotalAmt := 0;
+
+        // Create history header
+        HistHdr.Init();
+        HistHdr.Model := Model;
+        HistHdr."Start Date" := StartDate;
+        HistHdr."End Date" := EndDate;
+        HistHdr."Created By" := CopyStr(UserId(), 1, 50);
+        HistHdr."Created At" := NowDT;
+        HistHdr.Insert(true);
 
         if Buf.FindSet() then
             repeat
@@ -105,6 +118,18 @@ codeunit 73030620 "GMO ABC Analysis Mgt."
                 end;
                 Item.Modify(true);
                 Updated += 1;
+                TotalAmt += Buf.Value;
+
+                // Create history line
+                HistLine.Init();
+                HistLine."Entry No." := HistHdr."Entry No.";
+                HistLine."Line No." := Buf."Line No.";
+                HistLine."Item No." := Buf."Item No.";
+                HistLine.Value := Buf.Value;
+                HistLine."Value %" := Buf."Value %";
+                HistLine."Cum. %" := Buf."Cum. %";
+                HistLine.Class := Buf.Class;
+                HistLine.Insert(true);
 
                 // Optional: update counting period code per policy
                 MaybeUpdateCountingCode(Item."No.", Buf.Class, Model, Setup);
@@ -134,6 +159,11 @@ codeunit 73030620 "GMO ABC Analysis Mgt."
                         SKU.Modify(true);
                     until SKU.Next() = 0;
             until Buf.Next() = 0;
+
+        // Update history header totals
+        HistHdr."Total Amount" := TotalAmt;
+        HistHdr."Items Count" := Updated;
+        HistHdr.Modify(true);
 
         // Optional info message (kept silent here to avoid double-message with page)
         // Message('%1 items updated.', Updated);

@@ -1,4 +1,4 @@
-page 73030896 "GMO Load Test Runner"
+page 73030586 "GMO Load Test Runner"
 {
     PageType = Card;
     ApplicationArea = All;

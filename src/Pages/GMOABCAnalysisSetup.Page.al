@@ -1,4 +1,4 @@
-page 73030578 "GMO ABC Analysis Setup"
+page 73030575 "GMO ABC Analysis Setup"
 {
     Caption = 'ABC Analysis Setup';
     PageType = Card;

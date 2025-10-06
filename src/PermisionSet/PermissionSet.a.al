@@ -1,4 +1,4 @@
-permissionset 73030590 "GMO ABC MANAGER"
+permissionset 73030576 "GMO ABC MANAGER"
 {
     Caption = 'GMO ABC Manager';
     Assignable = true;
@@ -28,6 +28,10 @@ permissionset 73030590 "GMO ABC MANAGER"
         page "GMO ABC Analysis Setup" = X,
         page "GMO ABC Counting Policy Card" = X,
         page "GMO ABC Counting Policy List" = X,
+        page "GMO ABC History" = X,
+        page "GMO ABC Count Policy Subform" = X,
+        page "GMO ABC Counting Policy Lines" = X,
+
 
         // Report
         report "GMO ABC Analysis" = X,

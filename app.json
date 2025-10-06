@@ -13,7 +13,12 @@
   "logo": "abc-inventory.png",
   "target": "Cloud",
   "dependencies": [],
-  "screenshots": [],
+  "screenshots": [
+    "images/abc1.png",
+    "images/abc2.png",
+    "images/abc3.png",
+    "images/abc4.png"
+  ],
   "platform": "26.0.0.0",
   "application": "26.0.0.0",
   
@@ -31,10 +36,11 @@
   "supportedLocales": [
     "en-US",
     "el-GR",
-    "it-IT", 
+    "it-IT",
     "de-DE",
     "nl-NL",
-    "fr-FR"],
+    "fr-FR"
+  ],
   "resourceExposurePolicy": {
     "allowDebugging": true,
     "allowDownloadingSource": false,

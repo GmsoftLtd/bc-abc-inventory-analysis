@@ -1,10 +1,8 @@
-report 73030640 "GMO ABC Analysis"
+report 73030577 "GMO ABC Analysis"
 {
     UsageCategory = ReportsAndAnalysis;
     ApplicationArea = All;
     Caption = 'GMO ABC Analysis';
-
-    // Point to the RDLC layout shipped below (add the .rdl file to your project)
     RDLCLayout = './src/Reports/Layouts/GMOAnalysis.rdl';
 
     dataset
@@ -27,7 +25,6 @@ report 73030640 "GMO ABC Analysis"
             var
                 Mgt: Codeunit "GMO ABC Analysis Mgt.";
             begin
-                // Build the temp dataset according to the request page parameters
                 Mgt.CalculatePreview(gModel, gStartDate, gEndDate, PreviewABC);
             end;
         }
@@ -45,19 +42,19 @@ report 73030640 "GMO ABC Analysis"
                     {
                         ApplicationArea = All;
                         Caption = 'Model';
-                        ToolTip = 'Specifies the value of the Model field.';
+                        ToolTip = 'Specifies the ABC classification model to use.';
                     }
                     field(StartDate; gStartDate)
                     {
                         ApplicationArea = All;
                         Caption = 'Start Date';
-                        ToolTip = 'Specifies the value of the Start Date field.';
+                        ToolTip = 'Specifies the start date for the analysis period.';
                     }
                     field(EndDate; gEndDate)
                     {
                         ApplicationArea = All;
                         Caption = 'End Date';
-                        ToolTip = 'Specifies the value of the End Date field.';
+                        ToolTip = 'Specifies the end date for the analysis period.';
                     }
                 }
             }

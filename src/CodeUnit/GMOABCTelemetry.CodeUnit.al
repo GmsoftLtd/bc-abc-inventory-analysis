@@ -1,4 +1,4 @@
-codeunit 73030590 "GMO ABC Telemetry"
+codeunit 73030581 "GMO ABC Telemetry"
 {
     procedure LogInfo(EventId: Text[50]; MessageTxt: Text[250])
     begin

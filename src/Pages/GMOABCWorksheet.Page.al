@@ -1,4 +1,4 @@
-page 73030637 "GMO ABC Worksheet"
+page 73030580 "GMO ABC Worksheet"
 {
     PageType = Worksheet;
     SourceTable = "GMO ABC Preview Line";
@@ -131,11 +131,11 @@ page 73030637 "GMO ABC Worksheet"
         HasLastParams: Boolean;
         LastEndDate: Date;
         LastStartDate: Date;
-        LastModel: Enum "GMO ABC Model";
+        LastModel: enum "GMO ABC Model";
 
     // ===================== Helpers =====================
 
-    local procedure GetParams(var Model: Enum "GMO ABC Model"; var StartDate: Date; var EndDate: Date): Boolean
+    local procedure GetParams(var Model: enum "GMO ABC Model"; var StartDate: Date; var EndDate: Date): Boolean
     var
         Dlg: Page "GMO ABC Worksheet Params";
     begin
@@ -146,7 +146,7 @@ page 73030637 "GMO ABC Worksheet"
         exit(false);
     end;
 
-    local procedure GetModelText(Model: Enum "GMO ABC Model"): Text
+    local procedure GetModelText(Model: Option Revenue,"Gross Profit",COGS): Text
     begin
         case Model of
             Model::Revenue:

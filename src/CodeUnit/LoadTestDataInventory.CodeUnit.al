@@ -1,4 +1,4 @@
-codeunit 73030576 "GMO Load Test Data - Inventory"
+codeunit 73030575 "GMO Load Test Data - Inventory"
 
 {
     Subtype = Normal;

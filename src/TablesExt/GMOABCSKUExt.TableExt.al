@@ -1,4 +1,4 @@
-tableextension 73030626 "GMO ABC SKU Ext." extends "Stockkeeping Unit"
+tableextension 73030576 "GMO ABC SKU Ext." extends "Stockkeeping Unit"
 {
     fields
     {

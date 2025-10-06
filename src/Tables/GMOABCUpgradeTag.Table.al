@@ -1,4 +1,4 @@
-table 73030580 "GMO ABC Upgrade Tag"
+table 73030576 "GMO ABC Upgrade Tag"
 {
     Caption = 'ABC Upgrade Tag';
     DataClassification = SystemMetadata;

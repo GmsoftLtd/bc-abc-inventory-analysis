@@ -1,4 +1,4 @@
-page 73030594 "GMO ABC Counting Policy List"
+page 73030576 "GMO ABC Counting Policy List"
 {
     Caption = 'ABC Counting Policies';
     PageType = List;

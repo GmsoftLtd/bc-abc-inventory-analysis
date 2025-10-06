@@ -1,4 +1,4 @@
-table 73030593 "GMO ABC Counting Policy Line"
+table 73030578 "GMO ABC Counting Policy Line"
 {
     Caption = 'Counting Policy Line';
     DataClassification = SystemMetadata;

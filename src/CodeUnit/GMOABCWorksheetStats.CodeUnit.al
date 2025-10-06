@@ -1,4 +1,4 @@
-codeunit 73030643 "GMO ABC Worksheet Stats"
+codeunit 73030584 "GMO ABC Worksheet Stats"
 {
 
     procedure BuildStats(var TempPreview: Record "GMO ABC Preview Line" temporary; var TempStats: Record "GMO ABC Stats" temporary)

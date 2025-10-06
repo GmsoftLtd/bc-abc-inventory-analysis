@@ -1,4 +1,4 @@
-pageextension 73030650 "GMO SKU Card Ext." extends "Stockkeeping Unit Card"
+pageextension 73030578 "GMO SKU Card Ext." extends "Stockkeeping Unit Card"
 {
     layout
     {

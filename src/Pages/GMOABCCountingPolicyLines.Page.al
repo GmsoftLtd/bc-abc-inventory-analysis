@@ -1,4 +1,4 @@
-page 73030632 "GMO ABC Counting Policy Lines"
+page 73030579 "GMO ABC Counting Policy Lines"
 {
     PageType = ListPart;
     SourceTable = "GMO ABC Counting Policy Line";

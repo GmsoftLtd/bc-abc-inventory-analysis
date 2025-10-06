@@ -1,4 +1,4 @@
-pageextension 73030581 "GMO Item List Ext." extends "Item List"
+pageextension 73030576 "GMO Item List Ext." extends "Item List"
 {
     layout
     {

@@ -1,4 +1,4 @@
-page 73030595 "GMO ABC Count Policy Subform"
+page 73030577 "GMO ABC Count Policy Subform"
 {
     Caption = 'ABC Counting Policy Lines';
     PageType = ListPart;

@@ -1,4 +1,4 @@
-tableextension 73030579 "GMO ABC Item Ext." extends Item
+tableextension 73030575 "GMO ABC Item Ext." extends Item
 {
     fields
     {

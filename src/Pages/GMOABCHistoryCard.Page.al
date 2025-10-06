@@ -1,4 +1,4 @@
-page 73030646 "GMO ABC History Card"
+page 73030585 "GMO ABC History Card"
 {
     Caption = 'ABC History';
     PageType = Card;
@@ -131,6 +131,59 @@ page 73030646 "GMO ABC History Card"
             {
                 SubPageLink = "Entry No." = field("Entry No.");
                 ApplicationArea = All;
+            }
+        }
+    }
+
+    actions
+    {
+        area(Processing)
+        {
+            action(ExportToExcel)
+            {
+                Caption = 'Export Lines to Excel';
+                Image = ExportToExcel;
+                ApplicationArea = All;
+                ToolTip = 'Export the history lines to Excel.';
+                trigger OnAction()
+                var
+                    HistLine: Record "GMO ABC History Line";
+                    TempExcelBuffer: Record "Excel Buffer" temporary;
+                    SheetName: Text[250];
+                begin
+                    HistLine.SetRange("Entry No.", Rec."Entry No.");
+                    if HistLine.IsEmpty() then
+                        Error('No lines to export.');
+
+                    TempExcelBuffer.DeleteAll();
+                    SheetName := CopyStr(StrSubstNo('ABC %1 %2', Rec.Model, Rec."Entry No."), 1, 250);
+
+                    // Header row
+                    TempExcelBuffer.NewRow();
+                    TempExcelBuffer.AddColumn('Line No.', false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+                    TempExcelBuffer.AddColumn('Item No.', false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+                    TempExcelBuffer.AddColumn('Class', false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+                    TempExcelBuffer.AddColumn('Value', false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+                    TempExcelBuffer.AddColumn('Value %', false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+                    TempExcelBuffer.AddColumn('Cum. %', false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+
+                    // Data rows
+                    if HistLine.FindSet() then
+                        repeat
+                            TempExcelBuffer.NewRow();
+                            TempExcelBuffer.AddColumn(HistLine."Line No.", false, '', false, false, false, '', TempExcelBuffer."Cell Type"::Number);
+                            TempExcelBuffer.AddColumn(HistLine."Item No.", false, '', false, false, false, '', TempExcelBuffer."Cell Type"::Text);
+                            TempExcelBuffer.AddColumn(Format(HistLine.Class), false, '', false, false, false, '', TempExcelBuffer."Cell Type"::Text);
+                            TempExcelBuffer.AddColumn(HistLine.Value, false, '', false, false, false, '#,##0.00', TempExcelBuffer."Cell Type"::Number);
+                            TempExcelBuffer.AddColumn(HistLine."Value %", false, '', false, false, false, '0.00000', TempExcelBuffer."Cell Type"::Number);
+                            TempExcelBuffer.AddColumn(HistLine."Cum. %", false, '', false, false, false, '0.00000', TempExcelBuffer."Cell Type"::Number);
+                        until HistLine.Next() = 0;
+
+                    TempExcelBuffer.CreateNewBook(SheetName);
+                    TempExcelBuffer.WriteSheet(SheetName, '', '');
+                    TempExcelBuffer.CloseBook();
+                    TempExcelBuffer.OpenExcel();
+                end;
             }
         }
     }

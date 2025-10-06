@@ -1,4 +1,4 @@
-table 73030592 "GMO ABC Counting Policy Header"
+table 73030577 "GMO ABC Counting Policy Header"
 {
     Caption = 'ABC Counting Policy';
     DataClassification = SystemMetadata;

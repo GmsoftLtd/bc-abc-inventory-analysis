@@ -1,4 +1,4 @@
-page 73030596 "GMO ABC Counting Policy Card"
+page 73030578 "GMO ABC Counting Policy Card"
 {
     Caption = 'GMO Counting Policy';
     PageType = Card;

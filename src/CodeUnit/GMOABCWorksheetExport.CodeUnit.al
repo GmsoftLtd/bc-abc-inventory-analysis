@@ -1,4 +1,4 @@
-codeunit 73030640 "GMO ABC Worksheet Export"
+codeunit 73030583 "GMO ABC Worksheet Export"
 {
     procedure ExportPreviewAndStats(var TempPreview: Record "GMO ABC Preview Line" temporary)
     var

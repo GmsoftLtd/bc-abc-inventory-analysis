@@ -1,4 +1,4 @@
-table 73030577 "GMO ABC Analysis Setup"
+table 73030575 "GMO ABC Analysis Setup"
 {
     Caption = 'ABC Analysis Setup';
     DataClassification = SystemMetadata;
