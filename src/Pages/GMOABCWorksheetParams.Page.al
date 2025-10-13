@@ -13,19 +13,19 @@ page 73030581 "GMO ABC Worksheet Params"
                 field(Model; this.Model)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Model field.';
+                    ToolTip = 'Select the ABC analysis model: Revenue (sales value), Gross Profit (margin), or COGS (cost).';
                     Caption = 'ABC Model';
                 }
                 field(StartDate; this.StartDate)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the StartDate field.';
+                    ToolTip = 'Beginning date of the analysis period. Items will be analyzed based on transactions within this date range.';
                     Caption = 'Start Date';
                 }
                 field(EndDate; this.EndDate)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the EndDate field.';
+                    ToolTip = 'Ending date of the analysis period. Typically set to today or end of fiscal period.';
                     Caption = 'Start Date';
                 }
                

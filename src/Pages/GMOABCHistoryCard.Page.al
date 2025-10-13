@@ -15,49 +15,49 @@ page 73030585 "GMO ABC History Card"
                 {
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the Entry No. field.';
+                    ToolTip = 'Unique sequential number for this historical ABC analysis run.';
                 }
                 field(Model; Rec.Model)
                 {
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the Model field.';
+                    ToolTip = 'ABC analysis model used for this run: Revenue, Gross Profit, or COGS.';
                 }
                 field("Start Date"; Rec."Start Date")
                 {
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the Start Date field.';
+                    ToolTip = 'Beginning date of the period analyzed in this ABC calculation.';
                 }
                 field("End Date"; Rec."End Date")
                 {
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the End Date field.';
+                    ToolTip = 'Ending date of the period analyzed in this ABC calculation.';
                 }
                 field("Items Count"; Rec."Items Count")
                 {
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the Items Count field.';
+                    ToolTip = 'Total number of items included in this ABC analysis run.';
                 }
                 field("Total Amount"; Rec."Total Amount")
                 {
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the Total Amount field.';
+                    ToolTip = 'Total value (revenue, profit, or COGS) of all items analyzed in this run.';
                 }
                 field("Created By"; Rec."Created By")
                 {
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the Created By field.';
+                    ToolTip = 'User who initiated this ABC analysis calculation.';
                 }
                 field("Created At"; Rec."Created At")
                 {
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the Created At field.';
+                    ToolTip = 'Date and time when this ABC analysis was executed.';
                 }
             }
             group(Statistics)
@@ -68,63 +68,63 @@ page 73030585 "GMO ABC History Card"
                     Caption = 'A Amount';
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the A Amount field.';
+                    ToolTip = 'Total value of all items classified as Class A in this analysis run.';
                 }
                 field(AmtB; AmtB)
                 {
                     Caption = 'B Amount';
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the B Amount field.';
+                    ToolTip = 'Total value of all items classified as Class B in this analysis run.';
                 }
                 field(AmtC; AmtC)
                 {
                     Caption = 'C Amount';
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the C Amount field.';
+                    ToolTip = 'Total value of all items classified as Class C in this analysis run.';
                 }
                 field(CntA; CntA)
                 {
                     Caption = 'A Count';
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the A Count field.';
+                    ToolTip = 'Number of items classified as Class A (high value items) in this analysis run.';
                 }
                 field(CntB; CntB)
                 {
                     Caption = 'B Count';
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the B Count field.';
+                    ToolTip = 'Number of items classified as Class B (medium value items) in this analysis run.';
                 }
                 field(CntC; CntC)
                 {
                     Caption = 'C Count';
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the C Count field.';
+                    ToolTip = 'Number of items classified as Class C (lower value items) in this analysis run.';
                 }
                 field(ShareA; ShareA)
                 {
                     Caption = 'A % of Amount';
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the A % of Amount field.';
+                    ToolTip = 'Percentage of total value contributed by Class A items. Typically around 80% per Pareto principle.';
                 }
                 field(ShareB; ShareB)
                 {
                     Caption = 'B % of Amount';
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the B % of Amount field.';
+                    ToolTip = 'Percentage of total value contributed by Class B items. Typically around 15%.';
                 }
                 field(ShareC; ShareC)
                 {
                     Caption = 'C % of Amount';
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the C % of Amount field.';
+                    ToolTip = 'Percentage of total value contributed by Class C items. Typically around 5%.';
                 }
             }
             part(Lines; "GMO ABC History Lines")
@@ -156,7 +156,7 @@ page 73030585 "GMO ABC History Card"
                         Error('No lines to export.');
 
                     TempExcelBuffer.DeleteAll();
-                    SheetName := CopyStr(StrSubstNo('ABC %1 %2', Rec.Model, Rec."Entry No."), 1, 250);
+                    SheetName := CopyStr(StrSubstNo(SheetNameFormatLbl, Rec.Model, Rec."Entry No."), 1, 250);
 
                     // Header row
                     TempExcelBuffer.NewRow();
@@ -192,6 +192,7 @@ page 73030585 "GMO ABC History Card"
         AmtA, AmtB, AmtC : Decimal;
         ShareA, ShareB, ShareC : Decimal;
         CntA, CntB, CntC : Integer;
+        SheetNameFormatLbl: Label 'ABC %1 %2', Locked = true;
 
     trigger OnAfterGetRecord()
     var

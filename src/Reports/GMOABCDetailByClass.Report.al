@@ -16,7 +16,7 @@ report 73030580 "GMO ABC Detail by Class"
             column(CompanyName; CompanyProperty.DisplayName())
             {
             }
-            column(Model; Format(Model))
+            column(ModelColumn; Format(Model))
             {
             }
             column(ReportTitle; ReportTitleLbl)
@@ -81,28 +81,27 @@ report 73030580 "GMO ABC Detail by Class"
 
             trigger OnPostDataItem()
             var
-                TempItem: Record Item;
+                ItemRec: Record Item;
             begin
                 // Second pass to calculate percentages
-                TempItem.CopyFilters(Item);
+                ItemRec.CopyFilters(Item);
                 CumulativeValue := 0;
 
-                if TempItem.FindSet() then
+                if ItemRec.FindSet() then
                     repeat
-                        ABCClass := GetItemClass(TempItem, Model);
+                        ABCClass := GetItemClass(ItemRec, Model);
                         if ClassFilter <> ClassFilter::Unknown then
                             if ABCClass <> ClassFilter then
                                 continue;
 
-                        ItemValue := CalculateItemValue(TempItem."No.", Model, StartDate, EndDate);
-                        if ItemValue > 0 then begin
+                        ItemValue := CalculateItemValue(ItemRec."No.", Model, StartDate, EndDate);
+                        if ItemValue > 0 then
                             if TotalValue <> 0 then begin
                                 ValuePercent := (ItemValue / TotalValue) * 100;
                                 CumulativeValue += ItemValue;
                                 CumulativePercent := (CumulativeValue / TotalValue) * 100;
                             end;
-                        end;
-                    until TempItem.Next() = 0;
+                    until ItemRec.Next() = 0;
             end;
         }
     }
@@ -116,25 +115,25 @@ report 73030580 "GMO ABC Detail by Class"
                 group(Options)
                 {
                     Caption = 'Options';
-                    field(Model; Model)
+                    field(ModelField; Model)
                     {
                         ApplicationArea = All;
                         Caption = 'ABC Model';
                         ToolTip = 'Select the ABC model to analyze.';
                     }
-                    field(ClassFilter; ClassFilter)
+                    field(ClassFilterField; ClassFilter)
                     {
                         ApplicationArea = All;
                         Caption = 'Class Filter';
                         ToolTip = 'Filter by specific ABC class (leave blank for all).';
                     }
-                    field(StartDate; StartDate)
+                    field(StartDateField; StartDate)
                     {
                         ApplicationArea = All;
                         Caption = 'Start Date';
                         ToolTip = 'Start date for value calculation.';
                     }
-                    field(EndDate; EndDate)
+                    field(EndDateField; EndDate)
                     {
                         ApplicationArea = All;
                         Caption = 'End Date';

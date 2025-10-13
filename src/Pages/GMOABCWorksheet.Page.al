@@ -3,7 +3,7 @@ page 73030580 "GMO ABC Worksheet"
     PageType = Worksheet;
     SourceTable = "GMO ABC Preview Line";
     SourceTableTemporary = true;
-    Caption = 'GMO ABC Worksheet';
+    Caption = 'ABC Inventory Optimizer - Worksheet';
     ApplicationArea = All;
     UsageCategory = Tasks;
 
@@ -26,7 +26,7 @@ page 73030580 "GMO ABC Worksheet"
                 {
                     ApplicationArea = All;
                     Visible = false;
-                    ToolTip = 'Specifies the value of the Line No. field.';
+                    ToolTip = 'Internal line number for this preview calculation.';
                 }
                 field("Item No."; Rec."Item No.") { ApplicationArea = All; ToolTip = 'Item number.'; }
                 field(Description; Rec.Description) { ApplicationArea = All; ToolTip = 'Item description.'; }
@@ -89,7 +89,7 @@ page 73030580 "GMO ABC Worksheet"
                 ToolTip = 'Write the previewed ABC classes to Items/SKUs.';
                 trigger OnAction()
                 var
-                    Tmp: Record "GMO ABC Preview Line" temporary;
+                    TempPreviewLine: Record "GMO ABC Preview Line" temporary;
                     Mgt: Codeunit "GMO ABC Analysis Mgt.";
                     EndDate: Date;
                     StartDate: Date;
@@ -118,8 +118,8 @@ page 73030580 "GMO ABC Worksheet"
                         exit;
 
                     // 🔒 IMPORTANT: Copy page temp buffer to local temp before calling codeunit
-                    Tmp.Copy(Rec, true); // ShareTable = true keeps it lightweight, but temp → temp in same session
-                    Mgt.ApplyPreview(Tmp, Model, StartDate, EndDate);
+                    TempPreviewLine.Copy(Rec, true); // ShareTable = true keeps it lightweight, but temp → temp in same session
+                    Mgt.ApplyPreview(TempPreviewLine, Model, StartDate, EndDate);
 
                     Message('Applied successfully: %1 items updated.', Lines);
                 end;
@@ -135,25 +135,25 @@ page 73030580 "GMO ABC Worksheet"
 
     // ===================== Helpers =====================
 
-    local procedure GetParams(var Model: enum "GMO ABC Model"; var StartDate: Date; var EndDate: Date): Boolean
+    local procedure GetParams(var ModelParam: enum "GMO ABC Model"; var StartDate: Date; var EndDate: Date): Boolean
     var
         Dlg: Page "GMO ABC Worksheet Params";
     begin
         if Dlg.RunModal() = Action::OK then begin
-            Dlg.GetParams(Model, StartDate, EndDate);
+            Dlg.GetParams(ModelParam, StartDate, EndDate);
             exit(true);
         end;
         exit(false);
     end;
 
-    local procedure GetModelText(Model: Option Revenue,"Gross Profit",COGS): Text
+    local procedure GetModelText(ModelParam: Enum "GMO ABC Model"): Text
     begin
-        case Model of
-            Model::Revenue:
+        case ModelParam of
+            ModelParam::Revenue:
                 exit('Revenue');
-            Model::"Gross Profit":
+            ModelParam::"Gross Profit":
                 exit('Gross Profit');
-            Model::COGS:
+            ModelParam::COGS:
                 exit('COGS');
         end;
         exit('');
@@ -161,11 +161,11 @@ page 73030580 "GMO ABC Worksheet"
 
     local procedure GetTempCount(): Integer
     var
-        Buf: Record "GMO ABC Preview Line" temporary;
+        TempBuf: Record "GMO ABC Preview Line" temporary;
     begin
-        Buf.Copy(Rec, true);
-        Buf.Reset();
-        exit(Buf.Count());
+        TempBuf.Copy(Rec, true);
+        TempBuf.Reset();
+        exit(TempBuf.Count());
     end;
 
     local procedure GetClassDisplayText(): Text

@@ -15,42 +15,42 @@ page 73030583 "GMO ABC History"
                 field("Entry No."; Rec."Entry No.")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Entry No. field.';
+                    ToolTip = 'Unique sequential number for this historical ABC analysis run.';
                 }
                 field(Model; Rec.Model)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Model field.';
+                    ToolTip = 'ABC analysis model used for this run: Revenue, Gross Profit, or COGS.';
                 }
                 field("Start Date"; Rec."Start Date")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Start Date field.';
+                    ToolTip = 'Beginning date of the period analyzed in this ABC calculation.';
                 }
                 field("End Date"; Rec."End Date")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the End Date field.';
+                    ToolTip = 'Ending date of the period analyzed in this ABC calculation.';
                 }
                 field("Items Count"; Rec."Items Count")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Items Count field.';
+                    ToolTip = 'Total number of items included in this ABC analysis run.';
                 }
                 field("Total Amount"; Rec."Total Amount")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Total Amount field.';
+                    ToolTip = 'Total value (revenue, profit, or COGS) of all items analyzed in this run.';
                 }
                 field("Created By"; Rec."Created By")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Created By field.';
+                    ToolTip = 'User who initiated this ABC analysis calculation.';
                 }
                 field("Created At"; Rec."Created At")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Created At field.';
+                    ToolTip = 'Date and time when this ABC analysis was executed.';
                 }
             }
         }
@@ -65,7 +65,7 @@ page 73030583 "GMO ABC History"
                 Caption = 'Open';
                 Image = View;
                 ApplicationArea = All;
-                ToolTip = 'Executes the Open action.';
+                ToolTip = 'Open the detailed card view for this historical ABC analysis run to view item-level classifications and statistics.';
                 trigger OnAction()
                 begin
                     PAGE.Run(PAGE::"GMO ABC History Card", Rec);

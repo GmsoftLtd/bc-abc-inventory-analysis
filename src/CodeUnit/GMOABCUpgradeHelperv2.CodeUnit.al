@@ -107,62 +107,8 @@ codeunit 73030586 "GMO ABC Upgrade Helper v2"
         end;
 
         HeaderCode := Setup."Counting Code Mapping ID";
-        // Create header + lines if missing
+        // Create header + lines if missing (includes Revenue, Gross Profit, and COGS)
         Mgt.EnsurePolicyExists(HeaderCode);
-    end;
-
-    local procedure EnsureGrossProfitLines(HeaderCode: Code[10])
-    var
-        L: Record "GMO ABC Counting Policy Line";
-    begin
-        if not L.Get(HeaderCode, L.Model::"Gross Profit", L.Class::A) then begin
-            L.Init();
-            L."Header Code" := HeaderCode;
-            L.Model := L.Model::"Gross Profit";
-            L.Class := L.Class::A;
-            L.Insert(true);
-        end;
-        if not L.Get(HeaderCode, L.Model::"Gross Profit", L.Class::B) then begin
-            L.Init();
-            L."Header Code" := HeaderCode;
-            L.Model := L.Model::"Gross Profit";
-            L.Class := L.Class::B;
-            L.Insert(true);
-        end;
-        if not L.Get(HeaderCode, L.Model::"Gross Profit", L.Class::C) then begin
-            L.Init();
-            L."Header Code" := HeaderCode;
-            L.Model := L.Model::"Gross Profit";
-            L.Class := L.Class::C;
-            L.Insert(true);
-        end;
-    end;
-
-    local procedure EnsureCOGSLines(HeaderCode: Code[10])
-    var
-        L: Record "GMO ABC Counting Policy Line";
-    begin
-        if not L.Get(HeaderCode, L.Model::COGS, L.Class::A) then begin
-            L.Init();
-            L."Header Code" := HeaderCode;
-            L.Model := L.Model::COGS;
-            L.Class := L.Class::A;
-            L.Insert(true);
-        end;
-        if not L.Get(HeaderCode, L.Model::COGS, L.Class::B) then begin
-            L.Init();
-            L."Header Code" := HeaderCode;
-            L.Model := L.Model::COGS;
-            L.Class := L.Class::B;
-            L.Insert(true);
-        end;
-        if not L.Get(HeaderCode, L.Model::COGS, L.Class::C) then begin
-            L.Init();
-            L."Header Code" := HeaderCode;
-            L.Model := L.Model::COGS;
-            L.Class := L.Class::C;
-            L.Insert(true);
-        end;
     end;
 
     [TryFunction]
@@ -267,7 +213,7 @@ codeunit 73030586 "GMO ABC Upgrade Helper v2"
         T.SetRange("Tag", Tag);
         T.SetRange("Company Name", CompanyName);
         T.SetRange("App ID", ModInfo.Id);
-        exit(T.FindFirst());
+        exit(not T.IsEmpty());
     end;
 
     local procedure SetTag(Tag: Code[250])

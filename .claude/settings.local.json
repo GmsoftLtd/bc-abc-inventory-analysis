@@ -4,7 +4,11 @@
       "Bash(powershell:*)",
       "Bash(rm:*)",
       "Bash(python:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(alc:*)",
+      "Bash(tree:*)",
+      "Bash(dir:*)",
+      "Bash(ren:*)"
     ],
     "deny": [],
     "ask": []

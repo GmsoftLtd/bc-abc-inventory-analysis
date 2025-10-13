@@ -1,6 +1,7 @@
 table 73030578 "GMO ABC Counting Policy Line"
 {
     Caption = 'Counting Policy Line';
+    Description = 'Specifies counting period assignments for each ABC class and model combination within a counting policy';
     DataClassification = SystemMetadata;
     DataCaptionFields = Model, Class;
 

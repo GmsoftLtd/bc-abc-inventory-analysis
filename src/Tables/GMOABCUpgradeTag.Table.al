@@ -1,6 +1,7 @@
 table 73030576 "GMO ABC Upgrade Tag"
 {
     Caption = 'ABC Upgrade Tag';
+    Description = 'Tracks applied data upgrade routines to ensure upgrade scripts run only once per company and version';
     DataClassification = SystemMetadata;
 
     fields

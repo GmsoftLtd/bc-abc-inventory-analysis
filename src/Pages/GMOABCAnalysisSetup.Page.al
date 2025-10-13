@@ -15,59 +15,59 @@ page 73030575 "GMO ABC Analysis Setup"
                 field(Enabled; Rec.Enabled)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Enabled field.';
+                    ToolTip = 'Enable or disable automatic ABC analysis calculations. When enabled, the system will track items for recalculation based on inventory movements.';
                 }
                 field("A Threshold %"; Rec."A Threshold %")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the A Threshold % (Cumulative) field.';
+                    ToolTip = 'Cumulative percentage threshold for Class A items. Items contributing up to this percentage of total value are classified as A. Typical value: 80%.';
                 }
                 field("B Threshold %"; Rec."B Threshold %")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the B Threshold % (Cumulative) field.';
+                    ToolTip = 'Cumulative percentage threshold for Class B items. Items between A and this threshold are Class B, remainder are Class C. Typical value: 95%.';
                 }
                 field("Lookback (Days)"; Rec."Lookback (Days)")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Lookback (Days) field.';
+                    ToolTip = 'Number of days to look back when calculating item values and movements. Default is 365 days (one year).';
                 }
                 field("Include Transfers"; Rec."Include Transfers")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Include Transfers as Outbound field.';
+                    ToolTip = 'Include transfer orders as outbound movements when calculating item activity and consumption patterns.';
                 }
                 field("Zero Consumption as D"; Rec."Zero Consumption as D")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Class Zero Consumption as D field.';
+                    ToolTip = 'Automatically classify items with zero consumption during the lookback period as Class D (inactive/obsolete).';
                 }
                 field("Exclude Non-Inventory"; Rec."Exclude Non-Inventory")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Exclude Non-Inventory Items field.';
+                    ToolTip = 'Exclude non-inventory items (Service, Non-Inventory types) from ABC analysis calculations. Enabled by default.';
                 }
                 field("Auto Update On Posting"; Rec."Auto Update On Posting")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Mark Items for Recalc on Posting field.';
+                    ToolTip = 'Automatically mark items for recalculation when inventory transactions are posted. Enables real-time ABC classification tracking.';
                 }
                 field("Commit Batch Size"; Rec."Commit Batch Size")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Commit Batch Size field.';
+                    ToolTip = 'Number of items to process before committing database changes. Smaller values improve responsiveness; larger values improve performance. Default: 500.';
                 }
                 field("Last Run"; Rec."Last Run")
                 {
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the Last Run field.';
+                    ToolTip = 'Date and time when the ABC analysis was last executed. Read-only field.';
                 }
                 field("Last Upgraded To"; Rec."Last Upgraded To")
                 {
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Specifies the value of the Last Upgraded To Version field.';
+                    ToolTip = 'Version number of the last completed data upgrade. Used for upgrade tracking. Read-only field.';
                 }
             }
             group(ModelThresholds)
@@ -76,47 +76,47 @@ page 73030575 "GMO ABC Analysis Setup"
                 field("Rev A %"; Rec."Rev A %")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Revenue A Threshold % field.';
+                    ToolTip = 'Class A threshold percentage for Revenue model. Items contributing up to this cumulative percentage of revenue are Class A. Default: 80%.';
                 }
                 field("Rev B %"; Rec."Rev B %")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Revenue B Threshold % field.';
+                    ToolTip = 'Class B threshold percentage for Revenue model. Items between A and this threshold are Class B. Default: 95%.';
                 }
                 field("Rev Period (Days)"; Rec."Rev Period (Days)")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Revenue Period (Days) field.';
+                    ToolTip = 'Number of days to analyze when calculating revenue-based ABC classifications. Default: 365 days.';
                 }
                 field("GP A %"; Rec."GP A %")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Gross Profit A Threshold % field.';
+                    ToolTip = 'Class A threshold percentage for Gross Profit model. Items contributing up to this cumulative percentage of profit are Class A. Default: 80%.';
                 }
                 field("GP B %"; Rec."GP B %")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Gross Profit B Threshold % field.';
+                    ToolTip = 'Class B threshold percentage for Gross Profit model. Items between A and this threshold are Class B. Default: 95%.';
                 }
                 field("GP Period (Days)"; Rec."GP Period (Days)")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Gross Profit Period (Days) field.';
+                    ToolTip = 'Number of days to analyze when calculating profit-based ABC classifications. Default: 365 days.';
                 }
                 field("COGS A %"; Rec."COGS A %")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the COGS A Threshold % field.';
+                    ToolTip = 'Class A threshold percentage for Cost of Goods Sold model. Items contributing up to this cumulative percentage of COGS are Class A. Default: 80%.';
                 }
                 field("COGS B %"; Rec."COGS B %")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the COGS B Threshold % field.';
+                    ToolTip = 'Class B threshold percentage for COGS model. Items between A and this threshold are Class B. Default: 95%.';
                 }
                 field("COGS Period (Days)"; Rec."COGS Period (Days)")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the COGS Period (Days) field.';
+                    ToolTip = 'Number of days to analyze when calculating COGS-based ABC classifications. Default: 365 days.';
                 }
             }
             group(CountingPolicy)
@@ -125,19 +125,19 @@ page 73030575 "GMO ABC Analysis Setup"
                 field("Update Counting Codes"; Rec."Update Counting Codes")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Update Warehouse Counting Codes field.';
+                    ToolTip = 'Automatically update physical inventory counting period codes on items based on their ABC classification.';
                 }
                 field("Update SKU"; Rec."Update SKU")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Update SKU as well field.';
+                    ToolTip = 'Apply counting period updates to Stock Keeping Units (SKU) in addition to items. Only applies when Update Counting Codes is enabled.';
                 }
                 field("Counting Code Mapping ID"; Rec."Counting Code Mapping ID")
                 {
                     ApplicationArea = All;
                     Caption = 'Counting Code Mapping ID';
                     TableRelation = "GMO ABC Counting Policy Header".Code;
-                    ToolTip = 'Specifies the value of the Counting Code Mapping ID field.';
+                    ToolTip = 'Select the counting policy that defines how ABC classifications map to physical inventory counting frequencies.';
 
                     trigger OnAssistEdit()
                     var
@@ -185,7 +185,7 @@ page 73030575 "GMO ABC Analysis Setup"
                         if not H.Get(Rec."Counting Code Mapping ID") then begin
                             H.Init();
                             H.Code := Rec."Counting Code Mapping ID";
-                            H.Description := StrSubstNo('%1 ABC → Counting Period mapping', H.Code);
+                            H.Description := StrSubstNo(CountingPolicyDescLbl, H.Code);
                             H.Insert(true);
                         end;
                     end;
@@ -203,7 +203,7 @@ page 73030575 "GMO ABC Analysis Setup"
                 Caption = 'Open ABC Worksheet';
                 Image = Worksheet;
                 ApplicationArea = All;
-                ToolTip = 'Executes the Open ABC Worksheet action.';
+                ToolTip = 'Open the ABC Analysis Worksheet to calculate and preview classifications before committing results.';
                 trigger OnAction()
                 begin
                     PAGE.Run(PAGE::"GMO ABC Worksheet");
@@ -214,7 +214,7 @@ page 73030575 "GMO ABC Analysis Setup"
                 Caption = 'Run ABC Analysis Report';
                 Image = Report;
                 ApplicationArea = All;
-                ToolTip = 'Executes the Run ABC Analysis Report action.';
+                ToolTip = 'Generate a detailed report showing ABC classification results and statistical distribution.';
                 trigger OnAction()
                 begin
                     Report.RunModal(Report::"GMO ABC Analysis");
@@ -225,7 +225,7 @@ page 73030575 "GMO ABC Analysis Setup"
                 Caption = 'Create/Enable Job Queue';
                 Image = Job;
                 ApplicationArea = All;
-                ToolTip = 'Executes the Create/Enable Job Queue action.';
+                ToolTip = 'Create or enable the job queue entry for automated ABC analysis calculations on a scheduled basis.';
                 trigger OnAction()
                 var
                     Helper: Codeunit "GMO ABC Job Queue Helper";
@@ -238,7 +238,7 @@ page 73030575 "GMO ABC Analysis Setup"
                 Caption = 'Open ABC History';
                 Image = History;
                 ApplicationArea = All;
-                ToolTip = 'Executes the Open ABC History action.';
+                ToolTip = 'View historical ABC analysis runs and their results to track classification changes over time.';
                 trigger OnAction()
                 begin
                     PAGE.Run(PAGE::"GMO ABC History");
@@ -263,13 +263,15 @@ page 73030575 "GMO ABC Analysis Setup"
         }
     }
 
+    var
+        CountingPolicyDescLbl: Label '%1 ABC → Counting Period mapping', Locked = true;
+
     trigger OnOpenPage()
     var
         Mgt: Codeunit "GMO ABC Analysis Mgt.";
     begin
-        if not Rec.Get('SETUP') then begin
-            // (your existing setup seeding) ...
-        end;
+        // (your existing setup seeding) ...
+        Rec.Get('SETUP');
 
         if Rec."Counting Code Mapping ID" = '' then begin
             Rec.Validate("Counting Code Mapping ID", 'DEFAULT');

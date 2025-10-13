@@ -84,13 +84,13 @@ report 73030579 "GMO ABC Comparison"
                 group(Options)
                 {
                     Caption = 'Options';
-                    field(StartDate; StartDate)
+                    field(StartDateField; StartDate)
                     {
                         ApplicationArea = All;
                         Caption = 'Start Date';
                         ToolTip = 'Start date for value calculation.';
                     }
-                    field(EndDate; EndDate)
+                    field(EndDateField; EndDate)
                     {
                         ApplicationArea = All;
                         Caption = 'End Date';
@@ -146,9 +146,10 @@ report 73030579 "GMO ABC Comparison"
 
         if (RevClass = GPClass) and (RevClass = COGSClass) then
             exit('✓ Consistent')
-        else if (Abs(RevClass - GPClass) <= 1) and (Abs(RevClass - COGSClass) <= 1) then
-            exit('≈ Minor Variance')
         else
-            exit('⚠ Inconsistent');
+            if (Abs(RevClass - GPClass) <= 1) and (Abs(RevClass - COGSClass) <= 1) then
+                exit('≈ Minor Variance')
+            else
+                exit('⚠ Inconsistent');
     end;
 }

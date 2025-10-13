@@ -11,9 +11,9 @@ page 73030579 "GMO ABC Counting Policy Lines"
         {
             repeater(Group)
             {
-                field(Model; Rec.Model) { ApplicationArea = All; ToolTip = 'Specifies the value of the Model field.'; }
-                field(Class; Rec.Class) { ApplicationArea = All; ToolTip = 'Specifies the value of the Class field.'; }
-                field("Counting Period Code"; Rec."Counting Period Code") { ApplicationArea = All; ToolTip = 'Specifies the value of the Counting Period Code field.'; }
+                field(Model; Rec.Model) { ApplicationArea = All; ToolTip = 'ABC analysis model: Revenue, Gross Profit, or Cost of Goods Sold (COGS).'; }
+                field(Class; Rec.Class) { ApplicationArea = All; ToolTip = 'ABC classification: A (highest value), B (medium value), C (lower value), or D (inactive).'; }
+                field("Counting Period Code"; Rec."Counting Period Code") { ApplicationArea = All; ToolTip = 'Physical inventory counting period code to assign to items with this model and class combination.'; }
 
             }
         }

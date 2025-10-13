@@ -15,7 +15,7 @@ report 73030575 "GMO ABC Distribution"
             column(CompanyName; CompanyProperty.DisplayName())
             {
             }
-            column(Model; Format(Model))
+            column(ModelColumn; Format(Model))
             {
             }
             column(ReportTitle; ReportTitleLbl)
@@ -73,7 +73,7 @@ report 73030575 "GMO ABC Distribution"
                 group(Options)
                 {
                     Caption = 'Options';
-                    field(Model; Model)
+                    field(ModelField; Model)
                     {
                         ApplicationArea = All;
                         Caption = 'ABC Model';
@@ -83,7 +83,7 @@ report 73030575 "GMO ABC Distribution"
                 group(Filters)
                 {
                     Caption = 'Filters';
-                    field(ItemFilter; Item."No.")
+                    field(ItemNoFilter; Item."No.")
                     {
                         ApplicationArea = All;
                         Caption = 'Item No.';
@@ -113,16 +113,16 @@ report 73030575 "GMO ABC Distribution"
     }
 
     var
+        Item: Record Item;
         Model: Enum "GMO ABC Model";
         GrandTotalValue: Decimal;
         GrandItemCount: Integer;
-        ClassName: Text[10];
         ItemCount: Integer;
         TotalValue: Decimal;
         ValuePercent: Decimal;
         ItemPercent: Decimal;
+        ClassName: Text[10];
         ItemFilter: Text;
-        Item: Record Item;
         ReportTitleLbl: Label 'ABC Class Distribution Report';
 
     local procedure GetClassName(ClassNum: Integer): Text[10]
@@ -144,36 +144,36 @@ report 73030575 "GMO ABC Distribution"
 
     local procedure CalculateClassMetrics(ClassNum: Integer; var Count: Integer; var Value: Decimal)
     var
-        TempItem: Record Item;
+        ItemRec: Record Item;
         ClassEnum: Enum "GMO ABC Class";
     begin
         Count := 0;
         Value := 0;
 
-        TempItem.CopyFilters(Item);
-        if TempItem.FindSet() then
+        ItemRec.CopyFilters(Item);
+        if ItemRec.FindSet() then
             repeat
-                ClassEnum := GetItemClass(TempItem, Model);
+                ClassEnum := GetItemClass(ItemRec, Model);
                 if ClassEnum.AsInteger() = ClassNum then begin
                     Count += 1;
-                    Value += GetItemValue(TempItem);
+                    Value += GetItemValue(ItemRec);
                 end;
-            until TempItem.Next() = 0;
+            until ItemRec.Next() = 0;
     end;
 
     local procedure CalculateGrandTotals()
     var
-        TempItem: Record Item;
+        ItemRec: Record Item;
     begin
         GrandItemCount := 0;
         GrandTotalValue := 0;
 
-        TempItem.CopyFilters(Item);
-        if TempItem.FindSet() then
+        ItemRec.CopyFilters(Item);
+        if ItemRec.FindSet() then
             repeat
                 GrandItemCount += 1;
-                GrandTotalValue += GetItemValue(TempItem);
-            until TempItem.Next() = 0;
+                GrandTotalValue += GetItemValue(ItemRec);
+            until ItemRec.Next() = 0;
     end;
 
     local procedure GetItemClass(ItemRec: Record Item; ModelType: Enum "GMO ABC Model"): Enum "GMO ABC Class"

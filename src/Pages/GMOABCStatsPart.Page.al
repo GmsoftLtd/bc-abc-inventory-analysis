@@ -15,37 +15,37 @@ page 73030582 "GMO ABC Stats Part"
                 field(Class; Rec.Class)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Class field.';
+                    ToolTip = 'ABC classification: A (high value), B (medium), C (low), or D (inactive).';
                 }
                 field("Item Count"; Rec."Item Count")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Item Count field.';
+                    ToolTip = 'Number of items classified in this ABC class.';
                 }
                 field("Count %"; Rec."Count %")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Count % field.';
+                    ToolTip = 'Percentage of total items in this ABC class. Typically: A=20%, B=30%, C=50%.';
                 }
                 field(Amount; Rec.Amount)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Amount field.';
+                    ToolTip = 'Total value (Revenue/Profit/COGS) of all items in this ABC class.';
                 }
                 field("Amount %"; Rec."Amount %")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Amount % field.';
+                    ToolTip = 'Percentage of total value in this class. Typically: A=80%, B=15%, C=5% (Pareto principle).';
                 }
                 field("Cum. Count %"; Rec."Cum. Count %")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Cum. Count % field.';
+                    ToolTip = 'Cumulative percentage of items when classes are ordered A-B-C-D.';
                 }
                 field("Cum. Amount %"; Rec."Cum. Amount %")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Cum. Amount % field.';
+                    ToolTip = 'Cumulative percentage of value when classes are ordered A-B-C-D. Shows concentration of value in top classes.';
                 }
             }
         }

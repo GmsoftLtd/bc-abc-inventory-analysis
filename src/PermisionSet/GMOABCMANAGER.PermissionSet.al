@@ -1,6 +1,6 @@
 permissionset 73030576 "GMO ABC MANAGER"
 {
-    Caption = 'GMO ABC Manager';
+    Caption = 'ABC Inventory Optimizer - Manager';
     Assignable = true;
 
     // Include Microsoft base role

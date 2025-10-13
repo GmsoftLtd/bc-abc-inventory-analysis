@@ -432,8 +432,8 @@
         <Field Name="CompanyName">
           <DataField>CompanyName</DataField>
         </Field>
-        <Field Name="Model">
-          <DataField>Model</DataField>
+        <Field Name="ModelColumn">
+          <DataField>ModelColumn</DataField>
         </Field>
         <Field Name="ReportTitle">
           <DataField>ReportTitle</DataField>

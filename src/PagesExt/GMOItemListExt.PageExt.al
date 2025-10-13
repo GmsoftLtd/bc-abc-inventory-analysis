@@ -7,17 +7,17 @@ pageextension 73030576 "GMO Item List Ext." extends "Item List"
             field("GMO Class (Revenue)"; Rec."GMO Class (Revenue)")
             {
                 ApplicationArea = All;
-                ToolTip = 'Specifies the value of the GMO Class (Revenue) field.';
+                ToolTip = 'ABC classification based on revenue/sales value: A (high), B (medium), C (low), or D (inactive).';
             }
             field("GMO Class (Gross Profit)"; Rec."GMO Class (Gross Profit)")
             {
                 ApplicationArea = All;
-                ToolTip = 'Specifies the value of the GMO Class (Gross Profit) field.';
+                ToolTip = 'ABC classification based on gross profit margin contribution: A (high), B (medium), C (low), or D (inactive).';
             }
             field("GMO Class (COGS)"; Rec."GMO Class (COGS)")
             {
                 ApplicationArea = All;
-                ToolTip = 'Specifies the value of the GMO Class (Value/COGS) field.';
+                ToolTip = 'ABC classification based on cost of goods sold: A (high), B (medium), C (low), or D (inactive).';
             }
         }
     }

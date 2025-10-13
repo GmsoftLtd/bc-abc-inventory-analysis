@@ -54,26 +54,30 @@ report 73030578 "GMO ABC Exceptions"
                     ExceptionDetails := 'Item has never been classified';
                 end
                 // Exception 2: Outdated calculation (>90 days)
-                else if IsOutdated(Item) then begin
-                    ExceptionType := 'Outdated';
-                    ExceptionDetails := StrSubstNo('Last calculation more than %1 days ago', DaysThreshold);
-                end
-                // Exception 3: Inconsistent classes across models
-                else if HasInconsistentClasses(Item) then begin
-                    ExceptionType := 'Inconsistent';
-                    ExceptionDetails := 'Different classes across models';
-                end
-                // Exception 4: High inventory but low class
-                else if IsHighInventoryLowClass(Item) then begin
-                    ExceptionType := 'Inventory Mismatch';
-                    ExceptionDetails := 'High inventory value but Class C';
-                end
-                // Exception 5: Zero activity
-                else if HasZeroActivity(Item) then begin
-                    ExceptionType := 'No Activity';
-                    ExceptionDetails := 'No sales/movement in analysis period';
-                end else
-                    CurrReport.Skip();
+                else
+                    if IsOutdated(Item) then begin
+                        ExceptionType := 'Outdated';
+                        ExceptionDetails := StrSubstNo(OutdatedDetailsLbl, DaysThreshold);
+                    end
+                    // Exception 3: Inconsistent classes across models
+                    else
+                        if HasInconsistentClasses(Item) then begin
+                            ExceptionType := 'Inconsistent';
+                            ExceptionDetails := 'Different classes across models';
+                        end
+                        // Exception 4: High inventory but low class
+                        else
+                            if IsHighInventoryLowClass(Item) then begin
+                                ExceptionType := 'Inventory Mismatch';
+                                ExceptionDetails := 'High inventory value but Class C';
+                            end
+                            // Exception 5: Zero activity
+                            else
+                                if HasZeroActivity(Item) then begin
+                                    ExceptionType := 'No Activity';
+                                    ExceptionDetails := 'No sales/movement in analysis period';
+                                end else
+                                    CurrReport.Skip();
             end;
         }
     }
@@ -87,13 +91,13 @@ report 73030578 "GMO ABC Exceptions"
                 group(Options)
                 {
                     Caption = 'Options';
-                    field(DaysThreshold; DaysThreshold)
+                    field(DaysThresholdField; DaysThreshold)
                     {
                         ApplicationArea = All;
                         Caption = 'Outdated Threshold (Days)';
                         ToolTip = 'Number of days after which calculation is considered outdated.';
                     }
-                    field(InventoryThreshold; InventoryThreshold)
+                    field(InventoryThresholdField; InventoryThreshold)
                     {
                         ApplicationArea = All;
                         Caption = 'Inventory Value Threshold';
@@ -110,6 +114,7 @@ report 73030578 "GMO ABC Exceptions"
         ExceptionType: Text[50];
         ExceptionDetails: Text[250];
         ReportTitleLbl: Label 'ABC Exception Report';
+        OutdatedDetailsLbl: Label 'Last calculation more than %1 days ago', Locked = true;
 
     local procedure IsNeverCalculated(ItemRec: Record Item): Boolean
     begin

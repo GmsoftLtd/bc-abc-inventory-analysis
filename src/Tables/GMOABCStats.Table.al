@@ -1,6 +1,7 @@
 table 73030582 "GMO ABC Stats"
 {
     Caption = 'ABC Stats';
+    Description = 'Temporary table for calculating and displaying statistical summaries of ABC classification distribution';
     DataClassification = CustomerContent;
     TableType = Temporary;
 

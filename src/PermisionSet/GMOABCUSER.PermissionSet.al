@@ -1,7 +1,7 @@
 permissionset 73030578 "GMO ABC USER"
 {
     Assignable = true;
-    Caption = 'GMO ABC User';
+    Caption = 'ABC Inventory Optimizer - User';
 
     Permissions =
         // Tables (metadata)

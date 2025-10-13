@@ -1,14 +1,14 @@
 {
   "id": "8cea7497-4829-495d-8928-f065a0a5669a",
-  "name": "ABC_ANALYSIS",
-  "publisher": "GMSOFT",
+  "name": "ABC Inventory Optimizer",
+  "publisher": "GMSOFT LIMITED",
   "version": "1.1.0.0",
   "brief": "Advanced ABC Analysis with XYZ Matrix for Inventory Optimization",
-  "description": "Transform your inventory management with sophisticated ABC classification combined with XYZ demand variability analysis. Reduce inventory costs by 25-30% while improving service levels through data-driven insights and strategic classification.",
+  "description": "Transform your inventory management with sophisticated ABC classification. Reduce inventory costs by 25-30% while improving service levels through data-driven insights and strategic classification.",
   "privacyStatement": "https://www.GMsoft.co.uk/privacy_statement/",
   "EULA": "https://www.GMsoft.co.uk/abc_eula/",
   "help": "https://www.GMsoft.co.uk/abc_help/",
-  "contextSensitiveHelpUrl": "https://www.Gmsoft.co.uk/abc_help/",
+  "contextSensitiveHelpUrl": "https://www.GMsoft.co.uk/abc_help/",
   "url": "https://www.GMsoft.co.uk",
   "logo": "abc-inventory.png",
   "target": "Cloud",
@@ -21,7 +21,6 @@
   ],
   "platform": "26.0.0.0",
   "application": "26.0.0.0",
-  
   "idRanges": [
     {
       "from": 73030575,
@@ -32,7 +31,6 @@
     "NoImplicitWith",
     "TranslationFile"
   ],
-  
   "supportedLocales": [
     "en-US",
     "el-GR",
@@ -46,8 +44,8 @@
     "allowDownloadingSource": false,
     "includeSourceInSymbolFile": false
   },
-  "runtime": "15.0",
-  "applicationInsightsConnectionString": "InstrumentationKey=8b1f3b1e-2f1e-4dcb-8f7c-5f3d2f5e4c8a;IngestionEndpoint=https://westeurope-1.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/"
- 
-   
+  "runtime": "16.0",
+  "applicationInsightsConnectionString": "InstrumentationKey=8b1f3b1e-2f1e-4dcb-8f7c-5f3d2f5e4c8a;IngestionEndpoint=https://westeurope-1.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/",
+  "keyVaultUrls": [],
+  "propagateDependencies": false
 }

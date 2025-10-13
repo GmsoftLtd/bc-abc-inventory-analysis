@@ -1,6 +1,7 @@
 table 73030581 "GMO ABC History Line"
 {
     Caption = 'ABC History Line';
+    Description = 'Stores detailed item-level ABC classification results from historical analysis runs';
     DataClassification = CustomerContent;
 
     fields

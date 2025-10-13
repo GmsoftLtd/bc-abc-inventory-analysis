@@ -1,6 +1,7 @@
 table 73030577 "GMO ABC Counting Policy Header"
 {
     Caption = 'ABC Counting Policy';
+    Description = 'Defines counting policy templates that map ABC classifications to physical inventory counting frequencies';
     DataClassification = SystemMetadata;
     DataCaptionFields = Code, Description;
 

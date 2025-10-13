@@ -16,12 +16,12 @@ page 73030576 "GMO ABC Counting Policy List"
                 field(Code; Rec.Code)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Code field.';
+                    ToolTip = 'Unique identifier for this counting policy template. Used to link the policy to ABC analysis setup.';
                 }
                 field(Description; Rec.Description)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Description field.';
+                    ToolTip = 'Descriptive name for the counting policy. Example: "Standard ABC Counting Schedule" or "Quarterly Cycle Count".';
                 }
             }
         }

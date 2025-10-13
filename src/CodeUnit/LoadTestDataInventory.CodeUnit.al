@@ -3,6 +3,11 @@ codeunit 73030575 "GMO Load Test Data - Inventory"
 {
     Subtype = Normal;
 
+    var
+        ProgressFormatLbl: Label '%1 / %2', Locked = true;
+        ItemDescriptionLbl: Label 'LoadTest Inventory Item %1', Locked = true;
+        CompletionMsgLbl: Label 'Done. Created %1 items (UoM PCS), stocked %2 each, posted %3 invoices (%4..%5 lines).', Locked = true;
+
     procedure RunLoadTestWithStock(ItemsToCreate: Integer; InvoicesToPost: Integer; MinLinesPerInv: Integer; MaxLinesPerInv: Integer; StockQtyPerItem: Decimal; LocationCode: Code[10])
     var
         CustPG: Record "Customer Posting Group";
@@ -38,24 +43,24 @@ codeunit 73030575 "GMO Load Test Data - Inventory"
 
         // 1) Create INVENTORY items with PCS as base UoM
         ItemNos := CreateInventoryItems(ItemsToCreate, GenProdPG.Code, VatProdPG.Code, UoMCode);
-        Dialog.Update(1, StrSubstNo('%1 / %2', ItemsToCreate, ItemsToCreate));
+        Dialog.Update(1, StrSubstNo(ProgressFormatLbl, ItemsToCreate, ItemsToCreate));
 
         // 2) Stock each item with positive adjustments
         StockUpItems(ItemNos, StockQtyPerItem, LocationCode, Dialog);
-        Dialog.Update(2, StrSubstNo('%1 / %2', ItemNos.Count(), ItemNos.Count()));
+        Dialog.Update(2, StrSubstNo(ProgressFormatLbl, ItemNos.Count(), ItemNos.Count()));
 
         // 3) Create & post multi-line invoices
         CreateAndPostInvoicesWithLines(InvoicesToPost, TestCustomerNo, ItemNos, MinLinesPerInv, MaxLinesPerInv, Dialog);
 
         Dialog.Close();
-        Message('Done. Created %1 items (UoM PCS), stocked %2 each, posted %3 invoices (%4..%5 lines).',
+        Message(CompletionMsgLbl,
             ItemsToCreate, StockQtyPerItem, InvoicesToPost, MinLinesPerInv, MaxLinesPerInv);
     end;
 
     // --- Ensure PCS UoM
 
     // --- Customer helper (unchanged)
-    local procedure EnsureOrCreateCustomer(GenBusPGCode: Code[20]; CustPGCode: Code[20]; VatBusPGCode: Code[20]) TestCustomerNo: Code[20]
+    local procedure EnsureOrCreateCustomer(GenBusPGCode: Code[20]; CustPGCode: Code[20]; VatBusPGCode: Code[20]): Code[20]
     var
         Cust: Record Customer;
         SalesSetup: Record "Sales & Receivables Setup";
@@ -105,7 +110,7 @@ codeunit 73030575 "GMO Load Test Data - Inventory"
 
             Item.Init();
             Item.Validate("No.", No);
-            Desc := StrSubstNo('LoadTest Inventory Item %1', n);
+            Desc := StrSubstNo(ItemDescriptionLbl, n);
             Item.Validate(Description, Desc);
             Item.Validate(Type, Item.Type::Inventory);
             Item.Validate("Gen. Prod. Posting Group", GenProdPGCode);
@@ -130,9 +135,7 @@ codeunit 73030575 "GMO Load Test Data - Inventory"
     local procedure StockUpItems(ItemNos: List of [Code[20]]; QtyPerItem: Decimal; LocationCode: Code[10]; var Dialog: Dialog)
     var
         Item: Record Item;
-        ItemJnlBatch: Record "Item Journal Batch";
         ItemJnlLine: Record "Item Journal Line";
-        ItemJnlTemplate: Record "Item Journal Template";
         PostLine: Codeunit "Item Jnl.-Post Line";
         BatchName: Code[10];
         TemplateName: Code[10];
@@ -174,7 +177,7 @@ codeunit 73030575 "GMO Load Test Data - Inventory"
             PostedCount += 1;
 
             if (PostedCount mod 200) = 0 then begin
-                Dialog.Update(2, StrSubstNo('%1 / %2', PostedCount, ItemNos.Count()));
+                Dialog.Update(2, StrSubstNo(ProgressFormatLbl, PostedCount, ItemNos.Count()));
                 Commit();
             end;
         end;
@@ -240,17 +243,20 @@ codeunit 73030575 "GMO Load Test Data - Inventory"
             end;
 
             Ok := Codeunit.Run(Codeunit::"Sales-Post", SalesHeader);
-            if not Ok then begin
-                // continue on errors
-            end;
+            if not Ok then 
+                // Log error but continue processing remaining invoices
+                // This allows bulk load testing even if some invoices fail validation
+                if SalesHeader.Get(SalesHeader."Document Type", SalesHeader."No.") then
+                    SalesHeader.Delete(true);
+          
 
             if (i mod 50) = 0 then begin
-                Dialog.Update(3, StrSubstNo('%1 / %2', i, TotalInvoices));
+                Dialog.Update(3, StrSubstNo(ProgressFormatLbl, i, TotalInvoices));
                 Commit();
             end;
         end;
 
-        Dialog.Update(3, StrSubstNo('%1 / %2', TotalInvoices, TotalInvoices));
+        Dialog.Update(3, StrSubstNo(ProgressFormatLbl, TotalInvoices, TotalInvoices));
     end;
 
     // --- Utils

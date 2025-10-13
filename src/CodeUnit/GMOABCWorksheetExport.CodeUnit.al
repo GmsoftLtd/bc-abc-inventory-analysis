@@ -1,18 +1,17 @@
 codeunit 73030583 "GMO ABC Worksheet Export"
 {
-    procedure ExportPreviewAndStats(var TempPreview: Record "GMO ABC Preview Line" temporary)
+    procedure ExportPreviewAndStats(var TempPreview: Record "GMO ABC Preview Line" temporary; var TempStats: Record "GMO ABC Stats" temporary)
     var
         ExcelBuf: Record "Excel Buffer";
     begin
         ExcelBuf.DeleteAll();
 
         WritePreviewSheet(ExcelBuf, TempPreview);
-        // If you also want statistics, call WriteStatsSheet with your temp stats record:
-        // WriteStatsSheet(ExcelBuf, TempStats);
+        WriteStatsSheet(ExcelBuf, TempStats);
 
         ExcelBuf.CreateNewBook('GMO ABC Preview');
         ExcelBuf.WriteSheet('Preview', CompanyName, UserId);
-        // ExcelBuf.WriteSheet('Statistics', CompanyName, UserId); // uncomment if Stats added
+        ExcelBuf.WriteSheet('Statistics', CompanyName, UserId);
         ExcelBuf.CloseBook();
         ExcelBuf.OpenExcel();
     end;

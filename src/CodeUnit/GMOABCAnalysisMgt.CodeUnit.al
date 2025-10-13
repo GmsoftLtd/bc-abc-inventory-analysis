@@ -63,7 +63,7 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
     procedure ApplyPreview(var TempPreview: Record "GMO ABC Preview Line" temporary; Model: enum "GMO ABC Model"; StartDate: Date; EndDate: Date)
     var
         Setup: Record "GMO ABC Analysis Setup";
-        Buf: Record "GMO ABC Preview Line" temporary;
+        TempBuf: Record "GMO ABC Preview Line" temporary;
         Item: Record Item;
         SKU: Record "Stockkeeping Unit";
         HistHdr: Record "GMO ABC History Header";
@@ -75,10 +75,10 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
         EnsureSetup(Setup);
 
         // 🔒 Defensive copy (server-side) so we control filters and traversal
-        Buf.Copy(TempPreview, true);
-        Buf.Reset();
+        TempBuf.Copy(TempPreview, true);
+        TempBuf.Reset();
 
-        if Buf.IsEmpty() then
+        if TempBuf.IsEmpty() then
             Error('No preview lines to apply. Run Calculate first.');
 
         NowDT := CurrentDateTime;
@@ -94,45 +94,45 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
         HistHdr."Created At" := NowDT;
         HistHdr.Insert(true);
 
-        if Buf.FindSet() then
+        if TempBuf.FindSet() then
             repeat
-                if not Item.Get(Buf."Item No.") then
+                if not Item.Get(TempBuf."Item No.") then
                     continue;
 
                 case Model of
                     Model::Revenue:
                         begin
-                            Item.Validate("GMO Class (Revenue)", Buf.Class);
+                            Item.Validate("GMO Class (Revenue)", TempBuf.Class);
                             Item.Validate("GMO Last Calc (Revenue)", NowDT);
                         end;
                     Model::"Gross Profit":
                         begin
-                            Item.Validate("GMO Class (Gross Profit)", Buf.Class);
+                            Item.Validate("GMO Class (Gross Profit)", TempBuf.Class);
                             Item.Validate("GMO Last Calc (GP)", NowDT);
                         end;
                     Model::COGS:
                         begin
-                            Item.Validate("GMO Class (COGS)", Buf.Class);
+                            Item.Validate("GMO Class (COGS)", TempBuf.Class);
                             Item.Validate("GMO Last Calc (COGS)", NowDT);
                         end;
                 end;
                 Item.Modify(true);
                 Updated += 1;
-                TotalAmt += Buf.Value;
+                TotalAmt += TempBuf.Value;
 
                 // Create history line
                 HistLine.Init();
                 HistLine."Entry No." := HistHdr."Entry No.";
-                HistLine."Line No." := Buf."Line No.";
-                HistLine."Item No." := Buf."Item No.";
-                HistLine.Value := Buf.Value;
-                HistLine."Value %" := Buf."Value %";
-                HistLine."Cum. %" := Buf."Cum. %";
-                HistLine.Class := Buf.Class;
+                HistLine."Line No." := TempBuf."Line No.";
+                HistLine."Item No." := TempBuf."Item No.";
+                HistLine.Value := TempBuf.Value;
+                HistLine."Value %" := TempBuf."Value %";
+                HistLine."Cum. %" := TempBuf."Cum. %";
+                HistLine.Class := TempBuf.Class;
                 HistLine.Insert(true);
 
                 // Optional: update counting period code per policy
-                MaybeUpdateCountingCode(Item."No.", Buf.Class, Model, Setup);
+                MaybeUpdateCountingCode(Item."No.", TempBuf.Class, Model, Setup);
 
                 // Mirror to SKUs
                 SKU.Reset();
@@ -142,23 +142,23 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
                         case Model of
                             Model::Revenue:
                                 begin
-                                    SKU.Validate("GMO Class (Revenue)", Buf.Class);
+                                    SKU.Validate("GMO Class (Revenue)", TempBuf.Class);
                                     SKU.Validate("GMO Last Calc (Revenue)", NowDT);
                                 end;
                             Model::"Gross Profit":
                                 begin
-                                    SKU.Validate("GMO Class (Gross Profit)", Buf.Class);
+                                    SKU.Validate("GMO Class (Gross Profit)", TempBuf.Class);
                                     SKU.Validate("GMO Last Calc (GP)", NowDT);
                                 end;
                             Model::COGS:
                                 begin
-                                    SKU.Validate("GMO Class (COGS)", Buf.Class);
+                                    SKU.Validate("GMO Class (COGS)", TempBuf.Class);
                                     SKU.Validate("GMO Last Calc (COGS)", NowDT);
                                 end;
                         end;
                         SKU.Modify(true);
                     until SKU.Next() = 0;
-            until Buf.Next() = 0;
+            until TempBuf.Next() = 0;
 
         // Update history header totals
         HistHdr."Total Amount" := TotalAmt;
@@ -172,7 +172,7 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
     procedure RecalculateAllDistinctWindows(ApplyChanges: Boolean)
     var
         Setup: Record "GMO ABC Analysis Setup";
-        Preview: Record "GMO ABC Preview Line" temporary;
+        TempPreview: Record "GMO ABC Preview Line" temporary;
         E, S : Date;
         Model: Enum "GMO ABC Model";
     begin
@@ -180,23 +180,23 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
 
         Model := Model::Revenue;
         CalcDatesFromSetup(Model, Setup, WorkDate(), S, E);
-        CalculatePreview(Model, S, E, Preview);
-        if ApplyChanges and not Preview.IsEmpty() then
-            ApplyPreview(Preview, Model, S, E);
+        CalculatePreview(Model, S, E, TempPreview);
+        if ApplyChanges and not TempPreview.IsEmpty() then
+            ApplyPreview(TempPreview, Model, S, E);
 
-        Preview.DeleteAll();
+        TempPreview.DeleteAll();
         Model := Model::"Gross Profit";
         CalcDatesFromSetup(Model, Setup, WorkDate(), S, E);
-        CalculatePreview(Model, S, E, Preview);
-        if ApplyChanges and not Preview.IsEmpty() then
-            ApplyPreview(Preview, Model, S, E);
+        CalculatePreview(Model, S, E, TempPreview);
+        if ApplyChanges and not TempPreview.IsEmpty() then
+            ApplyPreview(TempPreview, Model, S, E);
 
-        Preview.DeleteAll();
+        TempPreview.DeleteAll();
         Model := Model::COGS;
         CalcDatesFromSetup(Model, Setup, WorkDate(), S, E);
-        CalculatePreview(Model, S, E, Preview);
-        if ApplyChanges and not Preview.IsEmpty() then
-            ApplyPreview(Preview, Model, S, E);
+        CalculatePreview(Model, S, E, TempPreview);
+        if ApplyChanges and not TempPreview.IsEmpty() then
+            ApplyPreview(TempPreview, Model, S, E);
     end;
 
     procedure RecalculateAllUsingSetupPeriods(ApplyChanges: Boolean)
@@ -306,11 +306,13 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
     end;
 
     local procedure ABC(): Enum "GMO ABC Class"
+    var
+        ABCClass: Enum "GMO ABC Class";
     begin
-        exit(0);
+        exit(ABCClass);
     end;
 
-    local procedure MaybeUpdateCountingCode(ItemNo: Code[20]; ClassOpt: Enum "GMO ABC Class"; Model: Enum "GMO ABC Model"; Setup: Record "GMO ABC Analysis Setup")
+    local procedure MaybeUpdateCountingCode(ItemNo: Code[20]; ABCClassification: Enum "GMO ABC Class"; Model: Enum "GMO ABC Model"; Setup: Record "GMO ABC Analysis Setup")
     var
         Line: Record "GMO ABC Counting Policy Line";
         Item: Record Item;
@@ -322,7 +324,7 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
         if HeaderCode = '' then HeaderCode := 'DEFAULT';
 
         if not EnsurePolicyExists(HeaderCode) then exit;
-        if not Line.Get(HeaderCode, Model, ClassOpt) then exit;
+        if not Line.Get(HeaderCode, Model, ABCClassification) then exit;
 
         PeriodCode := Line."Counting Period Code";
         if PeriodCode = '' then exit;
@@ -348,6 +350,7 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
     procedure EnsurePolicyExists(HeaderCode: Code[10]): Boolean
     var
         H: Record "GMO ABC Counting Policy Header";
+        PolicyDescriptionLbl: Label '%1 ABC → Counting Period mapping', Comment = '%1 = Header Code';
     begin
         if HeaderCode = '' then exit(false);
 
@@ -355,7 +358,7 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
 
         H.Init();
         H.Code := HeaderCode;
-        H.Description := StrSubstNo('%1 ABC → Counting Period mapping', HeaderCode);
+        H.Description := StrSubstNo(PolicyDescriptionLbl, HeaderCode);
         H.Insert(true);
 
         EnsureDefaultPolicyLines(HeaderCode);
@@ -375,33 +378,38 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
         EnsurePolicyLine(HeaderCode, ModelOpt() ::COGS, ClassOpt() ::C);
     end;
 
-    local procedure EnsurePolicyLine(HeaderCode: Code[10]; Model: enum "GMO ABC Model"; ClassOpt: enum "GMO ABC Class")
+    local procedure EnsurePolicyLine(HeaderCode: Code[10]; Model: enum "GMO ABC Model"; ABCClassification: enum "GMO ABC Class")
     var
         L: Record "GMO ABC Counting Policy Line";
     begin
-        if L.Get(HeaderCode, Model, ClassOpt) then
+        if L.Get(HeaderCode, Model, ABCClassification) then
             exit;
 
         L.Init();
         L."Header Code" := HeaderCode;
         L.Model := Model;
-        L.Class := ClassOpt;
+        L.Class := ABCClassification;
         L.Insert(true);
     end;
 
     local procedure ModelOpt(): enum "GMO ABC Model"
+    var
+        Model: Enum "GMO ABC Model";
     begin
-        exit(0);
+        exit(Model);
     end;
 
     local procedure ClassOpt(): enum "GMO ABC Class"
+    var
+        ABCClass: Enum "GMO ABC Class";
     begin
-        exit(0);
+        exit(ABCClass);
     end;
 
     local procedure CalcDatesFromSetup(Model: enum "GMO ABC Model"; Setup: Record "GMO ABC Analysis Setup"; AnchorDate: Date; var StartDate: Date; var EndDate: Date)
     var
         DaysBack: Integer;
+        DateFormulaLbl: Label '<-%1D>', Comment = '%1 = Number of days', Locked = true;
     begin
         case Model of
             Model::Revenue:
@@ -414,6 +422,6 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
         if DaysBack <= 0 then DaysBack := 365;
 
         EndDate := AnchorDate;
-        StartDate := CalcDate(StrSubstNo('<-%1D>', DaysBack), AnchorDate);
+        StartDate := CalcDate(StrSubstNo(DateFormulaLbl, DaysBack), AnchorDate);
     end;
 }

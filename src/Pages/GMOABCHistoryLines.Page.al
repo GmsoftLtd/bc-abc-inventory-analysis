@@ -14,32 +14,32 @@ page 73030584 "GMO ABC History Lines"
                 field("Line No."; Rec."Line No.")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Line No. field.';
+                    ToolTip = 'Sequential line number within this historical ABC analysis run.';
                 }
                 field("Item No."; Rec."Item No.")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Item No. field.';
+                    ToolTip = 'Item number for this ABC classification result.';
                 }
                 field(Class; Rec.Class)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Class field.';
+                    ToolTip = 'ABC classification assigned to this item: A (high value), B (medium), C (low), or D (inactive).';
                 }
                 field(Value; Rec.Value)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Value field.';
+                    ToolTip = 'Calculated value for this item based on the analysis model (Revenue, Gross Profit, or COGS).';
                 }
                 field("Value %"; Rec."Value %")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Value % field.';
+                    ToolTip = 'Percentage of total value contributed by this single item.';
                 }
                 field("Cum. %"; Rec."Cum. %")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the Cum. % field.';
+                    ToolTip = 'Cumulative percentage when items are sorted by value descending. Used to determine ABC class boundaries.';
                 }
             }
         }

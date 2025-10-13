@@ -15,13 +15,13 @@ report 73030576 "GMO ABC Item Movement"
             column(CompanyName; CompanyProperty.DisplayName())
             {
             }
-            column(Model; Format(Model))
+            column(ModelColumn; Format(Model))
             {
             }
             column(ReportTitle; ReportTitleLbl)
             {
             }
-            column(CompareDate; Format(CompareDate))
+            column(CompareDateColumn; Format(CompareDate))
             {
             }
             column(ItemNo; "No.")
@@ -72,13 +72,13 @@ report 73030576 "GMO ABC Item Movement"
                 group(Options)
                 {
                     Caption = 'Options';
-                    field(Model; Model)
+                    field(ModelField; Model)
                     {
                         ApplicationArea = All;
                         Caption = 'ABC Model';
                         ToolTip = 'Select the ABC model to analyze.';
                     }
-                    field(CompareDate; CompareDate)
+                    field(CompareDateField; CompareDate)
                     {
                         ApplicationArea = All;
                         Caption = 'Compare to Date';
@@ -97,6 +97,7 @@ report 73030576 "GMO ABC Item Movement"
         MovementText: Text[30];
         CurrentValue: Decimal;
         ReportTitleLbl: Label 'ABC Item Movement Report';
+        MovementFormatLbl: Label '%1 → %2', Locked = true;
 
     local procedure GetItemClass(ItemRec: Record Item; ModelType: Enum "GMO ABC Model"): Enum "GMO ABC Class"
     begin
@@ -116,7 +117,7 @@ report 73030576 "GMO ABC Item Movement"
         HistLine: Record "GMO ABC History Line";
     begin
         HistHeader.Reset();
-        HistHeader.SetRange(Model, ModelType);
+        HistHeader.SetRange(HistHeader.Model, ModelType);
         HistHeader.SetFilter("Created At", '<=%1', CreateDateTime(HistDate, 235959T));
         if HistHeader.FindLast() then begin
             HistLine.SetRange("Entry No.", HistHeader."Entry No.");
@@ -129,7 +130,7 @@ report 73030576 "GMO ABC Item Movement"
 
     local procedure GetMovementText(OldClass: Enum "GMO ABC Class"; NewClass: Enum "GMO ABC Class"): Text[30]
     begin
-        exit(StrSubstNo('%1 → %2', Format(OldClass), Format(NewClass)));
+        exit(StrSubstNo(MovementFormatLbl, Format(OldClass), Format(NewClass)));
     end;
 
     local procedure GetItemCurrentValue(ItemRec: Record Item; ModelType: Enum "GMO ABC Model"): Decimal

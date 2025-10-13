@@ -2,7 +2,7 @@ report 73030577 "GMO ABC Analysis"
 {
     UsageCategory = ReportsAndAnalysis;
     ApplicationArea = All;
-    Caption = 'GMO ABC Analysis';
+    Caption = 'ABC Inventory Optimizer - Analysis';
     RDLCLayout = './src/Reports/Layouts/GMOAnalysis.rdl';
 
     dataset
@@ -15,7 +15,7 @@ report 73030577 "GMO ABC Analysis"
             column(LineNo; "Line No.") { }
             column(Item_No_; "Item No.") { }
             column(Description; Description) { }
-            column(Model; Model) { }
+            column(ModelColumn; Model) { }
             column(Value; Value) { }
             column(ValuePct; "Value %") { }
             column(CumPct; "Cum. %") { }
@@ -38,19 +38,19 @@ report 73030577 "GMO ABC Analysis"
             {
                 group(Options)
                 {
-                    field(Model; gModel)
+                    field(ModelField; gModel)
                     {
                         ApplicationArea = All;
                         Caption = 'Model';
                         ToolTip = 'Specifies the ABC classification model to use.';
                     }
-                    field(StartDate; gStartDate)
+                    field(StartDateField; gStartDate)
                     {
                         ApplicationArea = All;
                         Caption = 'Start Date';
                         ToolTip = 'Specifies the start date for the analysis period.';
                     }
-                    field(EndDate; gEndDate)
+                    field(EndDateField; gEndDate)
                     {
                         ApplicationArea = All;
                         Caption = 'End Date';
