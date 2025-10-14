@@ -1,6 +1,6 @@
 page 73030578 "GMO ABC Counting Policy Card"
 {
-    Caption = 'ABC Inventory Optimizer - Counting Policy';
+    Caption = 'ABC Inventory - Counting Policy';
     PageType = Card;
     SourceTable = "GMO ABC Counting Policy Header";
     ApplicationArea = All;

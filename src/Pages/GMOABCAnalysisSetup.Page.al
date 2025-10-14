@@ -270,6 +270,9 @@ page 73030575 "GMO ABC Analysis Setup"
     var
         Mgt: Codeunit "GMO ABC Analysis Mgt.";
     begin
+        // Note: No license check here - users should be able to view setup even without license
+        // License is checked when running calculations or applying classifications
+
         // (your existing setup seeding) ...
         Rec.Get('SETUP');
 

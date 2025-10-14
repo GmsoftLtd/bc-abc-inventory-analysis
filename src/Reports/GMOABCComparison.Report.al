@@ -111,6 +111,11 @@ report 73030579 "GMO ABC Comparison"
         ConsistencyIndicator: Text[20];
         ReportTitleLbl: Label 'ABC Multi-Model Comparison Report';
 
+    trigger OnPreReport()
+    begin
+        // No license check needed
+    end;
+
     local procedure CalculateItemValue(ItemNo: Code[20]; ModelType: Enum "GMO ABC Model"; FromDate: Date; ToDate: Date): Decimal
     var
         VE: Record "Value Entry";

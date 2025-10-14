@@ -6,13 +6,13 @@ pageextension 73030577 "GMO ABC Inventory Manager RC" extends "Whse. Basic Role 
         {
             group("GMO ABC Analysis")
             {
-                Caption = 'ABC Inventory Optimizer';
+                Caption = 'ABC Inventory';
                 Image = AnalysisView;
 
                 action("GMO ABC Worksheet")
                 {
                     ApplicationArea = All;
-                    Caption = 'ABC Inventory Optimizer - Worksheet';
+                    Caption = 'ABC Inventory - Worksheet';
                     ToolTip = 'Calculate and preview ABC classifications.';
                     RunObject = page "GMO ABC Worksheet";
                     Image = Worksheet;
@@ -21,7 +21,7 @@ pageextension 73030577 "GMO ABC Inventory Manager RC" extends "Whse. Basic Role 
                 action("GMO ABC Setup")
                 {
                     ApplicationArea = All;
-                    Caption = 'ABC Inventory Optimizer - Setup';
+                    Caption = 'ABC Inventory - Setup';
                     ToolTip = 'Configure ABC analysis parameters and thresholds.';
                     RunObject = page "GMO ABC Analysis Setup";
                     Image = Setup;
@@ -30,7 +30,7 @@ pageextension 73030577 "GMO ABC Inventory Manager RC" extends "Whse. Basic Role 
                 action("GMO ABC History")
                 {
                     ApplicationArea = All;
-                    Caption = 'ABC Inventory Optimizer - History';
+                    Caption = 'ABC Inventory - History';
                     ToolTip = 'View historical ABC calculations.';
                     RunObject = page "GMO ABC History";
                     Image = History;
@@ -39,7 +39,7 @@ pageextension 73030577 "GMO ABC Inventory Manager RC" extends "Whse. Basic Role 
                 action("GMO ABC Counting Policy")
                 {
                     ApplicationArea = All;
-                    Caption = 'ABC Inventory Optimizer - Counting Policies';
+                    Caption = 'ABC Inventory - Counting Policies';
                     ToolTip = 'Configure physical inventory counting policies by ABC class.';
                     RunObject = page "GMO ABC Counting Policy List";
                     Image = Period;
@@ -51,13 +51,13 @@ pageextension 73030577 "GMO ABC Inventory Manager RC" extends "Whse. Basic Role 
         {
             group("GMO ABC Reports")
             {
-                Caption = 'ABC Inventory Optimizer - Reports';
+                Caption = 'ABC Inventory - Reports';
                 Image = "Report";
 
                 action("GMO ABC Analysis Report")
                 {
                     ApplicationArea = All;
-                    Caption = 'ABC Inventory Optimizer - Analysis Report';
+                    Caption = 'ABC Inventory - Analysis Report';
                     ToolTip = 'Print detailed ABC analysis report.';
                     RunObject = report "GMO ABC Analysis";
                     Image = Report;
@@ -66,7 +66,7 @@ pageextension 73030577 "GMO ABC Inventory Manager RC" extends "Whse. Basic Role 
                 action("GMO ABC Distribution Report")
                 {
                     ApplicationArea = All;
-                    Caption = 'ABC Inventory Optimizer - Distribution Report';
+                    Caption = 'ABC Inventory - Distribution Report';
                     ToolTip = 'View distribution of items across ABC classes.';
                     RunObject = report "GMO ABC Distribution";
                     Image = ShowChart;
@@ -75,7 +75,7 @@ pageextension 73030577 "GMO ABC Inventory Manager RC" extends "Whse. Basic Role 
                 action("GMO ABC Movement Report")
                 {
                     ApplicationArea = All;
-                    Caption = 'ABC Inventory Optimizer - Movement Report';
+                    Caption = 'ABC Inventory - Movement Report';
                     ToolTip = 'Show items that changed ABC class between periods.';
                     RunObject = report "GMO ABC Item Movement";
                     Image = ItemTracking;
@@ -84,7 +84,7 @@ pageextension 73030577 "GMO ABC Inventory Manager RC" extends "Whse. Basic Role 
                 action("GMO ABC Detail Report")
                 {
                     ApplicationArea = All;
-                    Caption = 'ABC Inventory Optimizer - Detail by Class';
+                    Caption = 'ABC Inventory - Detail by Class';
                     ToolTip = 'Detailed report filtered by ABC class.';
                     RunObject = report "GMO ABC Detail by Class";
                     Image = ViewDetails;
@@ -93,7 +93,7 @@ pageextension 73030577 "GMO ABC Inventory Manager RC" extends "Whse. Basic Role 
                 action("GMO ABC Exceptions Report")
                 {
                     ApplicationArea = All;
-                    Caption = 'ABC Inventory Optimizer - Exceptions Report';
+                    Caption = 'ABC Inventory - Exceptions Report';
                     ToolTip = 'Identify items with classification issues.';
                     RunObject = report "GMO ABC Exceptions";
                     Image = ErrorLog;
@@ -102,7 +102,7 @@ pageextension 73030577 "GMO ABC Inventory Manager RC" extends "Whse. Basic Role 
                 action("GMO ABC Comparison Report")
                 {
                     ApplicationArea = All;
-                    Caption = 'ABC Inventory Optimizer - Multi-Model Comparison';
+                    Caption = 'ABC Inventory - Multi-Model Comparison';
                     ToolTip = 'Compare ABC classifications across all models.';
                     RunObject = report "GMO ABC Comparison";
                     Image = CompareCOA;

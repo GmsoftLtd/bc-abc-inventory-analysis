@@ -99,6 +99,11 @@ report 73030576 "GMO ABC Item Movement"
         ReportTitleLbl: Label 'ABC Item Movement Report';
         MovementFormatLbl: Label '%1 → %2', Locked = true;
 
+    trigger OnPreReport()
+    begin
+        // No license check needed
+    end;
+
     local procedure GetItemClass(ItemRec: Record Item; ModelType: Enum "GMO ABC Model"): Enum "GMO ABC Class"
     begin
         case ModelType of

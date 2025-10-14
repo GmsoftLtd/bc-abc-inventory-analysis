@@ -1,7 +1,7 @@
 permissionset 73030578 "GMO ABC USER"
 {
     Assignable = true;
-    Caption = 'ABC Inventory Optimizer - User';
+    Caption = 'ABC Inventory - User';
 
     Permissions =
         // Tables (metadata)
@@ -12,6 +12,7 @@ permissionset 73030578 "GMO ABC USER"
         table "GMO ABC History Line" = X,
         table "GMO ABC Stats" = X,
         table "GMO ABC Preview Line" = X,
+
 
         // Tables (data) - Read only for setup and history, modify for working tables
         tabledata "GMO ABC Analysis Setup" = R,

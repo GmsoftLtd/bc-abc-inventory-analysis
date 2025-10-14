@@ -125,6 +125,11 @@ report 73030575 "GMO ABC Distribution"
         ItemFilter: Text;
         ReportTitleLbl: Label 'ABC Class Distribution Report';
 
+    trigger OnPreReport()
+    begin
+        // No license check needed
+    end;
+
     local procedure GetClassName(ClassNum: Integer): Text[10]
     begin
         case ClassNum of

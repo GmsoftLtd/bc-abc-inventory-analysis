@@ -3,7 +3,7 @@ page 73030580 "GMO ABC Worksheet"
     PageType = Worksheet;
     SourceTable = "GMO ABC Preview Line";
     SourceTableTemporary = true;
-    Caption = 'ABC Inventory Optimizer - Worksheet';
+    Caption = 'ABC Inventory - Worksheet';
     ApplicationArea = All;
     UsageCategory = Tasks;
 
@@ -132,6 +132,11 @@ page 73030580 "GMO ABC Worksheet"
         LastEndDate: Date;
         LastStartDate: Date;
         LastModel: enum "GMO ABC Model";
+
+    trigger OnOpenPage()
+    begin
+        // No license check needed
+    end;
 
     // ===================== Helpers =====================
 

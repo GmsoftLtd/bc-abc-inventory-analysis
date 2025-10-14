@@ -1,6 +1,6 @@
 table 73030579 "GMO ABC Preview Line"
 {
-    Caption = 'ABC Inventory Optimizer - Preview Line';
+    Caption = 'ABC Inventory - Preview Line';
     Description = 'Temporary table for displaying preview results of ABC analysis calculations before committing to history';
     DataClassification = CustomerContent;
     DataCaptionFields = Description;

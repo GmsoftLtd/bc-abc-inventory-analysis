@@ -2,7 +2,7 @@ report 73030577 "GMO ABC Analysis"
 {
     UsageCategory = ReportsAndAnalysis;
     ApplicationArea = All;
-    Caption = 'ABC Inventory Optimizer - Analysis';
+    Caption = 'ABC Inventory - Analysis';
     RDLCLayout = './src/Reports/Layouts/GMOAnalysis.rdl';
 
     dataset
@@ -65,4 +65,9 @@ report 73030577 "GMO ABC Analysis"
         gEndDate: Date;
         gStartDate: Date;
         gModel: Enum "GMO ABC Model";
+
+    trigger OnPreReport()
+    begin
+        // No license check needed
+    end;
 }

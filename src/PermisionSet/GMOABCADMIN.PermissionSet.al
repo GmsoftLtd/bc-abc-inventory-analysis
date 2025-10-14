@@ -1,7 +1,7 @@
 permissionset 73030577 "GMO ABC ADMIN"
 {
     Assignable = true;
-    Caption = 'ABC Inventory Optimizer - Administrator';
+    Caption = 'ABC Inventory - Administrator';
 
     Permissions =
         // Tables (metadata)

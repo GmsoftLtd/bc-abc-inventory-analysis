@@ -1,6 +1,6 @@
 permissionset 73030576 "GMO ABC MANAGER"
 {
-    Caption = 'ABC Inventory Optimizer - Manager';
+    Caption = 'ABC Inventory - Manager';
     Assignable = true;
 
     // Include Microsoft base role
@@ -13,6 +13,8 @@ permissionset 73030576 "GMO ABC MANAGER"
         table "GMO ABC Counting Policy Header" = X,
         table "GMO ABC Counting Policy Line" = X,
         table "GMO ABC Analysis Setup" = X,
+        table "GMO ABC History Header" = X,
+        table "GMO ABC History Line" = X,
 
         // Tables (data)
         tabledata "GMO ABC Preview Line" = RIMD,
@@ -20,6 +22,8 @@ permissionset 73030576 "GMO ABC MANAGER"
         tabledata "GMO ABC Counting Policy Header" = RIMD,
         tabledata "GMO ABC Counting Policy Line" = RIMD,
         tabledata "GMO ABC Analysis Setup" = RIMD,
+        tabledata "GMO ABC History Header" = RIMD,
+        tabledata "GMO ABC History Line" = RIMD,
 
         // Pages
         page "GMO ABC Worksheet" = X,
@@ -31,7 +35,6 @@ permissionset 73030576 "GMO ABC MANAGER"
         page "GMO ABC History" = X,
         page "GMO ABC Count Policy Subform" = X,
         page "GMO ABC Counting Policy Lines" = X,
-
 
         // Report
         report "GMO ABC Analysis" = X,
