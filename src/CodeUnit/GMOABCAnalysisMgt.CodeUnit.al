@@ -23,7 +23,8 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
                 Amount := CalcItemAmount(Model, StartDate, EndDate, Item."No.");
                 if Amount < 0 then Amount := 0;
 
-                if Amount <> 0 then begin
+                // Skip items with zero value - don't display them
+                if Amount > 0 then begin
                     if LNo = 0 then LNo := NextLineNo(TempPreview);
 
                     TempPreview.Init();
@@ -45,6 +46,7 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
 
         if TotalValue = 0 then exit;
 
+        // Classify items by value
         TempPreview.Reset();
         TempPreview.SetCurrentKey(Value);
         TempPreview.Ascending(false);
@@ -58,6 +60,8 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
                 TempPreview.Class := ClassFromCumPercent(Model, Setup, CumPct);
                 TempPreview.Modify();
             until TempPreview.Next() = 0;
+
+        TempPreview.Reset();
     end;
 
     procedure ApplyPreview(var TempPreview: Record "GMO ABC Preview Line" temporary; Model: enum "GMO ABC Model"; StartDate: Date; EndDate: Date)
@@ -115,6 +119,16 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
                             Item.Validate("GMO Class (COGS)", TempBuf.Class);
                             Item.Validate("GMO Last Calc (COGS)", NowDT);
                         end;
+                    Model::"Sales Quantity":
+                        begin
+                            Item.Validate("GMO Class (Sales Qty)", TempBuf.Class);
+                            Item.Validate("GMO Last Calc (Sales Qty)", NowDT);
+                        end;
+                    Model::"Usage Value":
+                        begin
+                            Item.Validate("GMO Class (Usage Value)", TempBuf.Class);
+                            Item.Validate("GMO Last Calc (Usage Value)", NowDT);
+                        end;
                 end;
                 Item.Modify(true);
                 Updated += 1;
@@ -155,6 +169,16 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
                                     SKU.Validate("GMO Class (COGS)", TempBuf.Class);
                                     SKU.Validate("GMO Last Calc (COGS)", NowDT);
                                 end;
+                            Model::"Sales Quantity":
+                                begin
+                                    SKU.Validate("GMO Class (Sales Qty)", TempBuf.Class);
+                                    SKU.Validate("GMO Last Calc (Sales Qty)", NowDT);
+                                end;
+                            Model::"Usage Value":
+                                begin
+                                    SKU.Validate("GMO Class (Usage Value)", TempBuf.Class);
+                                    SKU.Validate("GMO Last Calc (Usage Value)", NowDT);
+                                end;
                         end;
                         SKU.Modify(true);
                     until SKU.Next() = 0;
@@ -164,6 +188,12 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
         HistHdr."Total Amount" := TotalAmt;
         HistHdr."Items Count" := Updated;
         HistHdr.Modify(true);
+
+        // Update the "Last Run" timestamp in Setup
+        if Setup.Get('SETUP') then begin
+            Setup."Last Run" := NowDT;
+            Setup.Modify(true);
+        end;
 
         // Optional info message (kept silent here to avoid double-message with page)
         // Message('%1 items updated.', Updated);
@@ -234,6 +264,12 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
         Setup."COGS A %" := 80;
         Setup."COGS B %" := 95;
         Setup."COGS Period (Days)" := 365;
+        Setup."Sales Qty A %" := 80;
+        Setup."Sales Qty B %" := 95;
+        Setup."Sales Qty Period (Days)" := 365;
+        Setup."Usage Value A %" := 80;
+        Setup."Usage Value B %" := 95;
+        Setup."Usage Value Period (Days)" := 365;
         Setup."Counting Code Mapping ID" := 'DEFAULT';
         Setup.Insert(true);
     end;
@@ -244,10 +280,17 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
         amt: Decimal;
         c: Decimal;
         s: Decimal;
+        q: Decimal;
     begin
         amt := 0;
         VE.Reset();
         VE.SetRange("Item No.", ItemNo);
+        // Include: Sale, Consumption, Negative Adjmt (for scrap)
+        // Exclude: Output, Purchase, Positive Adjmt, Transfer, etc.
+        VE.SetFilter("Item Ledger Entry Type", '%1|%2|%3',
+            VE."Item Ledger Entry Type"::Sale,
+            VE."Item Ledger Entry Type"::Consumption,
+            VE."Item Ledger Entry Type"::"Negative Adjmt.");
         if (StartDate <> 0D) or (EndDate <> 0D) then
             VE.SetRange("Posting Date", StartDate, EndDate);
 
@@ -270,6 +313,22 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
                             c := VE."Cost Amount (Actual)";
                             if c < 0 then
                                 amt += -c; // outbound cost only
+                        end;
+                    Model::"Sales Quantity":
+                        begin
+                            q := VE."Invoiced Quantity";
+                            if q > 0 then
+                                amt += q; // positive sales quantity only
+                        end;
+                    Model::"Usage Value":
+                        begin
+                            // Usage Value = (Sales + Consumption) Qty × Unit Cost
+                            // For outbound entries, use absolute values
+                            q := VE."Invoiced Quantity";
+                            c := VE."Cost Amount (Actual)";
+                            if q < 0 then q := -q; // make quantity positive
+                            if c < 0 then c := -c; // make cost positive
+                            amt += c; // Cost already represents Qty × Unit Cost
                         end;
                 end;
             until VE.Next() = 0;
@@ -297,6 +356,16 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
                 begin
                     ATh := Setup."COGS A %";
                     BTh := Setup."COGS B %";
+                end;
+            Model::"Sales Quantity":
+                begin
+                    ATh := Setup."Sales Qty A %";
+                    BTh := Setup."Sales Qty B %";
+                end;
+            Model::"Usage Value":
+                begin
+                    ATh := Setup."Usage Value A %";
+                    BTh := Setup."Usage Value B %";
                 end;
         end;
 
@@ -370,12 +439,23 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
         EnsurePolicyLine(HeaderCode, ModelOpt() ::Revenue, ClassOpt() ::A);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::Revenue, ClassOpt() ::B);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::Revenue, ClassOpt() ::C);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::Revenue, ClassOpt() ::D);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::"Gross Profit", ClassOpt() ::A);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::"Gross Profit", ClassOpt() ::B);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::"Gross Profit", ClassOpt() ::C);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Gross Profit", ClassOpt() ::D);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::COGS, ClassOpt() ::A);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::COGS, ClassOpt() ::B);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::COGS, ClassOpt() ::C);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::COGS, ClassOpt() ::D);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Sales Quantity", ClassOpt() ::A);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Sales Quantity", ClassOpt() ::B);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Sales Quantity", ClassOpt() ::C);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Sales Quantity", ClassOpt() ::D);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Usage Value", ClassOpt() ::A);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Usage Value", ClassOpt() ::B);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Usage Value", ClassOpt() ::C);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Usage Value", ClassOpt() ::D);
     end;
 
     local procedure EnsurePolicyLine(HeaderCode: Code[10]; Model: enum "GMO ABC Model"; ABCClassification: enum "GMO ABC Class")
@@ -418,6 +498,10 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
                 DaysBack := Setup."GP Period (Days)";
             Model::COGS:
                 DaysBack := Setup."COGS Period (Days)";
+            Model::"Sales Quantity":
+                DaysBack := Setup."Sales Qty Period (Days)";
+            Model::"Usage Value":
+                DaysBack := Setup."Usage Value Period (Days)";
         end;
         if DaysBack <= 0 then DaysBack := 365;
 

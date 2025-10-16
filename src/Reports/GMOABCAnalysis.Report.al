@@ -48,14 +48,19 @@ report 73030577 "GMO ABC Analysis"
                     {
                         ApplicationArea = All;
                         Caption = 'Start Date';
-                        ToolTip = 'Specifies the start date for the analysis period.';
+                        ToolTip = 'Specifies the start date for the analysis period. If not specified, the system will calculate it as today minus the lookback days from setup.';
                     }
                     field(EndDateField; gEndDate)
                     {
                         ApplicationArea = All;
                         Caption = 'End Date';
-                        ToolTip = 'Specifies the end date for the analysis period.';
+                        ToolTip = 'Specifies the end date for the analysis period. If not specified, the system will use today''s date.';
                     }
+                }
+                group(Note)
+                {
+                    Caption = 'Note';
+                    InstructionalText = 'If dates are not specified, the system will use today as the end date and calculate the start date by subtracting the lookback days configured in ABC Analysis Setup.';
                 }
             }
         }

@@ -190,6 +190,10 @@ report 73030575 "GMO ABC Distribution"
                 exit(ItemRec."GMO Class (Gross Profit)");
             ModelType::COGS:
                 exit(ItemRec."GMO Class (COGS)");
+            ModelType::"Sales Quantity":
+                exit(ItemRec."GMO Class (Sales Qty)");
+            ModelType::"Usage Value":
+                exit(ItemRec."GMO Class (Usage Value)");
         end;
     end;
 

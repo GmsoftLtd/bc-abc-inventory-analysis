@@ -33,6 +33,12 @@ report 73030579 "GMO ABC Comparison"
             column(COGSClass; Format("GMO Class (COGS)"))
             {
             }
+            column(SalesQtyClass; Format("GMO Class (Sales Qty)"))
+            {
+            }
+            column(UsageValueClass; Format("GMO Class (Usage Value)"))
+            {
+            }
             column(RevenueValue; RevenueValue)
             {
             }
@@ -40,6 +46,12 @@ report 73030579 "GMO ABC Comparison"
             {
             }
             column(COGSValue; COGSValue)
+            {
+            }
+            column(SalesQtyValue; SalesQtyValue)
+            {
+            }
+            column(UsageValueValue; UsageValueValue)
             {
             }
             column(ConsistencyIndicator; ConsistencyIndicator)
@@ -57,11 +69,13 @@ report 73030579 "GMO ABC Comparison"
                 RevenueValue := CalculateItemValue(Item."No.", ModelEnum::Revenue, StartDate, EndDate);
                 GrossProfitValue := CalculateItemValue(Item."No.", ModelEnum::"Gross Profit", StartDate, EndDate);
                 COGSValue := CalculateItemValue(Item."No.", ModelEnum::COGS, StartDate, EndDate);
+                SalesQtyValue := CalculateItemValue(Item."No.", ModelEnum::"Sales Quantity", StartDate, EndDate);
+                UsageValueValue := CalculateItemValue(Item."No.", ModelEnum::"Usage Value", StartDate, EndDate);
 
                 ConsistencyIndicator := GetConsistencyIndicator(Item);
 
                 // Skip items with no values
-                if (RevenueValue = 0) and (GrossProfitValue = 0) and (COGSValue = 0) then
+                if (RevenueValue = 0) and (GrossProfitValue = 0) and (COGSValue = 0) and (SalesQtyValue = 0) and (UsageValueValue = 0) then
                     CurrReport.Skip();
             end;
 
@@ -88,14 +102,19 @@ report 73030579 "GMO ABC Comparison"
                     {
                         ApplicationArea = All;
                         Caption = 'Start Date';
-                        ToolTip = 'Start date for value calculation.';
+                        ToolTip = 'Start date for value calculation. If not specified, the system will calculate it as today minus the lookback days from setup.';
                     }
                     field(EndDateField; EndDate)
                     {
                         ApplicationArea = All;
                         Caption = 'End Date';
-                        ToolTip = 'End date for value calculation.';
+                        ToolTip = 'End date for value calculation. If not specified, the system will use today''s date.';
                     }
+                }
+                group(Note)
+                {
+                    Caption = 'Note';
+                    InstructionalText = 'If dates are not specified, the system will use today as the end date and calculate the start date by subtracting the lookback days configured in ABC Analysis Setup.';
                 }
             }
         }
@@ -108,6 +127,8 @@ report 73030579 "GMO ABC Comparison"
         RevenueValue: Decimal;
         GrossProfitValue: Decimal;
         COGSValue: Decimal;
+        SalesQtyValue: Decimal;
+        UsageValueValue: Decimal;
         ConsistencyIndicator: Text[20];
         ReportTitleLbl: Label 'ABC Multi-Model Comparison Report';
 
@@ -123,6 +144,12 @@ report 73030579 "GMO ABC Comparison"
     begin
         Total := 0;
         VE.SetRange("Item No.", ItemNo);
+        // Include: Sale, Consumption, Negative Adjmt (for scrap)
+        // Exclude: Output, Purchase, Positive Adjmt, Transfer, etc.
+        VE.SetFilter("Item Ledger Entry Type", '%1|%2|%3',
+            VE."Item Ledger Entry Type"::Sale,
+            VE."Item Ledger Entry Type"::Consumption,
+            VE."Item Ledger Entry Type"::"Negative Adjmt.");
         VE.SetRange("Posting Date", FromDate, ToDate);
         if VE.FindSet() then
             repeat
@@ -132,6 +159,12 @@ report 73030579 "GMO ABC Comparison"
                     ModelType::"Gross Profit":
                         Total += VE."Sales Amount (Actual)" + VE."Cost Amount (Actual)";
                     ModelType::COGS:
+                        if VE."Cost Amount (Actual)" < 0 then
+                            Total += -VE."Cost Amount (Actual)";
+                    ModelType::"Sales Quantity":
+                        if VE."Invoiced Quantity" > 0 then
+                            Total += VE."Invoiced Quantity";
+                    ModelType::"Usage Value":
                         if VE."Cost Amount (Actual)" < 0 then
                             Total += -VE."Cost Amount (Actual)";
                 end;
@@ -144,15 +177,19 @@ report 73030579 "GMO ABC Comparison"
         RevClass: Integer;
         GPClass: Integer;
         COGSClass: Integer;
+        SalesQtyClass: Integer;
+        UsageValueClass: Integer;
     begin
         RevClass := ItemRec."GMO Class (Revenue)".AsInteger();
         GPClass := ItemRec."GMO Class (Gross Profit)".AsInteger();
         COGSClass := ItemRec."GMO Class (COGS)".AsInteger();
+        SalesQtyClass := ItemRec."GMO Class (Sales Qty)".AsInteger();
+        UsageValueClass := ItemRec."GMO Class (Usage Value)".AsInteger();
 
-        if (RevClass = GPClass) and (RevClass = COGSClass) then
+        if (RevClass = GPClass) and (RevClass = COGSClass) and (RevClass = SalesQtyClass) and (RevClass = UsageValueClass) then
             exit('✓ Consistent')
         else
-            if (Abs(RevClass - GPClass) <= 1) and (Abs(RevClass - COGSClass) <= 1) then
+            if (Abs(RevClass - GPClass) <= 1) and (Abs(RevClass - COGSClass) <= 1) and (Abs(RevClass - SalesQtyClass) <= 1) and (Abs(RevClass - UsageValueClass) <= 1) then
                 exit('≈ Minor Variance')
             else
                 exit('⚠ Inconsistent');

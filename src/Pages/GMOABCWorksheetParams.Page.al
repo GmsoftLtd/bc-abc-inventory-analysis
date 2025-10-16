@@ -38,9 +38,54 @@ page 73030581 "GMO ABC Worksheet Params"
         StartDate: Date;
         Model: Enum "GMO ABC Model";
 
+    trigger OnOpenPage()
+    var
+        Setup: Record "GMO ABC Analysis Setup";
+        LookbackDays: Integer;
+        DateFormulaLbl: Label '<-%1D>', Locked = true;
+    begin
+        // Set default dates based on lookback days from setup
+        if Setup.Get('SETUP') then begin
+            // Get lookback days based on default model (Revenue)
+            LookbackDays := Setup."Lookback (Days)";
+            if LookbackDays <= 0 then
+                LookbackDays := 365;
+
+            EndDate := WorkDate();
+            StartDate := CalcDate(StrSubstNo(DateFormulaLbl, LookbackDays), EndDate);
+        end else begin
+            // Fallback if setup doesn't exist
+            EndDate := WorkDate();
+            StartDate := CalcDate('<-1Y>', EndDate);
+        end;
+
+        // Default to Revenue model
+        Model := Model::Revenue;
+    end;
+
     procedure GetParams(var pModel: Enum "GMO ABC Model"; var pStartDate: Date; var pEndDate: Date)
+    var
+        Setup: Record "GMO ABC Analysis Setup";
+        LookbackDays: Integer;
+        DateFormulaLbl: Label '<-%1D>', Locked = true;
     begin
         pModel := Model;
+
+        // If dates are not specified (0D), calculate from lookback days
+        if (StartDate = 0D) or (EndDate = 0D) then begin
+            if Setup.Get('SETUP') then begin
+                LookbackDays := Setup."Lookback (Days)";
+                if LookbackDays <= 0 then
+                    LookbackDays := 365;
+
+                EndDate := WorkDate();
+                StartDate := CalcDate(StrSubstNo(DateFormulaLbl, LookbackDays), EndDate);
+            end else begin
+                EndDate := WorkDate();
+                StartDate := CalcDate('<-1Y>', EndDate);
+            end;
+        end;
+
         pStartDate := StartDate;
         pEndDate := EndDate;
     end;

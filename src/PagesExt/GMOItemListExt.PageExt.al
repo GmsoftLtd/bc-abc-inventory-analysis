@@ -19,6 +19,16 @@ pageextension 73030576 "GMO Item List Ext." extends "Item List"
                 ApplicationArea = All;
                 ToolTip = 'ABC classification based on cost of goods sold: A (high), B (medium), C (low), or D (inactive).';
             }
+            field("GMO Class (Sales Qty)"; Rec."GMO Class (Sales Qty)")
+            {
+                ApplicationArea = All;
+                ToolTip = 'ABC classification based on sales quantity: A (high volume), B (medium volume), C (low volume), or D (no sales).';
+            }
+            field("GMO Class (Usage Value)"; Rec."GMO Class (Usage Value)")
+            {
+                ApplicationArea = All;
+                ToolTip = 'ABC classification based on usage value (consumption + sales quantity × unit cost): A (high usage), B (medium usage), C (low usage), or D (no usage).';
+            }
         }
     }
 }

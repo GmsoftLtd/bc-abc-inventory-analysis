@@ -70,9 +70,17 @@ page 73030575 "GMO ABC Analysis Setup"
                     ToolTip = 'Version number of the last completed data upgrade. Used for upgrade tracking. Read-only field.';
                 }
             }
-            group(ModelThresholds)
+            group(RevenueModel)
             {
-                Caption = 'Model Thresholds & Periods';
+                Caption = 'Revenue ABC Model';
+                field(revenueLbl;this.RevenueLbl)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Description';
+                    MultiLine = true;
+                    Editable = false;
+                    ToolTip = 'Ranks items by sales amount (net revenue). Good when demand is driven by sales, not internal consumption.';
+                }   
                 field("Rev A %"; Rec."Rev A %")
                 {
                     ApplicationArea = All;
@@ -87,6 +95,18 @@ page 73030575 "GMO ABC Analysis Setup"
                 {
                     ApplicationArea = All;
                     ToolTip = 'Number of days to analyze when calculating revenue-based ABC classifications. Default: 365 days.';
+                }
+            }
+            group(GrossProfitModel)
+            {
+                Caption = 'Gross Profit ABC Model';
+                field(profitLbl;this.ProfitLbl)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Description';
+                    MultiLine = true;
+                    Editable = false;
+                    ToolTip = 'Ranks by gross margin (Sales − Cost) to spotlight profit drivers (A’s) vs low-margin tail (C’s).';
                 }
                 field("GP A %"; Rec."GP A %")
                 {
@@ -103,6 +123,10 @@ page 73030575 "GMO ABC Analysis Setup"
                     ApplicationArea = All;
                     ToolTip = 'Number of days to analyze when calculating profit-based ABC classifications. Default: 365 days.';
                 }
+            }
+            group(COGSModel)
+            {
+                Caption = 'COGS ABC Model (Value / COGS)';
                 field("COGS A %"; Rec."COGS A %")
                 {
                     ApplicationArea = All;
@@ -117,6 +141,82 @@ page 73030575 "GMO ABC Analysis Setup"
                 {
                     ApplicationArea = All;
                     ToolTip = 'Number of days to analyze when calculating COGS-based ABC classifications. Default: 365 days.';
+                }
+            }
+            group(SalesQuantityModel)
+            {
+                Caption = 'Sales Quantity ABC Model';
+                field("Sales Qty A %"; Rec."Sales Qty A %")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Class A threshold percentage for Sales Quantity model. Items contributing up to this cumulative percentage of sales quantity are Class A. Default: 80%.';
+                }
+                field("Sales Qty B %"; Rec."Sales Qty B %")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Class B threshold percentage for Sales Quantity model. Items between A and this threshold are Class B. Default: 95%.';
+                }
+                field("Sales Qty Period (Days)"; Rec."Sales Qty Period (Days)")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Number of days to analyze when calculating sales quantity-based ABC classifications. Default: 365 days.';
+                }
+            }
+            group(UsageValueModel)
+            {
+                Caption = 'Usage Value ABC Model (Qty × Cost)';
+                field("Usage Value A %"; Rec."Usage Value A %")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Class A threshold percentage for Usage Value model. Items contributing up to this cumulative percentage of usage value are Class A. Default: 80%.';
+                }
+                field("Usage Value B %"; Rec."Usage Value B %")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Class B threshold percentage for Usage Value model. Items between A and this threshold are Class B. Default: 95%.';
+                }
+                field("Usage Value Period (Days)"; Rec."Usage Value Period (Days)")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Number of days to analyze when calculating usage value-based ABC classifications. Default: 365 days.';
+                }
+            }
+            group(GMROIIModel)
+            {
+                Caption = 'GMROII ABC Model';
+                field("GMROII A %"; Rec."GMROII A %")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Class A threshold percentage for GMROII (Gross Margin Return on Inventory Investment) model. Items ranked by Margin / Average Inventory Value contributing up to this cumulative percentage are Class A. Ideal when working capital is tight. Default: 80%.';
+                }
+                field("GMROII B %"; Rec."GMROII B %")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Class B threshold percentage for GMROII model. Items between A and this threshold are Class B. Default: 95%.';
+                }
+                field("GMROII Period (Days)"; Rec."GMROII Period (Days)")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Number of days to analyze when calculating GMROII-based ABC classifications. Period margin from Value Entries; average inventory value via Inventory Valuation / Item Ledger. Default: 365 days.';
+                }
+            }
+            group(PickFrequencyModel)
+            {
+                Caption = 'Pick-Frequency ABC Model';
+                field("Pick Freq A %"; Rec."Pick Freq A %")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Class A threshold percentage for Pick-Frequency model. Items ranked by number of picks/issues (not value) contributing up to this cumulative percentage are Class A. Great for warehouse slotting (fast pick lines near dispatch). Default: 80%.';
+                }
+                field("Pick Freq B %"; Rec."Pick Freq B %")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Class B threshold percentage for Pick-Frequency model. Items between A and this threshold are Class B. Default: 95%.';
+                }
+                field("Pick Freq Period (Days)"; Rec."Pick Freq Period (Days)")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Number of days to analyze when calculating pick frequency-based ABC classifications. Count issue/pick lines from Warehouse/Item Ledger (Sales & Consumption counts). Default: 365 days.';
                 }
             }
             group(CountingPolicy)
@@ -265,6 +365,8 @@ page 73030575 "GMO ABC Analysis Setup"
 
     var
         CountingPolicyDescLbl: Label '%1 ABC → Counting Period mapping', Locked = true;
+        RevenueLbl: Label 'Ranks items by sales amount (net revenue). Good when demand is driven by sales, not internal consumption. BC data: Value Entries or Sales Shipment/Invoice lines → Sales Amount (Actual).', Locked = true;
+        ProfitLbl: Label 'Ranks by gross margin (Sales − Cost) to spotlight profit drivers (A’s) vs low-margin tail (C’s).BC data: Value Entries → Sales Amount (Actual) minus Cost Amount (Actual).', Locked = true;
 
     trigger OnOpenPage()
     var

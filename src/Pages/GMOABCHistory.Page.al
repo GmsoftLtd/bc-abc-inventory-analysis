@@ -5,6 +5,10 @@ page 73030583 "GMO ABC History"
     SourceTable = "GMO ABC History Header";
     ApplicationArea = All;
     UsageCategory = History;
+    Editable = false;
+    InsertAllowed = false;
+    DeleteAllowed = false;
+    ModifyAllowed = false;
 
     layout
     {

@@ -39,6 +39,12 @@ report 73030578 "GMO ABC Exceptions"
             column(COGSClass; Format("GMO Class (COGS)"))
             {
             }
+            column(SalesQtyClass; Format("GMO Class (Sales Qty)"))
+            {
+            }
+            column(UsageValueClass; Format("GMO Class (Usage Value)"))
+            {
+            }
             column(LastCalcRev; Format("GMO Last Calc (Revenue)"))
             {
             }
@@ -95,14 +101,19 @@ report 73030578 "GMO ABC Exceptions"
                     {
                         ApplicationArea = All;
                         Caption = 'Outdated Threshold (Days)';
-                        ToolTip = 'Number of days after which calculation is considered outdated.';
+                        ToolTip = 'Number of days after which calculation is considered outdated. Default: 90 days.';
                     }
                     field(InventoryThresholdField; InventoryThreshold)
                     {
                         ApplicationArea = All;
                         Caption = 'Inventory Value Threshold';
-                        ToolTip = 'Minimum inventory value to flag as high inventory.';
+                        ToolTip = 'Minimum inventory value to flag as high inventory. Default: 10000.';
                     }
+                }
+                group(Note)
+                {
+                    Caption = 'Note';
+                    InstructionalText = 'This report identifies items with potential ABC classification issues: never calculated, outdated calculations, inconsistent classes across models, high inventory with low class, or zero activity.';
                 }
             }
         }
@@ -120,7 +131,9 @@ report 73030578 "GMO ABC Exceptions"
     begin
         exit((ItemRec."GMO Last Calc (Revenue)" = 0DT) and
              (ItemRec."GMO Last Calc (GP)" = 0DT) and
-             (ItemRec."GMO Last Calc (COGS)" = 0DT));
+             (ItemRec."GMO Last Calc (COGS)" = 0DT) and
+             (ItemRec."GMO Last Calc (Sales Qty)" = 0DT) and
+             (ItemRec."GMO Last Calc (Usage Value)" = 0DT));
     end;
 
     local procedure IsOutdated(ItemRec: Record Item): Boolean
@@ -132,6 +145,10 @@ report 73030578 "GMO ABC Exceptions"
             LatestCalc := ItemRec."GMO Last Calc (GP)";
         if ItemRec."GMO Last Calc (COGS)" > LatestCalc then
             LatestCalc := ItemRec."GMO Last Calc (COGS)";
+        if ItemRec."GMO Last Calc (Sales Qty)" > LatestCalc then
+            LatestCalc := ItemRec."GMO Last Calc (Sales Qty)";
+        if ItemRec."GMO Last Calc (Usage Value)" > LatestCalc then
+            LatestCalc := ItemRec."GMO Last Calc (Usage Value)";
 
         if LatestCalc = 0DT then
             exit(false);
@@ -141,13 +158,15 @@ report 73030578 "GMO ABC Exceptions"
 
     local procedure HasInconsistentClasses(ItemRec: Record Item): Boolean
     var
-        Classes: array[3] of Integer;
+        Classes: array[5] of Integer;
     begin
         Classes[1] := ItemRec."GMO Class (Revenue)".AsInteger();
         Classes[2] := ItemRec."GMO Class (Gross Profit)".AsInteger();
         Classes[3] := ItemRec."GMO Class (COGS)".AsInteger();
+        Classes[4] := ItemRec."GMO Class (Sales Qty)".AsInteger();
+        Classes[5] := ItemRec."GMO Class (Usage Value)".AsInteger();
 
-        exit((Classes[1] <> Classes[2]) or (Classes[1] <> Classes[3]));
+        exit((Classes[1] <> Classes[2]) or (Classes[1] <> Classes[3]) or (Classes[1] <> Classes[4]) or (Classes[1] <> Classes[5]));
     end;
 
     local procedure IsHighInventoryLowClass(ItemRec: Record Item): Boolean

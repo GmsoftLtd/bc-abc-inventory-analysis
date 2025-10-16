@@ -82,8 +82,13 @@ report 73030576 "GMO ABC Item Movement"
                     {
                         ApplicationArea = All;
                         Caption = 'Compare to Date';
-                        ToolTip = 'Historical date to compare against current classification.';
+                        ToolTip = 'Historical date to compare against current classification. Required field.';
                     }
+                }
+                group(Note)
+                {
+                    Caption = 'Note';
+                    InstructionalText = 'This report shows items whose ABC classification changed between the comparison date and today. A comparison date is required.';
                 }
             }
         }
@@ -113,6 +118,10 @@ report 73030576 "GMO ABC Item Movement"
                 exit(ItemRec."GMO Class (Gross Profit)");
             ModelType::COGS:
                 exit(ItemRec."GMO Class (COGS)");
+            ModelType::"Sales Quantity":
+                exit(ItemRec."GMO Class (Sales Qty)");
+            ModelType::"Usage Value":
+                exit(ItemRec."GMO Class (Usage Value)");
         end;
     end;
 
@@ -145,6 +154,12 @@ report 73030576 "GMO ABC Item Movement"
     begin
         Total := 0;
         VE.SetRange("Item No.", ItemRec."No.");
+        // Include: Sale, Consumption, Negative Adjmt (for scrap)
+        // Exclude: Output, Purchase, Positive Adjmt, Transfer, etc.
+        VE.SetFilter("Item Ledger Entry Type", '%1|%2|%3',
+            VE."Item Ledger Entry Type"::Sale,
+            VE."Item Ledger Entry Type"::Consumption,
+            VE."Item Ledger Entry Type"::"Negative Adjmt.");
         VE.SetFilter("Posting Date", '%1..%2', CalcDate('<-1Y>', WorkDate()), WorkDate());
         if VE.FindSet() then
             repeat
@@ -154,6 +169,12 @@ report 73030576 "GMO ABC Item Movement"
                     ModelType::"Gross Profit":
                         Total += VE."Sales Amount (Actual)" + VE."Cost Amount (Actual)";
                     ModelType::COGS:
+                        if VE."Cost Amount (Actual)" < 0 then
+                            Total += -VE."Cost Amount (Actual)";
+                    ModelType::"Sales Quantity":
+                        if VE."Invoiced Quantity" > 0 then
+                            Total += VE."Invoiced Quantity";
+                    ModelType::"Usage Value":
                         if VE."Cost Amount (Actual)" < 0 then
                             Total += -VE."Cost Amount (Actual)";
                 end;

@@ -7,7 +7,7 @@ page 73030580 "GMO ABC Worksheet"
     ApplicationArea = All;
     UsageCategory = Tasks;
 
-    SourceTableView = sorting(Value) order(Descending);
+    SourceTableView = sorting(class) order(ascending);
 
     Editable = false;
     InsertAllowed = false;
@@ -50,6 +50,20 @@ page 73030580 "GMO ABC Worksheet"
 
     actions
     {
+        area(Promoted)
+        {
+            group(Category_Process)
+            {
+                Caption = 'Process';
+
+                actionref(Calc_Promoted; Calc)
+                {
+                }
+                actionref(Apply_Promoted; Apply)
+                {
+                }
+            }
+        }
         area(Processing)
         {
             action(Calc)
@@ -160,6 +174,10 @@ page 73030580 "GMO ABC Worksheet"
                 exit('Gross Profit');
             ModelParam::COGS:
                 exit('COGS');
+            ModelParam::"Sales Quantity":
+                exit('Sales Quantity');
+            ModelParam::"Usage Value":
+                exit('Usage Value');
         end;
         exit('');
     end;

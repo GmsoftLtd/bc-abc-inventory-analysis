@@ -3,7 +3,12 @@ page 73030584 "GMO ABC History Lines"
     Caption = 'ABC History Lines';
     PageType = ListPart;
     SourceTable = "GMO ABC History Line";
+    SourceTableView = sorting(Class);
     ApplicationArea = All;
+    Editable = false;
+    InsertAllowed = false;
+    DeleteAllowed = false;
+    ModifyAllowed = false;
 
     layout
     {

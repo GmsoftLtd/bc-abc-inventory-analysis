@@ -21,5 +21,6 @@ table 73030579 "GMO ABC Preview Line"
     {
         key(PK; "Line No.") { Clustered = true; }
         key(ValueKey; Value) { } // used for value-desc cumulative calculations
+        key(ClassValue; Class, Value) { } // used for displaying by class then value
     }
 }

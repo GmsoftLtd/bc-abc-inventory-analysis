@@ -34,6 +34,22 @@ table 73030575 "GMO ABC Analysis Setup"
         field(121; "COGS B %"; Decimal) { Caption = 'COGS B Threshold %'; DecimalPlaces = 0 : 2; InitValue = 95; }
         field(122; "COGS Period (Days)"; Integer) { Caption = 'COGS Period (Days)'; InitValue = 365; MinValue = 1; }
 
+        field(125; "Sales Qty A %"; Decimal) { Caption = 'Sales Quantity A Threshold %'; DecimalPlaces = 0 : 2; InitValue = 80; }
+        field(126; "Sales Qty B %"; Decimal) { Caption = 'Sales Quantity B Threshold %'; DecimalPlaces = 0 : 2; InitValue = 95; }
+        field(127; "Sales Qty Period (Days)"; Integer) { Caption = 'Sales Quantity Period (Days)'; InitValue = 365; MinValue = 1; }
+
+        field(128; "Usage Value A %"; Decimal) { Caption = 'Usage Value A Threshold %'; DecimalPlaces = 0 : 2; InitValue = 80; }
+        field(129; "Usage Value B %"; Decimal) { Caption = 'Usage Value B Threshold %'; DecimalPlaces = 0 : 2; InitValue = 95; }
+        field(135; "Usage Value Period (Days)"; Integer) { Caption = 'Usage Value Period (Days)'; InitValue = 365; MinValue = 1; }
+
+        field(136; "GMROII A %"; Decimal) { Caption = 'GMROII A Threshold %'; DecimalPlaces = 0 : 2; InitValue = 80; }
+        field(137; "GMROII B %"; Decimal) { Caption = 'GMROII B Threshold %'; DecimalPlaces = 0 : 2; InitValue = 95; }
+        field(138; "GMROII Period (Days)"; Integer) { Caption = 'GMROII Period (Days)'; InitValue = 365; MinValue = 1; }
+
+        field(139; "Pick Freq A %"; Decimal) { Caption = 'Pick Frequency A Threshold %'; DecimalPlaces = 0 : 2; InitValue = 80; }
+        field(140; "Pick Freq B %"; Decimal) { Caption = 'Pick Frequency B Threshold %'; DecimalPlaces = 0 : 2; InitValue = 95; }
+        field(141; "Pick Freq Period (Days)"; Integer) { Caption = 'Pick Frequency Period (Days)'; InitValue = 365; MinValue = 1; }
+
         // Counting policy
         field(130; "Update Counting Codes"; Boolean) { Caption = 'Update Warehouse Counting Codes'; }
         field(131; "Update SKU"; Boolean) { Caption = 'Update SKU as well'; }

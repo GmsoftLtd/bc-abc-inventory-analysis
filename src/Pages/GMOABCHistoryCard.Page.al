@@ -4,6 +4,10 @@ page 73030585 "GMO ABC History Card"
     PageType = Card;
     SourceTable = "GMO ABC History Header";
     ApplicationArea = All;
+    Editable = false;
+    InsertAllowed = false;
+    DeleteAllowed = false;
+    ModifyAllowed = false;
 
     layout
     {

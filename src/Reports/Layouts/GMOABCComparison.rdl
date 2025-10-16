@@ -696,6 +696,12 @@
         <Field Name="COGSClass">
           <DataField>COGSClass</DataField>
         </Field>
+        <Field Name="SalesQtyClass">
+          <DataField>SalesQtyClass</DataField>
+        </Field>
+        <Field Name="UsageValueClass">
+          <DataField>UsageValueClass</DataField>
+        </Field>
         <Field Name="RevenueValue">
           <DataField>RevenueValue</DataField>
         </Field>
@@ -713,6 +719,18 @@
         </Field>
         <Field Name="COGSValueFormat">
           <DataField>COGSValueFormat</DataField>
+        </Field>
+        <Field Name="SalesQtyValue">
+          <DataField>SalesQtyValue</DataField>
+        </Field>
+        <Field Name="SalesQtyValueFormat">
+          <DataField>SalesQtyValueFormat</DataField>
+        </Field>
+        <Field Name="UsageValueValue">
+          <DataField>UsageValueValue</DataField>
+        </Field>
+        <Field Name="UsageValueValueFormat">
+          <DataField>UsageValueValueFormat</DataField>
         </Field>
         <Field Name="ConsistencyIndicator">
           <DataField>ConsistencyIndicator</DataField>
