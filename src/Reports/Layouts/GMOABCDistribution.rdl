@@ -40,13 +40,63 @@
               <PaddingRight>2pt</PaddingRight>
             </Style>
           </Textbox>
+          <Textbox Name="CompanyBox">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Fields!CompanyName.Value</Value>
+                    <Style>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>0in</Top>
+            <Left>0.25in</Left>
+            <Height>0.25in</Height>
+            <Width>4in</Width>
+            <ZIndex>3</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+            </Style>
+          </Textbox>
+          <Textbox Name="RunInfoBox">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Run: " &amp; Fields!RunDate.Value &amp; " by " &amp; Fields!RunByUser.Value</Value>
+                    <Style>
+                      <FontSize>9pt</FontSize>
+                      <Color>Gray</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Right</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>0in</Top>
+            <Left>4.5in</Left>
+            <Height>0.25in</Height>
+            <Width>2.75in</Width>
+            <ZIndex>4</ZIndex>
+            <Style />
+          </Textbox>
           <Textbox Name="ModelBox">
             <CanGrow>true</CanGrow>
             <Paragraphs>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>="Model: " &amp; Fields!Model.Value</Value>
+                    <Value>="Model: " &amp; Fields!ModelColumn.Value</Value>
                     <Style>
                       <FontSize>10pt</FontSize>
                       <Color>DarkGray</Color>
@@ -437,6 +487,12 @@
         </Field>
         <Field Name="ReportTitle">
           <DataField>ReportTitle</DataField>
+        </Field>
+        <Field Name="RunDate">
+          <DataField>RunDate</DataField>
+        </Field>
+        <Field Name="RunByUser">
+          <DataField>RunByUser</DataField>
         </Field>
         <Field Name="FilterText">
           <DataField>FilterText</DataField>

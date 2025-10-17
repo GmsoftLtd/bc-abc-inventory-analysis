@@ -119,15 +119,20 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
                             Item.Validate("GMO Class (COGS)", TempBuf.Class);
                             Item.Validate("GMO Last Calc (COGS)", NowDT);
                         end;
-                    Model::"Sales Quantity":
-                        begin
-                            Item.Validate("GMO Class (Sales Qty)", TempBuf.Class);
-                            Item.Validate("GMO Last Calc (Sales Qty)", NowDT);
-                        end;
                     Model::"Usage Value":
                         begin
                             Item.Validate("GMO Class (Usage Value)", TempBuf.Class);
                             Item.Validate("GMO Last Calc (Usage Value)", NowDT);
+                        end;
+                    Model::GMROII:
+                        begin
+                            Item.Validate("GMO Class (GMROII)", TempBuf.Class);
+                            Item.Validate("GMO Last Calc (GMROII)", NowDT);
+                        end;
+                    Model::"Pick Frequency":
+                        begin
+                            Item.Validate("GMO Class (Pick Frequency)", TempBuf.Class);
+                            Item.Validate("GMO Last Calc (Pick Freq)", NowDT);
                         end;
                 end;
                 Item.Modify(true);
@@ -169,15 +174,20 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
                                     SKU.Validate("GMO Class (COGS)", TempBuf.Class);
                                     SKU.Validate("GMO Last Calc (COGS)", NowDT);
                                 end;
-                            Model::"Sales Quantity":
-                                begin
-                                    SKU.Validate("GMO Class (Sales Qty)", TempBuf.Class);
-                                    SKU.Validate("GMO Last Calc (Sales Qty)", NowDT);
-                                end;
                             Model::"Usage Value":
                                 begin
                                     SKU.Validate("GMO Class (Usage Value)", TempBuf.Class);
                                     SKU.Validate("GMO Last Calc (Usage Value)", NowDT);
+                                end;
+                            Model::GMROII:
+                                begin
+                                    SKU.Validate("GMO Class (GMROII)", TempBuf.Class);
+                                    SKU.Validate("GMO Last Calc (GMROII)", NowDT);
+                                end;
+                            Model::"Pick Frequency":
+                                begin
+                                    SKU.Validate("GMO Class (Pick Frequency)", TempBuf.Class);
+                                    SKU.Validate("GMO Last Calc (Pick Freq)", NowDT);
                                 end;
                         end;
                         SKU.Modify(true);
@@ -208,12 +218,14 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
     begin
         EnsureSetup(Setup);
 
+        // Revenue Model
         Model := Model::Revenue;
         CalcDatesFromSetup(Model, Setup, WorkDate(), S, E);
         CalculatePreview(Model, S, E, TempPreview);
         if ApplyChanges and not TempPreview.IsEmpty() then
             ApplyPreview(TempPreview, Model, S, E);
 
+        // Gross Profit Model
         TempPreview.DeleteAll();
         Model := Model::"Gross Profit";
         CalcDatesFromSetup(Model, Setup, WorkDate(), S, E);
@@ -221,8 +233,33 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
         if ApplyChanges and not TempPreview.IsEmpty() then
             ApplyPreview(TempPreview, Model, S, E);
 
+        // COGS Model
         TempPreview.DeleteAll();
         Model := Model::COGS;
+        CalcDatesFromSetup(Model, Setup, WorkDate(), S, E);
+        CalculatePreview(Model, S, E, TempPreview);
+        if ApplyChanges and not TempPreview.IsEmpty() then
+            ApplyPreview(TempPreview, Model, S, E);
+
+        // Usage Value Model
+        TempPreview.DeleteAll();
+        Model := Model::"Usage Value";
+        CalcDatesFromSetup(Model, Setup, WorkDate(), S, E);
+        CalculatePreview(Model, S, E, TempPreview);
+        if ApplyChanges and not TempPreview.IsEmpty() then
+            ApplyPreview(TempPreview, Model, S, E);
+
+        // GMROII Model
+        TempPreview.DeleteAll();
+        Model := Model::GMROII;
+        CalcDatesFromSetup(Model, Setup, WorkDate(), S, E);
+        CalculatePreview(Model, S, E, TempPreview);
+        if ApplyChanges and not TempPreview.IsEmpty() then
+            ApplyPreview(TempPreview, Model, S, E);
+
+        // Pick Frequency Model
+        TempPreview.DeleteAll();
+        Model := Model::"Pick Frequency";
         CalcDatesFromSetup(Model, Setup, WorkDate(), S, E);
         CalculatePreview(Model, S, E, TempPreview);
         if ApplyChanges and not TempPreview.IsEmpty() then
@@ -264,12 +301,15 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
         Setup."COGS A %" := 80;
         Setup."COGS B %" := 95;
         Setup."COGS Period (Days)" := 365;
-        Setup."Sales Qty A %" := 80;
-        Setup."Sales Qty B %" := 95;
-        Setup."Sales Qty Period (Days)" := 365;
         Setup."Usage Value A %" := 80;
         Setup."Usage Value B %" := 95;
         Setup."Usage Value Period (Days)" := 365;
+        Setup."GMROII A %" := 80;
+        Setup."GMROII B %" := 95;
+        Setup."GMROII Period (Days)" := 365;
+        Setup."Pick Freq A %" := 80;
+        Setup."Pick Freq B %" := 95;
+        Setup."Pick Freq Period (Days)" := 365;
         Setup."Counting Code Mapping ID" := 'DEFAULT';
         Setup.Insert(true);
     end;
@@ -277,61 +317,127 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
     local procedure CalcItemAmount(Model: Enum "GMO ABC Model"; StartDate: Date; EndDate: Date; ItemNo: Code[20]): Decimal
     var
         VE: Record "Value Entry";
+        ILE: Record "Item Ledger Entry";
+        Item: Record Item;
         amt: Decimal;
         c: Decimal;
         s: Decimal;
         q: Decimal;
+        Margin: Decimal;
+        AvgInv: Decimal;
+        PickCount: Integer;
     begin
         amt := 0;
-        VE.Reset();
-        VE.SetRange("Item No.", ItemNo);
-        // Include: Sale, Consumption, Negative Adjmt (for scrap)
-        // Exclude: Output, Purchase, Positive Adjmt, Transfer, etc.
-        VE.SetFilter("Item Ledger Entry Type", '%1|%2|%3',
-            VE."Item Ledger Entry Type"::Sale,
-            VE."Item Ledger Entry Type"::Consumption,
-            VE."Item Ledger Entry Type"::"Negative Adjmt.");
-        if (StartDate <> 0D) or (EndDate <> 0D) then
-            VE.SetRange("Posting Date", StartDate, EndDate);
 
-        if VE.FindSet(false) then
-            repeat
-                case Model of
-                    Model::Revenue:
-                        begin
-                            s := VE."Sales Amount (Actual)";
-                            amt += s;
-                        end;
-                    Model::"Gross Profit":
-                        begin
-                            s := VE."Sales Amount (Actual)";
-                            c := VE."Cost Amount (Actual)";
-                            amt += (s + c); // cost is negative → profit
-                        end;
-                    Model::COGS:
-                        begin
-                            c := VE."Cost Amount (Actual)";
-                            if c < 0 then
-                                amt += -c; // outbound cost only
-                        end;
-                    Model::"Sales Quantity":
-                        begin
-                            q := VE."Invoiced Quantity";
-                            if q > 0 then
-                                amt += q; // positive sales quantity only
-                        end;
-                    Model::"Usage Value":
-                        begin
-                            // Usage Value = (Sales + Consumption) Qty × Unit Cost
-                            // For outbound entries, use absolute values
-                            q := VE."Invoiced Quantity";
-                            c := VE."Cost Amount (Actual)";
-                            if q < 0 then q := -q; // make quantity positive
-                            if c < 0 then c := -c; // make cost positive
-                            amt += c; // Cost already represents Qty × Unit Cost
-                        end;
+        // Handle GMROII and Pick Frequency models separately as they require different logic
+        case Model of
+            Model::GMROII:
+                begin
+                    // Calculate GMROII = Gross Margin / Average Inventory Value
+                    VE.Reset();
+                    VE.SetRange("Item No.", ItemNo);
+                    VE.SetFilter("Item Ledger Entry Type", '%1|%2|%3',
+                        VE."Item Ledger Entry Type"::Sale,
+                        VE."Item Ledger Entry Type"::Consumption,
+                        VE."Item Ledger Entry Type"::"Negative Adjmt.");
+
+                    if (StartDate <> 0D) and (EndDate <> 0D) then
+                        VE.SetRange("Posting Date", StartDate, EndDate)
+                    else if StartDate <> 0D then
+                        VE.SetFilter("Posting Date", '>=%1', StartDate)
+                    else if EndDate <> 0D then
+                        VE.SetFilter("Posting Date", '<=%1', EndDate);
+
+                    Margin := 0;
+                    if VE.FindSet(false) then
+                        repeat
+                            Margin += VE."Sales Amount (Actual)" + VE."Cost Amount (Actual)";
+                        until VE.Next() = 0;
+
+                    // Get average inventory value (simplified: current inventory value)
+                    if Item.Get(ItemNo) then begin
+                        Item.CalcFields(Inventory);
+                        AvgInv := Item.Inventory * Item."Unit Cost";
+                        if AvgInv > 0 then
+                            amt := (Margin / AvgInv) * 100  // Return as percentage
+                        else
+                            amt := 0;
+                    end;
                 end;
-            until VE.Next() = 0;
+            Model::"Pick Frequency":
+                begin
+                    // Count number of pick/issue transactions
+                    ILE.Reset();
+                    ILE.SetRange("Item No.", ItemNo);
+                    ILE.SetFilter("Entry Type", '%1|%2',
+                        ILE."Entry Type"::Sale,
+                        ILE."Entry Type"::Consumption);
+
+                    if (StartDate <> 0D) and (EndDate <> 0D) then
+                        ILE.SetRange("Posting Date", StartDate, EndDate)
+                    else if StartDate <> 0D then
+                        ILE.SetFilter("Posting Date", '>=%1', StartDate)
+                    else if EndDate <> 0D then
+                        ILE.SetFilter("Posting Date", '<=%1', EndDate);
+
+                    PickCount := ILE.Count();
+                    amt := PickCount;
+                end;
+            else begin
+                // Standard models: Revenue, Gross Profit, COGS, Usage Value
+                VE.Reset();
+                VE.SetRange("Item No.", ItemNo);
+
+                // Gross Profit should only use Sales entries, not Consumption
+                if Model = Model::"Gross Profit" then
+                    VE.SetRange("Item Ledger Entry Type", VE."Item Ledger Entry Type"::Sale)
+                else
+                    VE.SetFilter("Item Ledger Entry Type", '%1|%2|%3',
+                        VE."Item Ledger Entry Type"::Sale,
+                        VE."Item Ledger Entry Type"::Consumption,
+                        VE."Item Ledger Entry Type"::"Negative Adjmt.");
+
+                if (StartDate <> 0D) and (EndDate <> 0D) then
+                    VE.SetRange("Posting Date", StartDate, EndDate)
+                else if StartDate <> 0D then
+                    VE.SetFilter("Posting Date", '>=%1', StartDate)
+                else if EndDate <> 0D then
+                    VE.SetFilter("Posting Date", '<=%1', EndDate);
+
+                if VE.FindSet(false) then
+                    repeat
+                        case Model of
+                            Model::Revenue:
+                                begin
+                                    s := VE."Sales Amount (Actual)";
+                                    amt += s;
+                                end;
+                            Model::"Gross Profit":
+                                begin
+                                    s := VE."Sales Amount (Actual)";
+                                    c := VE."Cost Amount (Actual)";
+                                    amt += (s + c); // cost is negative → profit
+                                end;
+                            Model::COGS:
+                                begin
+                                    c := VE."Cost Amount (Actual)";
+                                    if c < 0 then
+                                        amt += -c; // outbound cost only
+                                end;
+                            Model::"Usage Value":
+                                begin
+                                    // Usage Value = (Sales + Consumption) Qty × Unit Cost
+                                    // For outbound entries, use absolute values
+                                    q := VE."Invoiced Quantity";
+                                    c := VE."Cost Amount (Actual)";
+                                    if q < 0 then q := -q; // make quantity positive
+                                    if c < 0 then c := -c; // make cost positive
+                                    amt += c; // Cost already represents Qty × Unit Cost
+                                end;
+                        end;
+                    until VE.Next() = 0;
+            end;
+        end;
 
         exit(amt);
     end;
@@ -357,15 +463,20 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
                     ATh := Setup."COGS A %";
                     BTh := Setup."COGS B %";
                 end;
-            Model::"Sales Quantity":
-                begin
-                    ATh := Setup."Sales Qty A %";
-                    BTh := Setup."Sales Qty B %";
-                end;
             Model::"Usage Value":
                 begin
                     ATh := Setup."Usage Value A %";
                     BTh := Setup."Usage Value B %";
+                end;
+            Model::GMROII:
+                begin
+                    ATh := Setup."GMROII A %";
+                    BTh := Setup."GMROII B %";
+                end;
+            Model::"Pick Frequency":
+                begin
+                    ATh := Setup."Pick Freq A %";
+                    BTh := Setup."Pick Freq B %";
                 end;
         end;
 
@@ -436,26 +547,41 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
 
     local procedure EnsureDefaultPolicyLines(HeaderCode: Code[10])
     begin
+        // Revenue model
         EnsurePolicyLine(HeaderCode, ModelOpt() ::Revenue, ClassOpt() ::A);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::Revenue, ClassOpt() ::B);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::Revenue, ClassOpt() ::C);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::Revenue, ClassOpt() ::D);
+
+        // Gross Profit model
         EnsurePolicyLine(HeaderCode, ModelOpt() ::"Gross Profit", ClassOpt() ::A);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::"Gross Profit", ClassOpt() ::B);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::"Gross Profit", ClassOpt() ::C);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::"Gross Profit", ClassOpt() ::D);
+
+        // COGS model
         EnsurePolicyLine(HeaderCode, ModelOpt() ::COGS, ClassOpt() ::A);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::COGS, ClassOpt() ::B);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::COGS, ClassOpt() ::C);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::COGS, ClassOpt() ::D);
-        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Sales Quantity", ClassOpt() ::A);
-        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Sales Quantity", ClassOpt() ::B);
-        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Sales Quantity", ClassOpt() ::C);
-        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Sales Quantity", ClassOpt() ::D);
+
+        // Usage Value model
         EnsurePolicyLine(HeaderCode, ModelOpt() ::"Usage Value", ClassOpt() ::A);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::"Usage Value", ClassOpt() ::B);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::"Usage Value", ClassOpt() ::C);
         EnsurePolicyLine(HeaderCode, ModelOpt() ::"Usage Value", ClassOpt() ::D);
+
+        // GMROII model
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::GMROII, ClassOpt() ::A);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::GMROII, ClassOpt() ::B);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::GMROII, ClassOpt() ::C);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::GMROII, ClassOpt() ::D);
+
+        // Pick Frequency model
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Pick Frequency", ClassOpt() ::A);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Pick Frequency", ClassOpt() ::B);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Pick Frequency", ClassOpt() ::C);
+        EnsurePolicyLine(HeaderCode, ModelOpt() ::"Pick Frequency", ClassOpt() ::D);
     end;
 
     local procedure EnsurePolicyLine(HeaderCode: Code[10]; Model: enum "GMO ABC Model"; ABCClassification: enum "GMO ABC Class")
@@ -498,10 +624,12 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
                 DaysBack := Setup."GP Period (Days)";
             Model::COGS:
                 DaysBack := Setup."COGS Period (Days)";
-            Model::"Sales Quantity":
-                DaysBack := Setup."Sales Qty Period (Days)";
             Model::"Usage Value":
                 DaysBack := Setup."Usage Value Period (Days)";
+            Model::GMROII:
+                DaysBack := Setup."GMROII Period (Days)";
+            Model::"Pick Frequency":
+                DaysBack := Setup."Pick Freq Period (Days)";
         end;
         if DaysBack <= 0 then DaysBack := 365;
 

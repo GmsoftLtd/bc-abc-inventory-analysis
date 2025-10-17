@@ -34,10 +34,6 @@ table 73030575 "GMO ABC Analysis Setup"
         field(121; "COGS B %"; Decimal) { Caption = 'COGS B Threshold %'; DecimalPlaces = 0 : 2; InitValue = 95; }
         field(122; "COGS Period (Days)"; Integer) { Caption = 'COGS Period (Days)'; InitValue = 365; MinValue = 1; }
 
-        field(125; "Sales Qty A %"; Decimal) { Caption = 'Sales Quantity A Threshold %'; DecimalPlaces = 0 : 2; InitValue = 80; }
-        field(126; "Sales Qty B %"; Decimal) { Caption = 'Sales Quantity B Threshold %'; DecimalPlaces = 0 : 2; InitValue = 95; }
-        field(127; "Sales Qty Period (Days)"; Integer) { Caption = 'Sales Quantity Period (Days)'; InitValue = 365; MinValue = 1; }
-
         field(128; "Usage Value A %"; Decimal) { Caption = 'Usage Value A Threshold %'; DecimalPlaces = 0 : 2; InitValue = 80; }
         field(129; "Usage Value B %"; Decimal) { Caption = 'Usage Value B Threshold %'; DecimalPlaces = 0 : 2; InitValue = 95; }
         field(135; "Usage Value Period (Days)"; Integer) { Caption = 'Usage Value Period (Days)'; InitValue = 365; MinValue = 1; }

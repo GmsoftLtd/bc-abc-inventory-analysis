@@ -22,15 +22,20 @@ pageextension 73030575 "GMO Item Card Ext." extends "Item Card"
                     ApplicationArea = All;
                     ToolTip = 'ABC classification based on cost of goods sold: A (high), B (medium), C (low), or D (inactive).';
                 }
-                field("GMO Class (Sales Qty)"; Rec."GMO Class (Sales Qty)")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'ABC classification based on sales quantity: A (high volume), B (medium volume), C (low volume), or D (no sales).';
-                }
                 field("GMO Class (Usage Value)"; Rec."GMO Class (Usage Value)")
                 {
                     ApplicationArea = All;
                     ToolTip = 'ABC classification based on usage value (consumption + sales quantity × unit cost): A (high usage), B (medium usage), C (low usage), or D (no usage).';
+                }
+                field("GMO Class (GMROII)"; Rec."GMO Class (GMROII)")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'ABC classification based on Gross Margin Return on Inventory Investment (GMROII = Margin / Avg Inventory Value): A (high return), B (medium return), C (low return), or D (negative return).';
+                }
+                field("GMO Class (Pick Frequency)"; Rec."GMO Class (Pick Frequency)")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'ABC classification based on number of picks/issues (not value): A (frequently picked), B (moderately picked), C (rarely picked), or D (never picked). Good for warehouse slotting.';
                 }
                 field("GMO Last Calc (Revenue)"; Rec."GMO Last Calc (Revenue)")
                 {
@@ -50,17 +55,23 @@ pageextension 73030575 "GMO Item Card Ext." extends "Item Card"
                     Editable = false;
                     ToolTip = 'Date and time when the COGS-based ABC classification was last calculated for this item.';
                 }
-                field("GMO Last Calc (Sales Qty)"; Rec."GMO Last Calc (Sales Qty)")
-                {
-                    ApplicationArea = All;
-                    Editable = false;
-                    ToolTip = 'Date and time when the Sales Quantity-based ABC classification was last calculated for this item.';
-                }
                 field("GMO Last Calc (Usage Value)"; Rec."GMO Last Calc (Usage Value)")
                 {
                     ApplicationArea = All;
                     Editable = false;
                     ToolTip = 'Date and time when the Usage Value-based ABC classification was last calculated for this item.';
+                }
+                field("GMO Last Calc (GMROII)"; Rec."GMO Last Calc (GMROII)")
+                {
+                    ApplicationArea = All;
+                    Editable = false;
+                    ToolTip = 'Date and time when the GMROII-based ABC classification was last calculated for this item.';
+                }
+                field("GMO Last Calc (Pick Freq)"; Rec."GMO Last Calc (Pick Freq)")
+                {
+                    ApplicationArea = All;
+                    Editable = false;
+                    ToolTip = 'Date and time when the Pick Frequency-based ABC classification was last calculated for this item.';
                 }
                 field("GMO Manual Override"; Rec."GMO Manual Override")
                 {

@@ -15,13 +15,19 @@ report 73030576 "GMO ABC Item Movement"
             column(CompanyName; CompanyProperty.DisplayName())
             {
             }
-            column(ModelColumn; Format(Model))
+            column(ModelColumn; Format(this.Model))
             {
             }
-            column(ReportTitle; ReportTitleLbl)
+            column(RunDate; Format(CurrentDateTime, 0, '<Standard Format,9>'))
             {
             }
-            column(CompareDateColumn; Format(CompareDate))
+            column(RunByUser; UserId)
+            {
+            }
+            column(ReportTitle; this.ReportTitleLbl)
+            {
+            }
+            column(CompareDateColumn; Format(this.CompareDate))
             {
             }
             column(ItemNo; "No.")
@@ -30,34 +36,34 @@ report 73030576 "GMO ABC Item Movement"
             column(Description; Description)
             {
             }
-            column(CurrentClass; Format(CurrentClass))
+            column(CurrentClass; Format(this.CurrentClass))
             {
             }
-            column(PreviousClass; Format(PreviousClass))
+            column(PreviousClass; Format(this.PreviousClass))
             {
             }
-            column(Movement; MovementText)
+            column(Movement; this.MovementText)
             {
             }
-            column(CurrentValue; CurrentValue)
+            column(CurrentValue; this.CurrentValue)
             {
             }
 
             trigger OnAfterGetRecord()
             begin
-                CurrentClass := GetItemClass(Item, Model);
-                PreviousClass := GetHistoricalClass(Item."No.", Model, CompareDate);
+                this.CurrentClass := this.GetItemClass(Item, this.Model);
+                this.PreviousClass := this.GetHistoricalClass(Item."No.", this.Model, this.CompareDate);
 
-                if CurrentClass = PreviousClass then
+                if this.CurrentClass = this.PreviousClass then
                     CurrReport.Skip();
 
-                MovementText := GetMovementText(PreviousClass, CurrentClass);
-                CurrentValue := GetItemCurrentValue(Item, Model);
+                this.MovementText := this.GetMovementText(this.PreviousClass, this.CurrentClass);
+                this.CurrentValue := this.GetItemCurrentValue(Item, this.Model);
             end;
 
             trigger OnPreDataItem()
             begin
-                if CompareDate = 0D then
+                if this.CompareDate = 0D then
                     Error('Please specify a comparison date.');
             end;
         }
@@ -101,7 +107,7 @@ report 73030576 "GMO ABC Item Movement"
         PreviousClass: Enum "GMO ABC Class";
         MovementText: Text[30];
         CurrentValue: Decimal;
-        ReportTitleLbl: Label 'ABC Item Movement Report';
+        ReportTitleLbl: Label 'ABC Item Movement';
         MovementFormatLbl: Label '%1 → %2', Locked = true;
 
     trigger OnPreReport()
@@ -118,10 +124,12 @@ report 73030576 "GMO ABC Item Movement"
                 exit(ItemRec."GMO Class (Gross Profit)");
             ModelType::COGS:
                 exit(ItemRec."GMO Class (COGS)");
-            ModelType::"Sales Quantity":
-                exit(ItemRec."GMO Class (Sales Qty)");
             ModelType::"Usage Value":
                 exit(ItemRec."GMO Class (Usage Value)");
+            ModelType::GMROII:
+                exit(ItemRec."GMO Class (GMROII)");
+            ModelType::"Pick Frequency":
+                exit(ItemRec."GMO Class (Pick Frequency)");
         end;
     end;
 
@@ -139,46 +147,90 @@ report 73030576 "GMO ABC Item Movement"
             if HistLine.FindFirst() then
                 exit(HistLine.Class);
         end;
-        exit(CurrentClass::C);
+        exit(this.CurrentClass::C);
     end;
 
     local procedure GetMovementText(OldClass: Enum "GMO ABC Class"; NewClass: Enum "GMO ABC Class"): Text[30]
     begin
-        exit(StrSubstNo(MovementFormatLbl, Format(OldClass), Format(NewClass)));
+        exit(StrSubstNo(this.MovementFormatLbl, Format(OldClass), Format(NewClass)));
     end;
 
     local procedure GetItemCurrentValue(ItemRec: Record Item; ModelType: Enum "GMO ABC Model"): Decimal
     var
         VE: Record "Value Entry";
         Total: Decimal;
+        Margin: Decimal;
+        AvgInv: Decimal;
+        ILE: Record "Item Ledger Entry";
+        PickCount: Integer;
     begin
         Total := 0;
         VE.SetRange("Item No.", ItemRec."No.");
-        // Include: Sale, Consumption, Negative Adjmt (for scrap)
-        // Exclude: Output, Purchase, Positive Adjmt, Transfer, etc.
-        VE.SetFilter("Item Ledger Entry Type", '%1|%2|%3',
-            VE."Item Ledger Entry Type"::Sale,
-            VE."Item Ledger Entry Type"::Consumption,
-            VE."Item Ledger Entry Type"::"Negative Adjmt.");
+
+        // Gross Profit should only use Sales entries
+        if ModelType = ModelType::"Gross Profit" then
+            VE.SetRange("Item Ledger Entry Type", VE."Item Ledger Entry Type"::Sale)
+        else
+            // Include: Sale, Consumption, Negative Adjmt (for scrap)
+            // Exclude: Output, Purchase, Positive Adjmt, Transfer, etc.
+            VE.SetFilter("Item Ledger Entry Type", '%1|%2|%3',
+                VE."Item Ledger Entry Type"::Sale,
+                VE."Item Ledger Entry Type"::Consumption,
+                VE."Item Ledger Entry Type"::"Negative Adjmt.");
+
         VE.SetFilter("Posting Date", '%1..%2', CalcDate('<-1Y>', WorkDate()), WorkDate());
-        if VE.FindSet() then
-            repeat
-                case ModelType of
-                    ModelType::Revenue:
-                        Total += VE."Sales Amount (Actual)";
-                    ModelType::"Gross Profit":
-                        Total += VE."Sales Amount (Actual)" + VE."Cost Amount (Actual)";
-                    ModelType::COGS:
-                        if VE."Cost Amount (Actual)" < 0 then
-                            Total += -VE."Cost Amount (Actual)";
-                    ModelType::"Sales Quantity":
-                        if VE."Invoiced Quantity" > 0 then
-                            Total += VE."Invoiced Quantity";
-                    ModelType::"Usage Value":
-                        if VE."Cost Amount (Actual)" < 0 then
-                            Total += -VE."Cost Amount (Actual)";
+
+        case ModelType of
+            ModelType::Revenue,
+            ModelType::"Gross Profit",
+            ModelType::COGS,
+            ModelType::"Usage Value":
+                begin
+                    if VE.FindSet() then
+                        repeat
+                            case ModelType of
+                                ModelType::Revenue:
+                                    Total += VE."Sales Amount (Actual)";
+                                ModelType::"Gross Profit":
+                                    Total += VE."Sales Amount (Actual)" + VE."Cost Amount (Actual)";
+                                ModelType::COGS:
+                                    if VE."Cost Amount (Actual)" < 0 then
+                                        Total += -VE."Cost Amount (Actual)";
+                                ModelType::"Usage Value":
+                                    if VE."Cost Amount (Actual)" < 0 then
+                                        Total += -VE."Cost Amount (Actual)";
+                            end;
+                        until VE.Next() = 0;
                 end;
-            until VE.Next() = 0;
+            ModelType::GMROII:
+                begin
+                    // Calculate GMROII = Gross Margin / Average Inventory Value
+                    Margin := 0;
+                    if VE.FindSet() then
+                        repeat
+                            Margin += VE."Sales Amount (Actual)" + VE."Cost Amount (Actual)";
+                        until VE.Next() = 0;
+
+                    ItemRec.CalcFields(Inventory);
+                    AvgInv := ItemRec.Inventory * ItemRec."Unit Cost";
+                    if AvgInv > 0 then
+                        Total := (Margin / AvgInv) * 100
+                    else
+                        Total := 0;
+                end;
+            ModelType::"Pick Frequency":
+                begin
+                    // Count number of pick/issue transactions
+                    ILE.Reset();
+                    ILE.SetRange("Item No.", ItemRec."No.");
+                    ILE.SetFilter("Entry Type", '%1|%2',
+                        ILE."Entry Type"::Sale,
+                        ILE."Entry Type"::Consumption);
+                    ILE.SetFilter("Posting Date", '%1..%2', CalcDate('<-1Y>', WorkDate()), WorkDate());
+                    PickCount := ILE.Count();
+                    Total := PickCount;
+                end;
+        end;
         exit(Total);
     end;
 }

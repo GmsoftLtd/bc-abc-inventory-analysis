@@ -18,6 +18,12 @@ report 73030579 "GMO ABC Comparison"
             column(ReportTitle; ReportTitleLbl)
             {
             }
+            column(RunDate; Format(CurrentDateTime, 0, '<Standard Format,9>'))
+            {
+            }
+            column(RunByUser; UserId)
+            {
+            }
             column(ItemNo; "No.")
             {
             }
@@ -33,10 +39,13 @@ report 73030579 "GMO ABC Comparison"
             column(COGSClass; Format("GMO Class (COGS)"))
             {
             }
-            column(SalesQtyClass; Format("GMO Class (Sales Qty)"))
+            column(UsageValueClass; Format("GMO Class (Usage Value)"))
             {
             }
-            column(UsageValueClass; Format("GMO Class (Usage Value)"))
+            column(GMROIIClass; Format("GMO Class (GMROII)"))
+            {
+            }
+            column(PickFrequencyClass; Format("GMO Class (Pick Frequency)"))
             {
             }
             column(RevenueValue; RevenueValue)
@@ -48,10 +57,13 @@ report 73030579 "GMO ABC Comparison"
             column(COGSValue; COGSValue)
             {
             }
-            column(SalesQtyValue; SalesQtyValue)
+            column(UsageValueValue; UsageValueValue)
             {
             }
-            column(UsageValueValue; UsageValueValue)
+            column(GMROIIValue; GMROIIValue)
+            {
+            }
+            column(PickFrequencyValue; PickFrequencyValue)
             {
             }
             column(ConsistencyIndicator; ConsistencyIndicator)
@@ -69,13 +81,15 @@ report 73030579 "GMO ABC Comparison"
                 RevenueValue := CalculateItemValue(Item."No.", ModelEnum::Revenue, StartDate, EndDate);
                 GrossProfitValue := CalculateItemValue(Item."No.", ModelEnum::"Gross Profit", StartDate, EndDate);
                 COGSValue := CalculateItemValue(Item."No.", ModelEnum::COGS, StartDate, EndDate);
-                SalesQtyValue := CalculateItemValue(Item."No.", ModelEnum::"Sales Quantity", StartDate, EndDate);
                 UsageValueValue := CalculateItemValue(Item."No.", ModelEnum::"Usage Value", StartDate, EndDate);
+                GMROIIValue := CalculateItemValue(Item."No.", ModelEnum::GMROII, StartDate, EndDate);
+                PickFrequencyValue := CalculateItemValue(Item."No.", ModelEnum::"Pick Frequency", StartDate, EndDate);
 
                 ConsistencyIndicator := GetConsistencyIndicator(Item);
 
                 // Skip items with no values
-                if (RevenueValue = 0) and (GrossProfitValue = 0) and (COGSValue = 0) and (SalesQtyValue = 0) and (UsageValueValue = 0) then
+                if (RevenueValue = 0) and (GrossProfitValue = 0) and (COGSValue = 0) and (UsageValueValue = 0) and
+                   (GMROIIValue = 0) and (PickFrequencyValue = 0) then
                     CurrReport.Skip();
             end;
 
@@ -127,10 +141,11 @@ report 73030579 "GMO ABC Comparison"
         RevenueValue: Decimal;
         GrossProfitValue: Decimal;
         COGSValue: Decimal;
-        SalesQtyValue: Decimal;
         UsageValueValue: Decimal;
+        GMROIIValue: Decimal;
+        PickFrequencyValue: Decimal;
         ConsistencyIndicator: Text[20];
-        ReportTitleLbl: Label 'ABC Multi-Model Comparison Report';
+        ReportTitleLbl: Label 'ABC Multi-Model Comparison';
 
     trigger OnPreReport()
     begin
@@ -141,34 +156,81 @@ report 73030579 "GMO ABC Comparison"
     var
         VE: Record "Value Entry";
         Total: Decimal;
+        Margin: Decimal;
+        AvgInv: Decimal;
+        Item: Record Item;
+        ILE: Record "Item Ledger Entry";
+        PickCount: Integer;
     begin
         Total := 0;
         VE.SetRange("Item No.", ItemNo);
-        // Include: Sale, Consumption, Negative Adjmt (for scrap)
-        // Exclude: Output, Purchase, Positive Adjmt, Transfer, etc.
-        VE.SetFilter("Item Ledger Entry Type", '%1|%2|%3',
-            VE."Item Ledger Entry Type"::Sale,
-            VE."Item Ledger Entry Type"::Consumption,
-            VE."Item Ledger Entry Type"::"Negative Adjmt.");
+
+        // Gross Profit should only use Sales entries
+        if ModelType = ModelType::"Gross Profit" then
+            VE.SetRange("Item Ledger Entry Type", VE."Item Ledger Entry Type"::Sale)
+        else
+            // Include: Sale, Consumption, Negative Adjmt (for scrap)
+            // Exclude: Output, Purchase, Positive Adjmt, Transfer, etc.
+            VE.SetFilter("Item Ledger Entry Type", '%1|%2|%3',
+                VE."Item Ledger Entry Type"::Sale,
+                VE."Item Ledger Entry Type"::Consumption,
+                VE."Item Ledger Entry Type"::"Negative Adjmt.");
+
         VE.SetRange("Posting Date", FromDate, ToDate);
-        if VE.FindSet() then
-            repeat
-                case ModelType of
-                    ModelType::Revenue:
-                        Total += VE."Sales Amount (Actual)";
-                    ModelType::"Gross Profit":
-                        Total += VE."Sales Amount (Actual)" + VE."Cost Amount (Actual)";
-                    ModelType::COGS:
-                        if VE."Cost Amount (Actual)" < 0 then
-                            Total += -VE."Cost Amount (Actual)";
-                    ModelType::"Sales Quantity":
-                        if VE."Invoiced Quantity" > 0 then
-                            Total += VE."Invoiced Quantity";
-                    ModelType::"Usage Value":
-                        if VE."Cost Amount (Actual)" < 0 then
-                            Total += -VE."Cost Amount (Actual)";
+
+        case ModelType of
+            ModelType::Revenue,
+            ModelType::"Gross Profit",
+            ModelType::COGS,
+            ModelType::"Usage Value":
+                begin
+                    if VE.FindSet() then
+                        repeat
+                            case ModelType of
+                                ModelType::Revenue:
+                                    Total += VE."Sales Amount (Actual)";
+                                ModelType::"Gross Profit":
+                                    Total += VE."Sales Amount (Actual)" + VE."Cost Amount (Actual)";
+                                ModelType::COGS:
+                                    if VE."Cost Amount (Actual)" < 0 then
+                                        Total += -VE."Cost Amount (Actual)";
+                                ModelType::"Usage Value":
+                                    if VE."Cost Amount (Actual)" < 0 then
+                                        Total += -VE."Cost Amount (Actual)";
+                            end;
+                        until VE.Next() = 0;
                 end;
-            until VE.Next() = 0;
+            ModelType::GMROII:
+                begin
+                    // Calculate GMROII = Gross Margin / Average Inventory Value
+                    Margin := 0;
+                    if VE.FindSet() then
+                        repeat
+                            Margin += VE."Sales Amount (Actual)" + VE."Cost Amount (Actual)";
+                        until VE.Next() = 0;
+
+                    if Item.Get(ItemNo) then begin
+                        Item.CalcFields(Inventory);
+                        AvgInv := Item.Inventory * Item."Unit Cost";
+                        if AvgInv > 0 then
+                            Total := (Margin / AvgInv) * 100
+                        else
+                            Total := 0;
+                    end;
+                end;
+            ModelType::"Pick Frequency":
+                begin
+                    // Count number of pick/issue transactions
+                    ILE.Reset();
+                    ILE.SetRange("Item No.", ItemNo);
+                    ILE.SetFilter("Entry Type", '%1|%2',
+                        ILE."Entry Type"::Sale,
+                        ILE."Entry Type"::Consumption);
+                    ILE.SetRange("Posting Date", FromDate, ToDate);
+                    PickCount := ILE.Count();
+                    Total := PickCount;
+                end;
+        end;
         exit(Total);
     end;
 
@@ -177,21 +239,43 @@ report 73030579 "GMO ABC Comparison"
         RevClass: Integer;
         GPClass: Integer;
         COGSClass: Integer;
-        SalesQtyClass: Integer;
         UsageValueClass: Integer;
+        GMROIIClass: Integer;
+        PickFreqClass: Integer;
+        MaxDiff: Integer;
     begin
         RevClass := ItemRec."GMO Class (Revenue)".AsInteger();
         GPClass := ItemRec."GMO Class (Gross Profit)".AsInteger();
         COGSClass := ItemRec."GMO Class (COGS)".AsInteger();
-        SalesQtyClass := ItemRec."GMO Class (Sales Qty)".AsInteger();
         UsageValueClass := ItemRec."GMO Class (Usage Value)".AsInteger();
+        GMROIIClass := ItemRec."GMO Class (GMROII)".AsInteger();
+        PickFreqClass := ItemRec."GMO Class (Pick Frequency)".AsInteger();
 
-        if (RevClass = GPClass) and (RevClass = COGSClass) and (RevClass = SalesQtyClass) and (RevClass = UsageValueClass) then
+        // Check if all classifications are the same
+        if (RevClass = GPClass) and (RevClass = COGSClass) and (RevClass = UsageValueClass) and
+           (RevClass = GMROIIClass) and (RevClass = PickFreqClass) then
             exit('✓ Consistent')
-        else
-            if (Abs(RevClass - GPClass) <= 1) and (Abs(RevClass - COGSClass) <= 1) and (Abs(RevClass - SalesQtyClass) <= 1) and (Abs(RevClass - UsageValueClass) <= 1) then
+        else begin
+            // Calculate maximum difference between any two classifications
+            MaxDiff := 0;
+            MaxDiff := MaxInt(MaxDiff, Abs(RevClass - GPClass));
+            MaxDiff := MaxInt(MaxDiff, Abs(RevClass - COGSClass));
+            MaxDiff := MaxInt(MaxDiff, Abs(RevClass - UsageValueClass));
+            MaxDiff := MaxInt(MaxDiff, Abs(RevClass - GMROIIClass));
+            MaxDiff := MaxInt(MaxDiff, Abs(RevClass - PickFreqClass));
+
+            if MaxDiff <= 1 then
                 exit('≈ Minor Variance')
             else
                 exit('⚠ Inconsistent');
+        end;
+    end;
+
+    local procedure MaxInt(A: Integer; B: Integer): Integer
+    begin
+        if A > B then
+            exit(A)
+        else
+            exit(B);
     end;
 }

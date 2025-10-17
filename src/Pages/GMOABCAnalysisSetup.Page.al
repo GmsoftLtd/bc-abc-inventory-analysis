@@ -127,6 +127,15 @@ page 73030575 "GMO ABC Analysis Setup"
             group(COGSModel)
             {
                 Caption = 'COGS ABC Model (Value / COGS)';
+
+                field(grossLbl;this.GrossLbl)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Description';
+                    MultiLine = true;
+                    Editable = false;
+                    ToolTip = 'Ranks your items by their share of total Cost of Goods Sold for a chosen period, then assigns them to ABC categories based on their contribution to overall profitability.';
+                }
                 field("COGS A %"; Rec."COGS A %")
                 {
                     ApplicationArea = All;
@@ -143,28 +152,18 @@ page 73030575 "GMO ABC Analysis Setup"
                     ToolTip = 'Number of days to analyze when calculating COGS-based ABC classifications. Default: 365 days.';
                 }
             }
-            group(SalesQuantityModel)
-            {
-                Caption = 'Sales Quantity ABC Model';
-                field("Sales Qty A %"; Rec."Sales Qty A %")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Class A threshold percentage for Sales Quantity model. Items contributing up to this cumulative percentage of sales quantity are Class A. Default: 80%.';
-                }
-                field("Sales Qty B %"; Rec."Sales Qty B %")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Class B threshold percentage for Sales Quantity model. Items between A and this threshold are Class B. Default: 95%.';
-                }
-                field("Sales Qty Period (Days)"; Rec."Sales Qty Period (Days)")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Number of days to analyze when calculating sales quantity-based ABC classifications. Default: 365 days.';
-                }
-            }
             group(UsageValueModel)
             {
                 Caption = 'Usage Value ABC Model (Qty × Cost)';
+
+                field(UsageValueLbl;this.UsageValueLbl)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Description';
+                    MultiLine = true;
+                    Editable = false;
+                    ToolTip = 'Ranks by usage value (quantity × cost) to highlight high-consumption items that tie up inventory investment. Good for managing working capital and stock levels.';
+                }
                 field("Usage Value A %"; Rec."Usage Value A %")
                 {
                     ApplicationArea = All;
@@ -184,6 +183,15 @@ page 73030575 "GMO ABC Analysis Setup"
             group(GMROIIModel)
             {
                 Caption = 'GMROII ABC Model';
+
+                field(GMROIILbl;this.GMROIILbl)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Description';
+                    MultiLine = true;
+                    Editable = false;
+                    ToolTip = 'Ranks by Gross Margin Return on Inventory Investment (GMROII = Margin / Average Inventory Value) to spotlight items that generate the highest return on your inventory investment. Ideal when working capital is tight.';
+                }
                 field("GMROII A %"; Rec."GMROII A %")
                 {
                     ApplicationArea = All;
@@ -203,6 +211,14 @@ page 73030575 "GMO ABC Analysis Setup"
             group(PickFrequencyModel)
             {
                 Caption = 'Pick-Frequency ABC Model';
+                field(pickFreqLbl;this.PickFreqLbl)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Description';
+                    MultiLine = true;
+                    Editable = false;
+                    ToolTip = 'Ranks by number of picks/issues (not value) to optimize warehouse slotting (fast pick lines near dispatch).';
+                }   
                 field("Pick Freq A %"; Rec."Pick Freq A %")
                 {
                     ApplicationArea = All;
@@ -298,6 +314,17 @@ page 73030575 "GMO ABC Analysis Setup"
     {
         area(Processing)
         {
+            action(FillDefaultThresholds)
+            {
+                Caption = 'Fill Default Thresholds';
+                Image = SuggestField;
+                ApplicationArea = All;
+                ToolTip = 'Fill all model thresholds with default values (A: 80%, B: 95%) for all ABC models.';
+                trigger OnAction()
+                begin
+                    FillAllThresholds();
+                end;
+            }
             action(OpenWorksheet)
             {
                 Caption = 'Open ABC Worksheet';
@@ -366,7 +393,52 @@ page 73030575 "GMO ABC Analysis Setup"
     var
         CountingPolicyDescLbl: Label '%1 ABC → Counting Period mapping', Locked = true;
         RevenueLbl: Label 'Ranks items by sales amount (net revenue). Good when demand is driven by sales, not internal consumption. BC data: Value Entries or Sales Shipment/Invoice lines → Sales Amount (Actual).', Locked = true;
-        ProfitLbl: Label 'Ranks by gross margin (Sales − Cost) to spotlight profit drivers (A’s) vs low-margin tail (C’s).BC data: Value Entries → Sales Amount (Actual) minus Cost Amount (Actual).', Locked = true;
+        ProfitLbl: Label 'Ranks by gross margin (Sales − Cost) to spotlight profit drivers (A''s) vs low-margin tail (C''s).BC data: Value Entries → Sales Amount (Actual) minus Cost Amount (Actual).', Locked = true;
+        GrossLbl: Label 'Ranks your items by their share of total Cost of Goods Sold for a chosen period, then assigns them to ABC categories based on their contribution to overall profitability.', Locked = true;
+        PickFreqLbl: Label 'Ranks by number of picks/issues (not value) to optimize warehouse slotting (fast pick lines near dispatch). BC data: Item Ledger or Warehouse Entries → count of issues/picks.', Locked = true;
+        GMROIILbl: Label 'Ranks by Gross Margin Return on Inventory Investment (GMROII = Margin / Average Inventory Value) to spotlight items that generate the highest return on your inventory investment. Ideal when working capital is tight. BC data: Value Entries → Margin (Sales Amount (Actual) minus Cost Amount (Actual)); Average Inventory Value via Inventory Valuation / Item Ledger.', Locked = true;
+        UsageValueLbl: Label 'Ranks by usage value (quantity × cost) to highlight high-consumption items that tie up inventory investment. Good for managing working capital and stock levels. BC data: Value Entries or Item Ledger → Quantity × Cost Amount (Actual).', Locked = true;
+
+    local procedure FillAllThresholds()
+    begin
+        // Fill General thresholds
+        Rec."A Threshold %" := 80;
+        Rec."B Threshold %" := 95;
+
+        // Fill Revenue model thresholds
+        Rec."Rev A %" := 80;
+        Rec."Rev B %" := 95;
+        Rec."Rev Period (Days)" := 365;
+
+        // Fill Gross Profit model thresholds
+        Rec."GP A %" := 80;
+        Rec."GP B %" := 95;
+        Rec."GP Period (Days)" := 365;
+
+        // Fill COGS model thresholds
+        Rec."COGS A %" := 80;
+        Rec."COGS B %" := 95;
+        Rec."COGS Period (Days)" := 365;
+
+        // Fill Usage Value model thresholds
+        Rec."Usage Value A %" := 80;
+        Rec."Usage Value B %" := 95;
+        Rec."Usage Value Period (Days)" := 365;
+
+        // Fill GMROII model thresholds
+        Rec."GMROII A %" := 80;
+        Rec."GMROII B %" := 95;
+        Rec."GMROII Period (Days)" := 365;
+
+        // Fill Pick Frequency model thresholds
+        Rec."Pick Freq A %" := 80;
+        Rec."Pick Freq B %" := 95;
+        Rec."Pick Freq Period (Days)" := 365;
+
+        Rec.Modify(true);
+        Message('All threshold values have been filled with default values (A: 80%%, B: 95%%, Period: 365 days).');
+    end;
+
 
     trigger OnOpenPage()
     var

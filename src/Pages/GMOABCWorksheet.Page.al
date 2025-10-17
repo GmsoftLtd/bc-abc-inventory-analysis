@@ -174,8 +174,6 @@ page 73030580 "GMO ABC Worksheet"
                 exit('Gross Profit');
             ModelParam::COGS:
                 exit('COGS');
-            ModelParam::"Sales Quantity":
-                exit('Sales Quantity');
             ModelParam::"Usage Value":
                 exit('Usage Value');
         end;

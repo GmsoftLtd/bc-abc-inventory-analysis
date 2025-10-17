@@ -22,6 +22,12 @@ report 73030580 "GMO ABC Detail by Class"
             column(ReportTitle; ReportTitleLbl)
             {
             }
+            column(RunDate; Format(CurrentDateTime, 0, '<Standard Format,9>'))
+            {
+            }
+            column(RunByUser; UserId)
+            {
+            }
             column(StartDate; Format(StartDate))
             {
             }
@@ -66,27 +72,26 @@ report 73030580 "GMO ABC Detail by Class"
                 if ItemValue = 0 then
                     CurrReport.Skip();
 
-                TotalValue += ItemValue;
+                // Calculate percentages on the fly
+                if TotalValue <> 0 then begin
+                    ValuePercent := (ItemValue / TotalValue) * 100;
+                    CumulativeValue += ItemValue;
+                    CumulativePercent := (CumulativeValue / TotalValue) * 100;
+                end;
             end;
 
             trigger OnPreDataItem()
+            var
+                ItemRec: Record Item;
             begin
                 if StartDate = 0D then
                     StartDate := CalcDate('<-1Y>', WorkDate());
                 if EndDate = 0D then
                     EndDate := WorkDate();
 
+                // First pass: calculate total value
                 TotalValue := 0;
-            end;
-
-            trigger OnPostDataItem()
-            var
-                ItemRec: Record Item;
-            begin
-                // Second pass to calculate percentages
                 ItemRec.CopyFilters(Item);
-                CumulativeValue := 0;
-
                 if ItemRec.FindSet() then
                     repeat
                         ABCClass := GetItemClass(ItemRec, Model);
@@ -96,12 +101,11 @@ report 73030580 "GMO ABC Detail by Class"
 
                         ItemValue := CalculateItemValue(ItemRec."No.", Model, StartDate, EndDate);
                         if ItemValue > 0 then
-                            if TotalValue <> 0 then begin
-                                ValuePercent := (ItemValue / TotalValue) * 100;
-                                CumulativeValue += ItemValue;
-                                CumulativePercent := (CumulativeValue / TotalValue) * 100;
-                            end;
+                            TotalValue += ItemValue;
                     until ItemRec.Next() = 0;
+
+                // Reset for the main loop
+                CumulativeValue := 0;
             end;
         }
     }
@@ -162,7 +166,7 @@ report 73030580 "GMO ABC Detail by Class"
         CumulativeValue: Decimal;
         LastCalculated: DateTime;
         ClassFilterText: Text[20];
-        ReportTitleLbl: Label 'ABC Detail by Class Report';
+        ReportTitleLbl: Label 'ABC Detail by Class';
 
     local procedure GetItemClass(ItemRec: Record Item; ModelType: Enum "GMO ABC Model"): Enum "GMO ABC Class"
     begin
@@ -173,10 +177,12 @@ report 73030580 "GMO ABC Detail by Class"
                 exit(ItemRec."GMO Class (Gross Profit)");
             ModelType::COGS:
                 exit(ItemRec."GMO Class (COGS)");
-            ModelType::"Sales Quantity":
-                exit(ItemRec."GMO Class (Sales Qty)");
             ModelType::"Usage Value":
                 exit(ItemRec."GMO Class (Usage Value)");
+            ModelType::GMROII:
+                exit(ItemRec."GMO Class (GMROII)");
+            ModelType::"Pick Frequency":
+                exit(ItemRec."GMO Class (Pick Frequency)");
         end;
     end;
 
@@ -184,35 +190,90 @@ report 73030580 "GMO ABC Detail by Class"
     var
         VE: Record "Value Entry";
         Total: Decimal;
+        Margin: Decimal;
+        AvgInv: Decimal;
+        ILE: Record "Item Ledger Entry";
+        PickCount: Integer;
     begin
         Total := 0;
         VE.SetRange("Item No.", ItemNo);
-        // Include: Sale, Consumption, Negative Adjmt (for scrap)
-        // Exclude: Output, Purchase, Positive Adjmt, Transfer, etc.
-        VE.SetFilter("Item Ledger Entry Type", '%1|%2|%3',
-            VE."Item Ledger Entry Type"::Sale,
-            VE."Item Ledger Entry Type"::Consumption,
-            VE."Item Ledger Entry Type"::"Negative Adjmt.");
+
+        // Gross Profit should only use Sales entries
+        if ModelType = ModelType::"Gross Profit" then
+            VE.SetRange("Item Ledger Entry Type", VE."Item Ledger Entry Type"::Sale)
+        else
+            // Include: Sale, Consumption, Negative Adjmt (for scrap)
+            // Exclude: Output, Purchase, Positive Adjmt, Transfer, etc.
+            VE.SetFilter("Item Ledger Entry Type", '%1|%2|%3',
+                VE."Item Ledger Entry Type"::Sale,
+                VE."Item Ledger Entry Type"::Consumption,
+                VE."Item Ledger Entry Type"::"Negative Adjmt.");
+
         VE.SetRange("Posting Date", FromDate, ToDate);
-        if VE.FindSet() then
-            repeat
-                case ModelType of
-                    ModelType::Revenue:
-                        Total += VE."Sales Amount (Actual)";
-                    ModelType::"Gross Profit":
-                        Total += VE."Sales Amount (Actual)" + VE."Cost Amount (Actual)";
-                    ModelType::COGS:
-                        if VE."Cost Amount (Actual)" < 0 then
-                            Total += -VE."Cost Amount (Actual)";
-                    ModelType::"Sales Quantity":
-                        if VE."Invoiced Quantity" > 0 then
-                            Total += VE."Invoiced Quantity";
-                    ModelType::"Usage Value":
-                        if VE."Cost Amount (Actual)" < 0 then
-                            Total += -VE."Cost Amount (Actual)";
+
+        case ModelType of
+            ModelType::Revenue,
+            ModelType::"Gross Profit",
+            ModelType::COGS,
+            ModelType::"Usage Value":
+                begin
+                    if VE.FindSet() then
+                        repeat
+                            case ModelType of
+                                ModelType::Revenue:
+                                    Total += VE."Sales Amount (Actual)";
+                                ModelType::"Gross Profit":
+                                    Total += VE."Sales Amount (Actual)" + VE."Cost Amount (Actual)";
+                                ModelType::COGS:
+                                    if VE."Cost Amount (Actual)" < 0 then
+                                        Total += -VE."Cost Amount (Actual)";
+                                ModelType::"Usage Value":
+                                    if VE."Cost Amount (Actual)" < 0 then
+                                        Total += -VE."Cost Amount (Actual)";
+                            end;
+                        until VE.Next() = 0;
                 end;
-            until VE.Next() = 0;
+            ModelType::GMROII:
+                begin
+                    // Calculate GMROII = Gross Margin / Average Inventory Value
+                    Margin := 0;
+                    if VE.FindSet() then
+                        repeat
+                            Margin += VE."Sales Amount (Actual)" + VE."Cost Amount (Actual)";
+                        until VE.Next() = 0;
+
+                    AvgInv := GetAverageInventoryValue(ItemNo, FromDate, ToDate);
+                    if AvgInv > 0 then
+                        Total := (Margin / AvgInv) * 100  // Return as percentage
+                    else
+                        Total := 0;
+                end;
+            ModelType::"Pick Frequency":
+                begin
+                    // Count number of pick/issue transactions
+                    ILE.Reset();
+                    ILE.SetRange("Item No.", ItemNo);
+                    ILE.SetFilter("Entry Type", '%1|%2',
+                        ILE."Entry Type"::Sale,
+                        ILE."Entry Type"::Consumption);
+                    ILE.SetRange("Posting Date", FromDate, ToDate);
+                    PickCount := ILE.Count();
+                    Total := PickCount;
+                end;
+        end;
         exit(Total);
+    end;
+
+    local procedure GetAverageInventoryValue(ItemNo: Code[20]; FromDate: Date; ToDate: Date): Decimal
+    var
+        Item: Record Item;
+    begin
+        // Simplified: use current inventory value as approximation
+        if Item.Get(ItemNo) then begin
+            Item.CalcFields(Inventory);
+            exit(Item.Inventory * Item."Unit Cost");
+        end;
+        exit(0);
     end;
 
     trigger OnPreReport()

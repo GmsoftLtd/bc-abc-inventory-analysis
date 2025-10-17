@@ -21,7 +21,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>GMO ABC Analysis Report</Value>
+                    <Value>=Fields!ReportTitle.Value</Value>
                     <Style>
                       <FontSize>18pt</FontSize>
                       <FontWeight>Bold</FontWeight>
@@ -551,9 +551,9 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>="Company: " &amp; Globals!CompanyName</Value>
+                      <Value>=Fields!CompanyName.Value</Value>
                       <Style>
-                        <FontSize>9pt</FontSize>
+                        <FontSize>10pt</FontSize>
                         <FontWeight>Bold</FontWeight>
                       </Style>
                     </TextRun>
@@ -568,6 +568,40 @@
               <Left>0.25in</Left>
               <Height>0.25in</Height>
               <Width>4in</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="RunInfo">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Run: " &amp; Fields!RunDate.Value &amp; " by " &amp; Fields!RunByUser.Value</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                        <Color>Gray</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>RunInfo</rd:DefaultName>
+              <Top>0.1in</Top>
+              <Left>4.5in</Left>
+              <Height>0.25in</Height>
+              <Width>3in</Width>
               <Style>
                 <Border>
                   <Style>None</Style>
@@ -656,6 +690,18 @@
   <DataSets>
     <DataSet Name="DataSet_Result">
       <Fields>
+        <Field Name="CompanyName">
+          <DataField>CompanyName</DataField>
+        </Field>
+        <Field Name="ReportTitle">
+          <DataField>ReportTitle</DataField>
+        </Field>
+        <Field Name="RunDate">
+          <DataField>RunDate</DataField>
+        </Field>
+        <Field Name="RunByUser">
+          <DataField>RunByUser</DataField>
+        </Field>
         <Field Name="LineNo">
           <DataField>LineNo</DataField>
         </Field>

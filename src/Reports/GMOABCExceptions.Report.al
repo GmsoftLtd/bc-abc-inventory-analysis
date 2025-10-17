@@ -18,6 +18,12 @@ report 73030578 "GMO ABC Exceptions"
             column(ReportTitle; ReportTitleLbl)
             {
             }
+            column(RunDate; Format(CurrentDateTime, 0, '<Standard Format,9>'))
+            {
+            }
+            column(RunByUser; UserId)
+            {
+            }
             column(ItemNo; "No.")
             {
             }
@@ -133,12 +139,17 @@ report 73030578 "GMO ABC Exceptions"
              (ItemRec."GMO Last Calc (GP)" = 0DT) and
              (ItemRec."GMO Last Calc (COGS)" = 0DT) and
              (ItemRec."GMO Last Calc (Sales Qty)" = 0DT) and
-             (ItemRec."GMO Last Calc (Usage Value)" = 0DT));
+             (ItemRec."GMO Last Calc (Usage Value)" = 0DT) and
+             (ItemRec."GMO Last Calc (GMROII)" = 0DT) and
+             (ItemRec."GMO Last Calc (Pick Freq)" = 0DT));
     end;
 
     local procedure IsOutdated(ItemRec: Record Item): Boolean
     var
         LatestCalc: DateTime;
+        DaysSinceCalc: Integer;
+        MillisecondsPerDay: BigInteger;
+        TimeDifference: BigInteger;
     begin
         LatestCalc := ItemRec."GMO Last Calc (Revenue)";
         if ItemRec."GMO Last Calc (GP)" > LatestCalc then
@@ -149,24 +160,37 @@ report 73030578 "GMO ABC Exceptions"
             LatestCalc := ItemRec."GMO Last Calc (Sales Qty)";
         if ItemRec."GMO Last Calc (Usage Value)" > LatestCalc then
             LatestCalc := ItemRec."GMO Last Calc (Usage Value)";
+        if ItemRec."GMO Last Calc (GMROII)" > LatestCalc then
+            LatestCalc := ItemRec."GMO Last Calc (GMROII)";
+        if ItemRec."GMO Last Calc (Pick Freq)" > LatestCalc then
+            LatestCalc := ItemRec."GMO Last Calc (Pick Freq)";
 
         if LatestCalc = 0DT then
             exit(false);
 
-        exit(CurrentDateTime - LatestCalc > DaysThreshold * 86400000);
+        // Calculate days difference to avoid overflow
+        // DateTime difference is in milliseconds: 1 day = 86,400,000 milliseconds
+        MillisecondsPerDay := 86400000;
+        TimeDifference := CurrentDateTime - LatestCalc;
+        DaysSinceCalc := TimeDifference div MillisecondsPerDay;
+
+        exit(DaysSinceCalc > DaysThreshold);
     end;
 
     local procedure HasInconsistentClasses(ItemRec: Record Item): Boolean
     var
-        Classes: array[5] of Integer;
+        Classes: array[7] of Integer;
     begin
         Classes[1] := ItemRec."GMO Class (Revenue)".AsInteger();
         Classes[2] := ItemRec."GMO Class (Gross Profit)".AsInteger();
         Classes[3] := ItemRec."GMO Class (COGS)".AsInteger();
         Classes[4] := ItemRec."GMO Class (Sales Qty)".AsInteger();
         Classes[5] := ItemRec."GMO Class (Usage Value)".AsInteger();
+        Classes[6] := ItemRec."GMO Class (GMROII)".AsInteger();
+        Classes[7] := ItemRec."GMO Class (Pick Frequency)".AsInteger();
 
-        exit((Classes[1] <> Classes[2]) or (Classes[1] <> Classes[3]) or (Classes[1] <> Classes[4]) or (Classes[1] <> Classes[5]));
+        exit((Classes[1] <> Classes[2]) or (Classes[1] <> Classes[3]) or (Classes[1] <> Classes[4]) or
+             (Classes[1] <> Classes[5]) or (Classes[1] <> Classes[6]) or (Classes[1] <> Classes[7]));
     end;
 
     local procedure IsHighInventoryLowClass(ItemRec: Record Item): Boolean

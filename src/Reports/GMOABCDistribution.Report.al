@@ -21,6 +21,12 @@ report 73030575 "GMO ABC Distribution"
             column(ReportTitle; ReportTitleLbl)
             {
             }
+            column(RunDate; Format(CurrentDateTime, 0, '<Standard Format,9>'))
+            {
+            }
+            column(RunByUser; UserId)
+            {
+            }
             column(FilterText; ItemFilter)
             {
             }
@@ -123,7 +129,7 @@ report 73030575 "GMO ABC Distribution"
         ItemPercent: Decimal;
         ClassName: Text[10];
         ItemFilter: Text;
-        ReportTitleLbl: Label 'ABC Class Distribution Report';
+        ReportTitleLbl: Label 'ABC Class Distribution';
 
     trigger OnPreReport()
     begin
@@ -190,10 +196,12 @@ report 73030575 "GMO ABC Distribution"
                 exit(ItemRec."GMO Class (Gross Profit)");
             ModelType::COGS:
                 exit(ItemRec."GMO Class (COGS)");
-            ModelType::"Sales Quantity":
-                exit(ItemRec."GMO Class (Sales Qty)");
             ModelType::"Usage Value":
                 exit(ItemRec."GMO Class (Usage Value)");
+            ModelType::GMROII:
+                exit(ItemRec."GMO Class (GMROII)");
+            ModelType::"Pick Frequency":
+                exit(ItemRec."GMO Class (Pick Frequency)");
         end;
     end;
 

@@ -36,13 +36,61 @@
             <Width>7in</Width>
             <Style />
           </Textbox>
+          <Textbox Name="CompanyBox">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Fields!CompanyName.Value</Value>
+                    <Style>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>0in</Top>
+            <Left>0.25in</Left>
+            <Height>0.25in</Height>
+            <Width>4in</Width>
+            <ZIndex>3</ZIndex>
+            <Style />
+          </Textbox>
+          <Textbox Name="RunInfoBox">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Run: " &amp; Fields!RunDate.Value &amp; " by " &amp; Fields!RunByUser.Value</Value>
+                    <Style>
+                      <FontSize>9pt</FontSize>
+                      <Color>Gray</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Right</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>0in</Top>
+            <Left>4.5in</Left>
+            <Height>0.25in</Height>
+            <Width>2.75in</Width>
+            <ZIndex>4</ZIndex>
+            <Style />
+          </Textbox>
           <Textbox Name="ParamsBox">
             <CanGrow>true</CanGrow>
             <Paragraphs>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>="Model: " &amp; Fields!Model.Value &amp; "   Compared to: " &amp; Fields!CompareDate.Value</Value>
+                    <Value>="Model: " &amp; Fields!ModelColumn.Value &amp; "   Compared to: " &amp; Fields!CompareDateColumn.Value</Value>
                     <Style>
                       <FontSize>10pt</FontSize>
                       <Color>DarkGray</Color>
@@ -414,6 +462,12 @@
         </Field>
         <Field Name="ModelColumn">
           <DataField>ModelColumn</DataField>
+        </Field>
+        <Field Name="RunDate">
+          <DataField>RunDate</DataField>
+        </Field>
+        <Field Name="RunByUser">
+          <DataField>RunByUser</DataField>
         </Field>
         <Field Name="ReportTitle">
           <DataField>ReportTitle</DataField>

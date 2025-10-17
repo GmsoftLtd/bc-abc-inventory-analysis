@@ -2,7 +2,7 @@ report 73030577 "GMO ABC Analysis"
 {
     UsageCategory = ReportsAndAnalysis;
     ApplicationArea = All;
-    Caption = 'ABC Inventory - Analysis';
+    Caption = 'ABC Inventory Analysis';
     RDLCLayout = './src/Reports/Layouts/GMOAnalysis.rdl';
 
     dataset
@@ -12,6 +12,10 @@ report 73030577 "GMO ABC Analysis"
             UseTemporary = true;
             DataItemTableView = sorting(Value) order(Descending);
 
+            column(CompanyName; CompanyProperty.DisplayName()) { }
+            column(ReportTitle; 'ABC Inventory Analysis') { }
+            column(RunDate; Format(CurrentDateTime, 0, '<Standard Format,9>')) { }
+            column(RunByUser; UserId) { }
             column(LineNo; "Line No.") { }
             column(Item_No_; "Item No.") { }
             column(Description; Description) { }
