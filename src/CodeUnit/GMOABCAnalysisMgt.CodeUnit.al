@@ -1,6 +1,7 @@
 codeunit 73030582 "GMO ABC Analysis Mgt."
 {
-
+    var
+        LicenseMgt: Codeunit "GMO ABC License Mgt.";
 
     procedure CalculatePreview(Model: Enum "GMO ABC Model"; StartDate: Date; EndDate: Date; var TempPreview: Record "GMO ABC Preview Line" temporary)
     var
@@ -11,6 +12,9 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
         TotalValue: Decimal;
         LNo: Integer;
     begin
+        // Check license before running analysis
+        LicenseMgt.ValidateLicense();
+
         EnsureSetup(Setup);
         TempPreview.DeleteAll();
         TotalValue := 0;
@@ -76,6 +80,9 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
         Updated: Integer;
         TotalAmt: Decimal;
     begin
+        // Check license before applying changes
+        LicenseMgt.ValidateLicense();
+
         EnsureSetup(Setup);
 
         // 🔒 Defensive copy (server-side) so we control filters and traversal
@@ -216,6 +223,9 @@ codeunit 73030582 "GMO ABC Analysis Mgt."
         E, S : Date;
         Model: Enum "GMO ABC Model";
     begin
+        // Check license before running full recalculation
+        LicenseMgt.ValidateLicense();
+
         EnsureSetup(Setup);
 
         // Revenue Model

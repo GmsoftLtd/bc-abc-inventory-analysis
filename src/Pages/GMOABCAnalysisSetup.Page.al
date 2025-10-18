@@ -10,6 +10,18 @@ page 73030575 "GMO ABC Analysis Setup"
     {
         area(Content)
         {
+            group(LicenseInfo)
+            {
+                Caption = 'License Information';
+                field(LicenseStatus; LicenseStatusText)
+                {
+                    ApplicationArea = All;
+                    Caption = 'License Status';
+                    Editable = false;
+                    ToolTip = 'Shows the current license status for ABC Inventory Optimizer. Active license required to run analysis.';
+                    StyleExpr = LicenseStatusStyle;
+                }
+            }
             group(General)
             {
                 field(Enabled; Rec.Enabled)
@@ -391,6 +403,9 @@ page 73030575 "GMO ABC Analysis Setup"
     }
 
     var
+        LicenseMgt: Codeunit "GMO ABC License Mgt.";
+        LicenseStatusText: Text[50];
+        LicenseStatusStyle: Text;
         CountingPolicyDescLbl: Label '%1 ABC → Counting Period mapping', Locked = true;
         RevenueLbl: Label 'Ranks items by sales amount (net revenue). Good when demand is driven by sales, not internal consumption. BC data: Value Entries or Sales Shipment/Invoice lines → Sales Amount (Actual).', Locked = true;
         ProfitLbl: Label 'Ranks by gross margin (Sales − Cost) to spotlight profit drivers (A''s) vs low-margin tail (C''s).BC data: Value Entries → Sales Amount (Actual) minus Cost Amount (Actual).', Locked = true;
@@ -444,6 +459,9 @@ page 73030575 "GMO ABC Analysis Setup"
     var
         Mgt: Codeunit "GMO ABC Analysis Mgt.";
     begin
+        // Update license status display
+        UpdateLicenseStatus();
+
         // Note: No license check here - users should be able to view setup even without license
         // License is checked when running calculations or applying classifications
 
@@ -456,5 +474,15 @@ page 73030575 "GMO ABC Analysis Setup"
         end;
 
         Mgt.EnsurePolicyExists(Rec."Counting Code Mapping ID");
+    end;
+
+    local procedure UpdateLicenseStatus()
+    begin
+        LicenseStatusText := LicenseMgt.GetLicenseStatusText();
+
+        if LicenseMgt.HasValidLicense() then
+            LicenseStatusStyle := 'Favorable'
+        else
+            LicenseStatusStyle := 'Unfavorable';
     end;
 }
