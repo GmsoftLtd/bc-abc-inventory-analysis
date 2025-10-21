@@ -116,15 +116,15 @@ Combining both creates a 9-zone strategic matrix:
 After installation, assign permissions:
 
 1. Search → "Permission Sets"
-2. Find "GMO ABC ANALYSIS" permission sets:
-   - **GMO ABC ADMIN**: Full access (setup, analysis, reports)
-   - **GMO ABC USER**: Standard user (run analysis, view reports)
-   - **GMO ABC VIEW**: Read-only access
+2. Find "GSO ABC ANALYSIS" permission sets:
+   - **GSO ABC ADMIN**: Full access (setup, analysis, reports)
+   - **GSO ABC USER**: Standard user (run analysis, view reports)
+   - **GSO ABC VIEW**: Read-only access
 
 3. Assign to users:
    - Search → "Users"
    - Select user → "User Permission Sets"
-   - Add "GMO ABC USER" or "GMO ABC ADMIN"
+   - Add "GSO ABC USER" or "GSO ABC ADMIN"
 
 ---
 
@@ -727,7 +727,7 @@ If results don't look right:
 1. Check date filter: Ensure format is correct (MM/DD/YYYY..MM/DD/YYYY)
 2. Expand date range: Try last 12 months
 3. Clear location filter: Test with no location filter
-4. Verify permissions: Ensure you have "GMO ABC USER" permission set
+4. Verify permissions: Ensure you have "GSO ABC USER" permission set
 5. Check item ledger entries: Verify sales exist in Item Ledger Entries page
 
 #### Issue: All items classified as A or C

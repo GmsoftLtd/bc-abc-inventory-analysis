@@ -153,7 +153,7 @@ This documentation package contains everything you need to submit your ABC Analy
 - [ ] Read **01-AppSource-Submission-Guide.md** completely
 - [ ] Create Microsoft Partner Network account
 - [ ] Enroll in Commercial Marketplace program
-- [ ] Register Object IDs and prefix (already done: 73030575-73031574, GMO)
+- [ ] Register Object IDs and prefix (already done: 73030575-73031574, GSO)
 
 ### Legal Documents (Week 1)
 - [ ] Customize **03-Privacy-Policy-Template.md**
@@ -180,10 +180,10 @@ This documentation package contains everything you need to submit your ABC Analy
 ### Technical Preparation (Week 2-3)
 - [ ] Run AppSourceCop validation on your .app file
 - [ ] Test in BC sandbox environment
-- [ ] Verify all objects use GMO prefix
+- [ ] Verify all objects use GSO prefix
 - [ ] Verify all objects in ID range 73030575-73031574
 - [ ] Test in multiple BC versions (26.0+)
-- [ ] Create permission sets (GMO ABC ADMIN, GMO ABC USER)
+- [ ] Create permission sets (GSO ABC ADMIN, GSO ABC USER)
 
 ### Partner Center Setup (Week 3)
 - [ ] Complete Partner Center enrollment

@@ -37,7 +37,7 @@
   - Verify registration at: https://aka.ms/BCPublisherRange
 
 - [ ] **Publisher Prefix Registered**
-  - Current prefix: GMO
+  - Current prefix: GSO
   - Register at: https://aka.ms/BCPublisherAffixes
 
 - [ ] **Code Validation**
@@ -308,7 +308,7 @@ Select target markets:
 - [ ] App compiles without errors
 - [ ] AppSourceCop validation passes
 - [ ] All objects within registered ID range (73030575-73031574)
-- [ ] All objects use GMO prefix
+- [ ] All objects use GSO prefix
 - [ ] Permission sets defined (no SUPER required)
 - [ ] Data sensitivity labels applied
 - [ ] Translation files included

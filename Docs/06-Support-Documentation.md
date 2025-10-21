@@ -97,7 +97,7 @@ Check the [Troubleshooting](#troubleshooting) section in the User Guide for comm
 2. Extend date range to last 12 months
 3. Clear location filter
 4. Check Item Ledger Entries for sales data
-5. Verify user has GMO ABC USER permission
+5. Verify user has GSO ABC USER permission
 
 ---
 

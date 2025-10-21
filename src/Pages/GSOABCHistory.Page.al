@@ -1,0 +1,80 @@
+page 73030583 "GSO ABC History"
+{
+    Caption = 'ABC History';
+    PageType = List;
+    SourceTable = "GSO ABC History Header";
+    ApplicationArea = All;
+    UsageCategory = History;
+    Editable = false;
+    InsertAllowed = false;
+    DeleteAllowed = false;
+    ModifyAllowed = false;
+
+    layout
+    {
+        area(content)
+        {
+            repeater(Headers)
+            {
+                field("Entry No."; Rec."Entry No.")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Unique sequential number for this historical ABC analysis run.';
+                }
+                field(Model; Rec.Model)
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'ABC analysis model used for this run: Revenue, Gross Profit, or COGS.';
+                }
+                field("Start Date"; Rec."Start Date")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Beginning date of the period analyzed in this ABC calculation.';
+                }
+                field("End Date"; Rec."End Date")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Ending date of the period analyzed in this ABC calculation.';
+                }
+                field("Items Count"; Rec."Items Count")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Total number of items included in this ABC analysis run.';
+                }
+                field("Total Amount"; Rec."Total Amount")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Total value (revenue, profit, or COGS) of all items analyzed in this run.';
+                }
+                field("Created By"; Rec."Created By")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'User who initiated this ABC analysis calculation.';
+                }
+                field("Created At"; Rec."Created At")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Date and time when this ABC analysis was executed.';
+                }
+            }
+        }
+    }
+
+    actions
+    {
+        area(Processing)
+        {
+            action(OpenCard)
+            {
+                Caption = 'Open';
+                Image = View;
+                ApplicationArea = All;
+                ToolTip = 'Open the detailed card view for this historical ABC analysis run to view item-level classifications and statistics.';
+                trigger OnAction()
+                begin
+                    PAGE.Run(PAGE::"GSO ABC History Card", Rec);
+                end;
+            }
+        }
+    }
+}

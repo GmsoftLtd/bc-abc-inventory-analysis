@@ -6,21 +6,21 @@ This is a **Business Central AL extension** (ID: `8cea7497-4829-495d-8928-f065a0
 
 ### Core Domain Model
 - **Three ABC Models**: Revenue, Gross Profit, and COGS (Value) - each with separate thresholds and calculation periods
-- **ABC Classes**: A (high-value), B (medium), C (low), D (zero/no consumption) - defined in `GMOABCClass.Enum.al`
-- **Multi-model support**: Items track separate classifications per model via table extensions (`GMOABCItemExt.TableExt.al`, `GMOABCSKUExt.TableExt.al`)
+- **ABC Classes**: A (high-value), B (medium), C (low), D (zero/no consumption) - defined in `GSOABCClass.Enum.al`
+- **Multi-model support**: Items track separate classifications per model via table extensions (`GSOABCItemExt.TableExt.al`, `GSOABCSKUExt.TableExt.al`)
 
 ### Key Data Flow
-1. **Setup** → `GMOABCAnalysisSetup.Table.al` - Single record with ID 'SETUP' containing thresholds, periods, and flags
-2. **Calculation** → `GMOABCAnalysisMgt.CodeUnit.al` - Main business logic for preview generation and application
-3. **Worksheet** → Temporary `GMOABCPreviewLine.Table.al` records displayed in `GMOABCWorksheet.Page.al`
+1. **Setup** → `GSOABCAnalysisSetup.Table.al` - Single record with ID 'SETUP' containing thresholds, periods, and flags
+2. **Calculation** → `GSOABCAnalysisMgt.CodeUnit.al` - Main business logic for preview generation and application
+3. **Worksheet** → Temporary `GSOABCPreviewLine.Table.al` records displayed in `GSOABCWorksheet.Page.al`
 4. **Application** → Updates Item/SKU records with classification and timestamp per model
 
 ## Essential Patterns
 
 ### Object Naming Convention
-- **Prefix**: All objects start with `GMO` (company prefix) + `ABC` (module)
-- **Examples**: `GMOABCAnalysisMgt.CodeUnit.al`, `GMOABCWorksheet.Page.al`
-- **Table Extensions**: End with `Ext` (e.g., `GMOABCItemExt.TableExt.al`)
+- **Prefix**: All objects start with `GSO` (company prefix) + `ABC` (module)
+- **Examples**: `GSOABCAnalysisMgt.CodeUnit.al`, `GSOABCWorksheet.Page.al`
+- **Table Extensions**: End with `Ext` (e.g., `GSOABCItemExt.TableExt.al`)
 
 ### ID Range Management
 - **Base**: `73030575` - First enum/permission set
@@ -32,33 +32,33 @@ This is a **Business Central AL extension** (ID: `8cea7497-4829-495d-8928-f065a0
 ### Multi-Model Architecture Pattern
 ```al
 // Per-model fields in table extensions
-field(73030620; "GMO Class (Revenue)"; Enum "GMO ABC Class")
-field(73030621; "GMO Class (Gross Profit)"; Enum "GMO ABC Class")  
-field(73030622; "GMO Class (COGS)"; Enum "GMO ABC Class")
+field(73030620; "GSO Class (Revenue)"; Enum "GSO ABC Class")
+field(73030621; "GSO Class (Gross Profit)"; Enum "GSO ABC Class")  
+field(73030622; "GSO Class (COGS)"; Enum "GSO ABC Class")
 ```
 
 ### Upgrade Pattern
-- **Upgrade Tags**: `GMOABCUpgradeTag.Table.al` tracks applied upgrades
-- **Version Helpers**: Separate codeunits (`GMOABCUpgradeHelperv2.CodeUnit.al`) handle schema changes
+- **Upgrade Tags**: `GSOABCUpgradeTag.Table.al` tracks applied upgrades
+- **Version Helpers**: Separate codeunits (`GSOABCUpgradeHelperv2.CodeUnit.al`) handle schema changes
 - **Safe Migration**: Uses reflection (`RecordRef`/`FieldRef`) to avoid compilation errors on missing fields
 
 ## Critical Development Workflows
 
 ### Adding New Features
 1. **Check ID availability** in the `73030575-73031574` range
-2. **Follow naming convention**: `GMO` + `ABC` + descriptive name
-3. **Update permissions**: Add to `GMOABCANALYSIS.Permissions.al`
+2. **Follow naming convention**: `GSO` + `ABC` + descriptive name
+3. **Update permissions**: Add to `GSOABCANALYSIS.Permissions.al`
 4. **Consider upgrade path**: May need upgrade codeunit for schema changes
 
 ### Testing Calculations
-- Use `GMOABCWorksheet.Page.al` with "Calculate Preview" action
+- Use `GSOABCWorksheet.Page.al` with "Calculate Preview" action
 - Models run independently - each has separate thresholds in Setup
 - Worksheet sorts by Value descending, applies cumulative percentage thresholds
 
 ### Debugging Job Queue Integration
-- `GMOABCJobQueueHelper.CodeUnit.al` manages background scheduling
+- `GSOABCJobQueueHelper.CodeUnit.al` manages background scheduling
 - Auto-recalc triggers on Value Entry posting (configurable via Setup)
-- Telemetry via `GMOABCTelemetry.CodeUnit.al` logs to Application Insights
+- Telemetry via `GSOABCTelemetry.CodeUnit.al` logs to Application Insights
 
 ### Working with Extensions
 - **Item extensions** add ABC fields without breaking base functionality
