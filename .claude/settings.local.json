@@ -10,7 +10,9 @@
       "Bash(dir:*)",
       "Bash(ren:*)",
       "Bash(del \"c:\\GMSoft\\OneDrive - Gmsoft\\AL Projects\\Appsource\\ABC\\Version 1.1.0.0\\replace_gmo_to_gso.ps1\")",
-      "Bash(del \"c:\\GMSoft\\OneDrive - Gmsoft\\AL Projects\\Appsource\\ABC\\Version 1.1.0.0\\rename_gmo_files.ps1\")"
+      "Bash(del \"c:\\GMSoft\\OneDrive - Gmsoft\\AL Projects\\Appsource\\ABC\\Version 1.1.0.0\\rename_gmo_files.ps1\")",
+      "Bash(del \"c:\\GMSoft\\OneDrive - Gmsoft\\AL Projects\\Appsource\\ABC\\Version 1.1.0.0\\fix_permissions.ps1\")",
+      "Bash(del \"c:\\GMSoft\\OneDrive - Gmsoft\\AL Projects\\Appsource\\ABC\\Version 1.1.0.0\\remove_inherent_permissions.ps1\")"
     ],
     "deny": [],
     "ask": []

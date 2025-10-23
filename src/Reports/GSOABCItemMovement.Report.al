@@ -5,6 +5,8 @@ report 73030576 "GSO ABC Item Movement"
     ApplicationArea = All;
     DefaultLayout = RDLC;
     RDLCLayout = './src/Reports/Layouts/GSOABCMovement.rdl';
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     dataset
     {

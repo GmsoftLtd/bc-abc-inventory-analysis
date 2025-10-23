@@ -1,6 +1,8 @@
 codeunit 73030590 "GSO ABC License Mgt."
 {
     Access = Public;
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     var
         LicenseNotActiveErr: Label 'You do not have an active license for ABC Inventory Optimizer. Please purchase a subscription through Microsoft AppSource.';

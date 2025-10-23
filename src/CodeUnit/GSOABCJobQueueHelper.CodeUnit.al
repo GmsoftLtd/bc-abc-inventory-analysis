@@ -1,5 +1,8 @@
 codeunit 73030580 "GSO ABC Job Queue Helper"
 {
+    InherentPermissions = X;
+    InherentEntitlements = X;
+
     procedure CreateOrEnableJob()
     var
         JQ: Record "Job Queue Entry";

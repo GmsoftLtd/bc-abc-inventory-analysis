@@ -1,6 +1,8 @@
 codeunit 73030577 "GSO ABC Install"
 {
     Subtype = Install;
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     trigger OnInstallAppPerCompany()
     var

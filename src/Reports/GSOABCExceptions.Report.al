@@ -5,6 +5,8 @@ report 73030578 "GSO ABC Exceptions"
     ApplicationArea = All;
     DefaultLayout = RDLC;
     RDLCLayout = './src/Reports/Layouts/GSOABCExceptions.rdl';
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     dataset
     {

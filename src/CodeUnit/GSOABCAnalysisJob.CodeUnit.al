@@ -1,6 +1,7 @@
 codeunit 73030576 "GSO ABC Analysis Job"
 {
-
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     trigger OnRun()
     var

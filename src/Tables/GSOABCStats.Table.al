@@ -4,6 +4,8 @@ table 73030582 "GSO ABC Stats"
     Description = 'Temporary table for calculating and displaying statistical summaries of ABC classification distribution';
     DataClassification = CustomerContent;
     TableType = Temporary;
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     fields
     {

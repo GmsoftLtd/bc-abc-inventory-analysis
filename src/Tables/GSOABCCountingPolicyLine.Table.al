@@ -4,6 +4,8 @@ table 73030578 "GSO ABC Counting Policy Line"
     Description = 'Specifies counting period assignments for each ABC class and model combination within a counting policy';
     DataClassification = SystemMetadata;
     DataCaptionFields = Model, Class;
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     fields
     {

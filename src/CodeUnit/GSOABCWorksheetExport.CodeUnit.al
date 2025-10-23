@@ -1,5 +1,8 @@
 codeunit 73030583 "GSO ABC Worksheet Export"
 {
+    InherentPermissions = X;
+    InherentEntitlements = X;
+
     procedure ExportPreviewAndStats(var TempPreview: Record "GSO ABC Preview Line" temporary; var TempStats: Record "GSO ABC Stats" temporary)
     var
         ExcelBuf: Record "Excel Buffer";

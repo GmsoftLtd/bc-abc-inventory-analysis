@@ -1,5 +1,8 @@
 codeunit 73030582 "GSO ABC Analysis Mgt."
 {
+    InherentPermissions = X;
+    InherentEntitlements = X;
+
     var
         LicenseMgt: Codeunit "GSO ABC License Mgt.";
 

@@ -4,6 +4,8 @@ table 73030579 "GSO ABC Preview Line"
     Description = 'Temporary table for displaying preview results of ABC analysis calculations before committing to history';
     DataClassification = CustomerContent;
     DataCaptionFields = Description;
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     fields
     {

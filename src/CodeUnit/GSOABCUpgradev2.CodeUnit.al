@@ -1,6 +1,8 @@
 codeunit 73030585 "GSO ABC Upgrade v2"
 {
     Subtype = Upgrade;
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     trigger OnUpgradePerCompany()
     var

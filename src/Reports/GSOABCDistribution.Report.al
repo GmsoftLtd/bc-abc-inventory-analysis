@@ -5,6 +5,8 @@ report 73030575 "GSO ABC Distribution"
     ApplicationArea = All;
     DefaultLayout = RDLC;
     RDLCLayout = './src/Reports/Layouts/GSOABCDistribution.rdl';
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     dataset
     {

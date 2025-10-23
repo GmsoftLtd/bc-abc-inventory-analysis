@@ -1,6 +1,7 @@
 codeunit 73030579 "GSO ABC Upgrade Helper"
 {
-
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     procedure ApplyInitialUpgrade()
     var

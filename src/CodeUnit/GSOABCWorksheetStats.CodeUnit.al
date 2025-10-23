@@ -1,5 +1,7 @@
 codeunit 73030584 "GSO ABC Worksheet Stats"
 {
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     procedure BuildStats(var TempPreview: Record "GSO ABC Preview Line" temporary; var TempStats: Record "GSO ABC Stats" temporary)
     var

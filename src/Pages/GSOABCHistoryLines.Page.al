@@ -9,6 +9,7 @@ page 73030584 "GSO ABC History Lines"
     InsertAllowed = false;
     DeleteAllowed = false;
     ModifyAllowed = false;
+ 
 
     layout
     {

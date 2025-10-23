@@ -5,6 +5,8 @@ report 73030579 "GSO ABC Comparison"
     ApplicationArea = All;
     DefaultLayout = RDLC;
     RDLCLayout = './src/Reports/Layouts/GSOABCComparison.rdl';
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     dataset
     {

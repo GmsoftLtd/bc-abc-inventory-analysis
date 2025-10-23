@@ -3,6 +3,8 @@ table 73030581 "GSO ABC History Line"
     Caption = 'ABC History Line';
     Description = 'Stores detailed item-level ABC classification results from historical analysis runs';
     DataClassification = CustomerContent;
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     fields
     {
@@ -14,5 +16,9 @@ table 73030581 "GSO ABC History Line"
         field(6; "Value %"; Decimal) { DecimalPlaces = 0 : 5; }
         field(7; "Cum. %"; Decimal) { DecimalPlaces = 0 : 5; }
     }
-    keys { key(PK; "Entry No.", "Line No.") { Clustered = true; } }
+    keys
+    {
+        key(PK; "Entry No.", "Line No.") { Clustered = true; }
+        key(ClassKey; Class) { }
+    }
 }

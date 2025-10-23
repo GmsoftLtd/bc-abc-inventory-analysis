@@ -1,6 +1,7 @@
 codeunit 73030586 "GSO ABC Upgrade Helper v2"
 {
-
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     procedure ApplyV2()
     begin

@@ -5,6 +5,8 @@ report 73030580 "GSO ABC Detail by Class"
     ApplicationArea = All;
     DefaultLayout = RDLC;
     RDLCLayout = './src/Reports/Layouts/GSOABCDetailByClass.rdl';
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     dataset
     {

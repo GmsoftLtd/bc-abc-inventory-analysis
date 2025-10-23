@@ -4,6 +4,8 @@ report 73030577 "GSO ABC Analysis"
     ApplicationArea = All;
     Caption = 'ABC Inventory Analysis';
     RDLCLayout = './src/Reports/Layouts/GSOAnalysis.rdl';
+    InherentPermissions = X;
+    InherentEntitlements = X;
 
     dataset
     {
