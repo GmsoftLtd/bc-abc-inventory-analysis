@@ -48,6 +48,7 @@ report 73030576 "GSO ABC Item Movement"
 
     requestpage
     {
+        ContextSensitiveHelpPage = 'reports';
         layout
         {
             area(Content)

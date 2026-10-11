@@ -1,5 +1,6 @@
 page 73030582 "GSO ABC Stats Part"
 {
+    ContextSensitiveHelpPage = 'worksheet';
     Caption = 'ABC Statistics';
     PageType = ListPart;
     SourceTable = "GSO ABC Stats";

@@ -70,6 +70,7 @@ report 73030580 "GSO ABC Detail by Class"
 
     requestpage
     {
+        ContextSensitiveHelpPage = 'reports';
         layout
         {
             area(Content)

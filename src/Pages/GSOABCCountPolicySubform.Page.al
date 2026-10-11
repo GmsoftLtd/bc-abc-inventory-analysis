@@ -1,5 +1,6 @@
 page 73030577 "GSO ABC Count Policy Subform"
 {
+    ContextSensitiveHelpPage = 'counting-policies';
     Caption = 'ABC Counting Policy Lines';
     PageType = ListPart;
     SourceTable = "GSO ABC Counting Policy Line";

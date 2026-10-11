@@ -1,6 +1,7 @@
 page 73030581 "GSO ABC Worksheet Params"
 {
     PageType = StandardDialog;
+    ContextSensitiveHelpPage = 'worksheet';
     Caption = 'ABC Calculation Parameters';
     ApplicationArea = All;
 

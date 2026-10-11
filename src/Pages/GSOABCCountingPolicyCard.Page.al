@@ -1,5 +1,6 @@
 page 73030578 "GSO ABC Counting Policy Card"
 {
+    ContextSensitiveHelpPage = 'counting-policies';
     Caption = 'ABC Inventory - Counting Policy';
     PageType = Card;
     SourceTable = "GSO ABC Counting Policy Header";

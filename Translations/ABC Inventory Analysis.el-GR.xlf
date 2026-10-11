@@ -429,36 +429,6 @@
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Table GSO ABC Stats - Field Line No. - Property Caption</note>
         </trans-unit>
-        <trans-unit id="Table 4054826971 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>ABC Upgrade Tag</source>
-          <target>Ετικέτα Αναβάθμισης ABC</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table GSO ABC Upgrade Tag - Property Caption</note>
-        </trans-unit>
-        <trans-unit id="Table 4054826971 - Field 2766253784 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>App ID</source>
-          <target>ID Εφαρμογής</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table GSO ABC Upgrade Tag - Field App ID - Property Caption</note>
-        </trans-unit>
-        <trans-unit id="Table 4054826971 - Field 3674145688 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Applied On</source>
-          <target>Εφαρμόστηκε Στις</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table GSO ABC Upgrade Tag - Field Applied On - Property Caption</note>
-        </trans-unit>
-        <trans-unit id="Table 4054826971 - Field 3997336476 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Company Name</source>
-          <target>Επωνυμία Εταιρείας</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table GSO ABC Upgrade Tag - Field Company Name - Property Caption</note>
-        </trans-unit>
-        <trans-unit id="Table 4054826971 - Field 2801749846 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Tag</source>
-          <target>Ετικέτα</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Table GSO ABC Upgrade Tag - Field Tag - Property Caption</note>
-        </trans-unit>
         <trans-unit id="Codeunit 1130809355 - NamedType 3359697259" size-unit="char" translate="yes" xml:space="preserve">
           <source>There are no preview lines to apply. Run Calculate first.</source>
           <target>Δεν υπάρχουν γραμμές προεπισκόπησης για εφαρμογή. Εκτελέστε πρώτα τον Υπολογισμό.</target>
@@ -1028,30 +998,6 @@
           <target>Περιγραφική ονομασία της πολιτικής απογραφής. Παράδειγμα: "Τυπικό Πρόγραμμα Απογραφής ABC" ή "Τριμηνιαία Κυκλική Απογραφή".</target>
           <note from="Developer" annotates="general" priority="2"></note>
           <note from="Xliff Generator" annotates="general" priority="3">Page GSO ABC Counting Policy Card - Control Description - Property ToolTip</note>
-        </trans-unit>
-        <trans-unit id="Page 755475447 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Counting Policy Lines</source>
-          <target>Γραμμές Πολιτικής Απογραφής</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page GSO ABC Counting Policy Lines - Property Caption</note>
-        </trans-unit>
-        <trans-unit id="Page 755475447 - Control 3454070650 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
-          <source>ABC classification: A (highest value), B (medium value), C (lower value).</source>
-          <target>Κλάση ABC: A (υψηλότερη αξία), B (μεσαία αξία), C (χαμηλότερη αξία).</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page GSO ABC Counting Policy Lines - Control Class - Property ToolTip</note>
-        </trans-unit>
-        <trans-unit id="Page 755475447 - Control 2942977181 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
-          <source>Physical inventory counting period code to assign to items with this model and class combination.</source>
-          <target>Κωδικός περιόδου φυσικής απογραφής που αποδίδεται στα είδη με αυτόν τον συνδυασμό μοντέλου και κλάσης.</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page GSO ABC Counting Policy Lines - Control Counting Period Code - Property ToolTip</note>
-        </trans-unit>
-        <trans-unit id="Page 755475447 - Control 1695122201 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
-          <source>ABC analysis model: Revenue, Gross Profit, or Cost of Goods Sold (COGS).</source>
-          <target>Μοντέλο ανάλυσης ABC: Έσοδα, Μικτό Κέρδος ή Κόστος Πωληθέντων (COGS).</target>
-          <note from="Developer" annotates="general" priority="2"></note>
-          <note from="Xliff Generator" annotates="general" priority="3">Page GSO ABC Counting Policy Lines - Control Model - Property ToolTip</note>
         </trans-unit>
         <trans-unit id="Page 3481207486 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
           <source>ABC Counting Policies</source>

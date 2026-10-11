@@ -4,6 +4,7 @@ page 73030580 "GSO ABC Worksheet"
     SourceTable = "GSO ABC Preview Line";
     SourceTableTemporary = true;
     SourceTableView = sorting(Value) order(descending);
+    ContextSensitiveHelpPage = 'worksheet';
     Caption = 'ABC Inventory - Worksheet';
     ApplicationArea = All;
     UsageCategory = Tasks;

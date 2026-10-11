@@ -73,6 +73,7 @@ report 73030578 "GSO ABC Exceptions"
 
     requestpage
     {
+        ContextSensitiveHelpPage = 'reports';
         layout
         {
             area(Content)

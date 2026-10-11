@@ -37,6 +37,7 @@ report 73030577 "GSO ABC Analysis"
 
     requestpage
     {
+        ContextSensitiveHelpPage = 'reports';
         layout
         {
             area(Content)

@@ -1,5 +1,6 @@
 page 73030583 "GSO ABC History"
 {
+    ContextSensitiveHelpPage = 'history';
     Caption = 'ABC History';
     PageType = List;
     SourceTable = "GSO ABC History Header";

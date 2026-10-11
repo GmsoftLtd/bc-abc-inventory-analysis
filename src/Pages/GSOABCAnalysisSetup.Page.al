@@ -1,5 +1,6 @@
 page 73030575 "GSO ABC Analysis Setup"
 {
+    ContextSensitiveHelpPage = 'setup';
     Caption = 'ABC Analysis Setup';
     PageType = Card;
     ApplicationArea = All;

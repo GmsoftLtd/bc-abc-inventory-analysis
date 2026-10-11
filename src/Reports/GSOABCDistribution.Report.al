@@ -69,6 +69,7 @@ report 73030575 "GSO ABC Distribution"
 
     requestpage
     {
+        ContextSensitiveHelpPage = 'reports';
         layout
         {
             area(Content)
