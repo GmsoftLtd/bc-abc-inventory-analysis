@@ -4,7 +4,6 @@ permissionset 73030578 "GSO ABC USER"
     Caption = 'ABC Inventory - User';
 
     Permissions =
-        // Tables (metadata)
         table "GSO ABC Analysis Setup" = X,
         table "GSO ABC Counting Policy Header" = X,
         table "GSO ABC Counting Policy Line" = X,
@@ -13,17 +12,15 @@ permissionset 73030578 "GSO ABC USER"
         table "GSO ABC Stats" = X,
         table "GSO ABC Preview Line" = X,
 
-
-        // Tables (data) - Read only for setup and history, modify for working tables
-        tabledata "GSO ABC Analysis Setup" = R,
+        // Read setup and policies, write history when applying classes
+        tabledata "GSO ABC Analysis Setup" = RM,
         tabledata "GSO ABC Counting Policy Header" = R,
         tabledata "GSO ABC Counting Policy Line" = R,
-        tabledata "GSO ABC History Header" = R,
-        tabledata "GSO ABC History Line" = R,
+        tabledata "GSO ABC History Header" = RIM,
+        tabledata "GSO ABC History Line" = RI,
         tabledata "GSO ABC Stats" = RIMD,
         tabledata "GSO ABC Preview Line" = RIMD,
 
-        // Pages - Limited access
         page "GSO ABC Analysis Setup" = X,
         page "GSO ABC Worksheet Params" = X,
         page "GSO ABC Stats Part" = X,
@@ -35,7 +32,6 @@ permissionset 73030578 "GSO ABC USER"
         page "GSO ABC Counting Policy Card" = X,
         page "GSO ABC Count Policy Subform" = X,
 
-        // Reports - Read access only
         report "GSO ABC Analysis" = X,
         report "GSO ABC Distribution" = X,
         report "GSO ABC Item Movement" = X,
@@ -43,7 +39,6 @@ permissionset 73030578 "GSO ABC USER"
         report "GSO ABC Exceptions" = X,
         report "GSO ABC Comparison" = X,
 
-        // Codeunits - Limited access
         codeunit "GSO ABC Analysis Mgt." = X,
         codeunit "GSO ABC Worksheet Stats" = X,
         codeunit "GSO ABC Worksheet Export" = X;

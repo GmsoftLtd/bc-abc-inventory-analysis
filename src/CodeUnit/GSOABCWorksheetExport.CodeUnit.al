@@ -1,80 +1,88 @@
 codeunit 73030583 "GSO ABC Worksheet Export"
 {
-    InherentPermissions = X;
-    InherentEntitlements = X;
+    var
+        BookNameLbl: Label 'ABC Preview';
+        PreviewSheetLbl: Label 'Preview';
+        StatsSheetLbl: Label 'Statistics';
+        ItemNoLbl: Label 'Item No.';
+        DescriptionLbl: Label 'Description';
+        ModelLbl: Label 'Model';
+        ValueLbl: Label 'Value';
+        ValuePctLbl: Label 'Value %';
+        CumPctLbl: Label 'Cum. %';
+        ClassLbl: Label 'Class';
+        ItemCountLbl: Label 'Item Count';
+        CountPctLbl: Label 'Count %';
+        AmountLbl: Label 'Amount';
+        AmountPctLbl: Label 'Amount %';
+        CumCountPctLbl: Label 'Cum. Count %';
+        CumAmountPctLbl: Label 'Cum. Amount %';
 
     procedure ExportPreviewAndStats(var TempPreview: Record "GSO ABC Preview Line" temporary; var TempStats: Record "GSO ABC Stats" temporary)
     var
-        ExcelBuf: Record "Excel Buffer";
+        TempExcelBuffer: Record "Excel Buffer" temporary;
     begin
-        ExcelBuf.DeleteAll();
+        WritePreviewSheet(TempExcelBuffer, TempPreview);
+        TempExcelBuffer.CreateNewBook(PreviewSheetLbl);
+        TempExcelBuffer.WriteSheet(PreviewSheetLbl, CompanyName(), UserId());
 
-        WritePreviewSheet(ExcelBuf, TempPreview);
-        WriteStatsSheet(ExcelBuf, TempStats);
+        TempExcelBuffer.DeleteAll();
+        WriteStatsSheet(TempExcelBuffer, TempStats);
+        TempExcelBuffer.SelectOrAddSheet(StatsSheetLbl);
+        TempExcelBuffer.WriteSheet(StatsSheetLbl, CompanyName(), UserId());
 
-        ExcelBuf.CreateNewBook('GSO ABC Preview');
-        ExcelBuf.WriteSheet('Preview', CompanyName, UserId);
-        ExcelBuf.WriteSheet('Statistics', CompanyName, UserId);
-        ExcelBuf.CloseBook();
-        ExcelBuf.OpenExcel();
+        TempExcelBuffer.CloseBook();
+        TempExcelBuffer.SetFriendlyFilename(BookNameLbl);
+        TempExcelBuffer.OpenExcel();
     end;
 
-    local procedure WritePreviewSheet(var ExcelBuf: Record "Excel Buffer"; var TempPreview: Record "GSO ABC Preview Line" temporary)
-    var
-        // Fallback for environments without Enum "Excel Buffer Cell Type"
-        CellType: Option "Text","Number","Date","Time","DateTime","Boolean";
+    local procedure WritePreviewSheet(var TempExcelBuffer: Record "Excel Buffer" temporary; var TempPreview: Record "GSO ABC Preview Line" temporary)
     begin
-        // Header
-        ExcelBuf.AddColumn('Item No.', false, '', true, false, false, '', CellType::Text);
-        ExcelBuf.AddColumn('Description', false, '', true, false, false, '', CellType::Text);
-        ExcelBuf.AddColumn('Model', false, '', true, false, false, '', CellType::Text);
-        ExcelBuf.AddColumn('Value', false, '', true, false, false, '0.00', CellType::Number);
-        ExcelBuf.AddColumn('Value %', false, '', true, false, false, '0.00000', CellType::Number);
-        ExcelBuf.AddColumn('Cum. %', false, '', true, false, false, '0.00000', CellType::Number);
-        ExcelBuf.AddColumn('Class', false, '', true, false, false, '', CellType::Text);
-        ExcelBuf.NewRow();
+        TempExcelBuffer.NewRow();
+        TempExcelBuffer.AddColumn(ItemNoLbl, false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+        TempExcelBuffer.AddColumn(DescriptionLbl, false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+        TempExcelBuffer.AddColumn(ModelLbl, false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+        TempExcelBuffer.AddColumn(ValueLbl, false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+        TempExcelBuffer.AddColumn(ValuePctLbl, false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+        TempExcelBuffer.AddColumn(CumPctLbl, false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+        TempExcelBuffer.AddColumn(ClassLbl, false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
 
-        // Data
         TempPreview.Reset();
         if TempPreview.FindSet() then
             repeat
-                ExcelBuf.AddColumn(TempPreview."Item No.", false, '', false, false, false, '', CellType::Text);
-                ExcelBuf.AddColumn(TempPreview.Description, false, '', false, false, false, '', CellType::Text);
-                ExcelBuf.AddColumn(Format(TempPreview.Model), false, '', false, false, false, '', CellType::Text);
-                ExcelBuf.AddColumn(TempPreview.Value, false, '', false, false, false, '0.00', CellType::Number);
-                ExcelBuf.AddColumn(TempPreview."Value %", false, '', false, false, false, '0.00000', CellType::Number);
-                ExcelBuf.AddColumn(TempPreview."Cum. %", false, '', false, false, false, '0.00000', CellType::Number);
-                ExcelBuf.AddColumn(Format(TempPreview.Class), false, '', false, false, false, '', CellType::Text);
-                ExcelBuf.NewRow();
+                TempExcelBuffer.NewRow();
+                TempExcelBuffer.AddColumn(TempPreview."Item No.", false, '', false, false, false, '', TempExcelBuffer."Cell Type"::Text);
+                TempExcelBuffer.AddColumn(TempPreview.Description, false, '', false, false, false, '', TempExcelBuffer."Cell Type"::Text);
+                TempExcelBuffer.AddColumn(Format(TempPreview.Model), false, '', false, false, false, '', TempExcelBuffer."Cell Type"::Text);
+                TempExcelBuffer.AddColumn(TempPreview.Value, false, '', false, false, false, '#,##0.00', TempExcelBuffer."Cell Type"::Number);
+                TempExcelBuffer.AddColumn(TempPreview."Value %", false, '', false, false, false, '0.00000', TempExcelBuffer."Cell Type"::Number);
+                TempExcelBuffer.AddColumn(TempPreview."Cum. %", false, '', false, false, false, '0.00000', TempExcelBuffer."Cell Type"::Number);
+                TempExcelBuffer.AddColumn(Format(TempPreview.Class), false, '', false, false, false, '', TempExcelBuffer."Cell Type"::Text);
             until TempPreview.Next() = 0;
     end;
 
-    local procedure WriteStatsSheet(var ExcelBuf: Record "Excel Buffer"; var TempStats: Record "GSO ABC Stats" temporary)
-    var
-        CellType: Option "Text","Number","Date","Time","DateTime","Boolean";
+    local procedure WriteStatsSheet(var TempExcelBuffer: Record "Excel Buffer" temporary; var TempStats: Record "GSO ABC Stats" temporary)
     begin
-        // Header
-        ExcelBuf.AddColumn('Class', false, '', true, false, false, '', CellType::Text);
-        ExcelBuf.AddColumn('Item Count', false, '', true, false, false, '0', CellType::Number);
-        ExcelBuf.AddColumn('Count %', false, '', true, false, false, '0.00000', CellType::Number);
-        ExcelBuf.AddColumn('Amount', false, '', true, false, false, '0.00', CellType::Number);
-        ExcelBuf.AddColumn('Amount %', false, '', true, false, false, '0.00000', CellType::Number);
-        ExcelBuf.AddColumn('Cum. Count %', false, '', true, false, false, '0.00000', CellType::Number);
-        ExcelBuf.AddColumn('Cum. Amount %', false, '', true, false, false, '0.00000', CellType::Number);
-        ExcelBuf.NewRow();
+        TempExcelBuffer.NewRow();
+        TempExcelBuffer.AddColumn(ClassLbl, false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+        TempExcelBuffer.AddColumn(ItemCountLbl, false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+        TempExcelBuffer.AddColumn(CountPctLbl, false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+        TempExcelBuffer.AddColumn(AmountLbl, false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+        TempExcelBuffer.AddColumn(AmountPctLbl, false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+        TempExcelBuffer.AddColumn(CumCountPctLbl, false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
+        TempExcelBuffer.AddColumn(CumAmountPctLbl, false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
 
-        // Data
         TempStats.Reset();
         if TempStats.FindSet() then
             repeat
-                ExcelBuf.AddColumn(Format(TempStats.Class), false, '', false, false, false, '', CellType::Text);
-                ExcelBuf.AddColumn(TempStats."Item Count", false, '', false, false, false, '0', CellType::Number);
-                ExcelBuf.AddColumn(TempStats."Count %", false, '', false, false, false, '0.00000', CellType::Number);
-                ExcelBuf.AddColumn(TempStats.Amount, false, '', false, false, false, '0.00', CellType::Number);
-                ExcelBuf.AddColumn(TempStats."Amount %", false, '', false, false, false, '0.00000', CellType::Number);
-                ExcelBuf.AddColumn(TempStats."Cum. Count %", false, '', false, false, false, '0.00000', CellType::Number);
-                ExcelBuf.AddColumn(TempStats."Cum. Amount %", false, '', false, false, false, '0.00000', CellType::Number);
-                ExcelBuf.NewRow();
+                TempExcelBuffer.NewRow();
+                TempExcelBuffer.AddColumn(Format(TempStats.Class), false, '', false, false, false, '', TempExcelBuffer."Cell Type"::Text);
+                TempExcelBuffer.AddColumn(TempStats."Item Count", false, '', false, false, false, '0', TempExcelBuffer."Cell Type"::Number);
+                TempExcelBuffer.AddColumn(TempStats."Count %", false, '', false, false, false, '0.00000', TempExcelBuffer."Cell Type"::Number);
+                TempExcelBuffer.AddColumn(TempStats.Amount, false, '', false, false, false, '#,##0.00', TempExcelBuffer."Cell Type"::Number);
+                TempExcelBuffer.AddColumn(TempStats."Amount %", false, '', false, false, false, '0.00000', TempExcelBuffer."Cell Type"::Number);
+                TempExcelBuffer.AddColumn(TempStats."Cum. Count %", false, '', false, false, false, '0.00000', TempExcelBuffer."Cell Type"::Number);
+                TempExcelBuffer.AddColumn(TempStats."Cum. Amount %", false, '', false, false, false, '0.00000', TempExcelBuffer."Cell Type"::Number);
             until TempStats.Next() = 0;
     end;
 }

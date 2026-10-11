@@ -6,87 +6,71 @@ page 73030581 "GSO ABC Worksheet Params"
 
     layout
     {
-        area(content)
+        area(Content)
         {
             group(General)
             {
-                field(Model; this.Model)
+                field(Model; Model)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Select the ABC analysis model: Revenue (sales value), Gross Profit (margin), or COGS (cost).';
                     Caption = 'ABC Model';
+                    ToolTip = 'Specifies the model used to rank items. The dates below default to the period configured for the model in ABC Analysis Setup.';
+
+                    trigger OnValidate()
+                    begin
+                        SetDefaultDates();
+                    end;
                 }
-                field(StartDate; this.StartDate)
+                field(StartDate; StartDate)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Beginning date of the analysis period. Items will be analyzed based on transactions within this date range.';
                     Caption = 'Start Date';
+                    ToolTip = 'Specifies the first posting date included in the analysis.';
                 }
-                field(EndDate; this.EndDate)
+                field(EndDate; EndDate)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Ending date of the analysis period. Typically set to today or end of fiscal period.';
-                    Caption = 'Start Date';
+                    Caption = 'End Date';
+                    ToolTip = 'Specifies the last posting date included in the analysis.';
                 }
-               
             }
         }
     }
 
     var
-        EndDate: Date;
-        StartDate: Date;
         Model: Enum "GSO ABC Model";
+        StartDate: Date;
+        EndDate: Date;
+        DateOrderErr: Label 'Start Date must not be after End Date.';
 
     trigger OnOpenPage()
-    var
-        Setup: Record "GSO ABC Analysis Setup";
-        LookbackDays: Integer;
-        DateFormulaLbl: Label '<-%1D>', Locked = true;
     begin
-        // Set default dates based on lookback days from setup
-        if Setup.Get('SETUP') then begin
-            // Get lookback days based on default model (Revenue)
-            LookbackDays := Setup."Lookback (Days)";
-            if LookbackDays <= 0 then
-                LookbackDays := 365;
-
-            EndDate := WorkDate();
-            StartDate := CalcDate(StrSubstNo(DateFormulaLbl, LookbackDays), EndDate);
-        end else begin
-            // Fallback if setup doesn't exist
-            EndDate := WorkDate();
-            StartDate := CalcDate('<-1Y>', EndDate);
-        end;
-
-        // Default to Revenue model
         Model := Model::Revenue;
+        SetDefaultDates();
+    end;
+
+    trigger OnQueryClosePage(CloseAction: Action): Boolean
+    begin
+        if CloseAction <> Action::OK then
+            exit(true);
+        if (StartDate = 0D) or (EndDate = 0D) then
+            SetDefaultDates();
+        if StartDate > EndDate then
+            Error(DateOrderErr);
+        exit(true);
     end;
 
     procedure GetParams(var pModel: Enum "GSO ABC Model"; var pStartDate: Date; var pEndDate: Date)
-    var
-        Setup: Record "GSO ABC Analysis Setup";
-        LookbackDays: Integer;
-        DateFormulaLbl: Label '<-%1D>', Locked = true;
     begin
         pModel := Model;
-
-        // If dates are not specified (0D), calculate from lookback days
-        if (StartDate = 0D) or (EndDate = 0D) then begin
-            if Setup.Get('SETUP') then begin
-                LookbackDays := Setup."Lookback (Days)";
-                if LookbackDays <= 0 then
-                    LookbackDays := 365;
-
-                EndDate := WorkDate();
-                StartDate := CalcDate(StrSubstNo(DateFormulaLbl, LookbackDays), EndDate);
-            end else begin
-                EndDate := WorkDate();
-                StartDate := CalcDate('<-1Y>', EndDate);
-            end;
-        end;
-
         pStartDate := StartDate;
         pEndDate := EndDate;
+    end;
+
+    local procedure SetDefaultDates()
+    var
+        Mgt: Codeunit "GSO ABC Analysis Mgt.";
+    begin
+        Mgt.GetDefaultDates(Model, StartDate, EndDate);
     end;
 }

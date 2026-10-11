@@ -1,4 +1,4 @@
-# Privacy Policy for ABC Inventory Optimizer
+# Privacy Policy for ABC Inventory Analysis
 
 **Effective Date**: January 11, 2025
 **Last Updated**: January 11, 2025
@@ -9,9 +9,9 @@
 
 ## 1. Introduction
 
-GMSOFT LIMITED ("we," "our," or "us") respects your privacy and is committed to protecting your personal data. This Privacy Policy explains how we collect, use, and safeguard information when you use the **ABC Inventory Optimizer** application ("the App") for Microsoft Dynamics 365 Business Central.
+GMSOFT LIMITED ("we," "our," or "us") respects your privacy and is committed to protecting your personal data. This Privacy Policy explains how we collect, use, and safeguard information when you use the **ABC Inventory Analysis** application ("the App") for Microsoft Dynamics 365 Business Central.
 
-By installing and using the ABC Inventory Optimizer, you agree to the collection and use of information in accordance with this Privacy Policy.
+By installing and using the ABC Inventory Analysis, you agree to the collection and use of information in accordance with this Privacy Policy.
 
 ---
 
@@ -19,7 +19,7 @@ By installing and using the ABC Inventory Optimizer, you agree to the collection
 
 ### 2.1 Data Processing Within Business Central
 
-The ABC Inventory Optimizer operates entirely within your Microsoft Dynamics 365 Business Central environment. The App processes the following types of data:
+The ABC Inventory Analysis operates entirely within your Microsoft Dynamics 365 Business Central environment. The App processes the following types of data:
 
 #### **Inventory Data** (processed, not collected)
 - Item numbers, descriptions, and attributes
@@ -94,7 +94,7 @@ Telemetry data collected via Application Insights is used to:
 
 ### 4.1 Business Central Data
 
-All business data processed by the ABC Inventory Optimizer is stored in your Microsoft Dynamics 365 Business Central database. This data is:
+All business data processed by the ABC Inventory Analysis is stored in your Microsoft Dynamics 365 Business Central database. This data is:
 
 - **Stored in your tenant**: Remains within your Business Central environment
 - **Controlled by you**: Subject to your Business Central security settings
@@ -168,7 +168,7 @@ If you are a California resident, you have the right to:
 To exercise any of these rights, please contact us at:
 
 **Email**: privacy@gmsoft.co.uk
-**Subject Line**: "ABC Inventory Optimizer - Privacy Rights Request"
+**Subject Line**: "ABC Inventory Analysis - Privacy Rights Request"
 
 We will respond to your request within 30 days.
 
@@ -182,7 +182,7 @@ We will respond to your request within 30 days.
 
 Data stored in your Business Central environment (inventory transactions, ABC classifications, history records) is retained according to **your** data retention policies. We do not control or dictate retention periods for data within your Business Central tenant.
 
-To delete ABC Inventory Optimizer data from your Business Central environment:
+To delete ABC Inventory Analysis data from your Business Central environment:
 - Uninstall the App from Business Central
 - ABC-specific tables will be removed according to Business Central's app removal procedures
 
@@ -194,7 +194,7 @@ Telemetry data in Application Insights is automatically deleted after **90 days*
 
 ## 8. Children's Privacy
 
-The ABC Inventory Optimizer is a business application intended for use by business professionals. We do not knowingly collect information from children under the age of 16. If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately.
+The ABC Inventory Analysis is a business application intended for use by business professionals. We do not knowingly collect information from children under the age of 16. If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately.
 
 ---
 
@@ -202,7 +202,7 @@ The ABC Inventory Optimizer is a business application intended for use by busine
 
 ### 9.1 Business Central Data
 
-Your Business Central data is stored in the Microsoft Azure region you selected when setting up your Business Central environment. The ABC Inventory Optimizer does not transfer this data outside of your Business Central tenant.
+Your Business Central data is stored in the Microsoft Azure region you selected when setting up your Business Central environment. The ABC Inventory Analysis does not transfer this data outside of your Business Central tenant.
 
 ### 9.2 Telemetry Data
 
@@ -240,7 +240,7 @@ You are responsible for:
 
 ## 11. Cookies and Tracking Technologies
 
-The ABC Inventory Optimizer does **not** use cookies or tracking technologies. The App operates entirely within the Business Central environment and does not include web pages, tracking pixels, or advertising technologies.
+The ABC Inventory Analysis does **not** use cookies or tracking technologies. The App operates entirely within the Business Central environment and does not include web pages, tracking pixels, or advertising technologies.
 
 Telemetry is collected via Application Insights SDK, which does not use browser cookies.
 
@@ -282,7 +282,7 @@ United Kingdom
 If you have questions about data protection, you can contact our Data Protection Officer:
 
 **Email**: dpo@gmsoft.co.uk
-**Subject Line**: "ABC Inventory Optimizer - Data Protection Inquiry"
+**Subject Line**: "ABC Inventory Analysis - Data Protection Inquiry"
 
 ### 14.3 Supervisory Authority
 
@@ -315,7 +315,7 @@ For your convenience, here is a summary of our privacy practices:
 
 ## 16. Consent
 
-By installing and using the ABC Inventory Optimizer, you acknowledge that you have read and understood this Privacy Policy and consent to the collection and use of telemetry data as described herein.
+By installing and using the ABC Inventory Analysis, you acknowledge that you have read and understood this Privacy Policy and consent to the collection and use of telemetry data as described herein.
 
 If you do not agree with this Privacy Policy, please do not install or use the App.
 
@@ -329,8 +329,8 @@ This Privacy Policy is provided in English. In the event of any inconsistency be
 
 **© 2025 GMSOFT LIMITED. All Rights Reserved.**
 
-**App**: ABC Inventory Optimizer
-**App ID**: 8cea7497-4829-495d-8928-f065a0a5669a
+**App**: ABC Inventory Analysis
+**App ID**: fed0d995-8c8d-4fda-bd16-e10d112171fb
 **Publisher**: GMSOFT LIMITED
 **Version**: 1.1.0.0
 

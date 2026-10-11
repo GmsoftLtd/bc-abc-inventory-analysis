@@ -1,69 +1,72 @@
 codeunit 73030584 "GSO ABC Worksheet Stats"
 {
-    InherentPermissions = X;
-    InherentEntitlements = X;
-
     procedure BuildStats(var TempPreview: Record "GSO ABC Preview Line" temporary; var TempStats: Record "GSO ABC Stats" temporary)
     var
-        AAmount, BAmount, CAmount, TotAmount : Decimal;
-        CumAmtPct, CumCntPct : Decimal;
-        ACount, BCount, CCount, TotCount : Integer;
+        Amount: array[4] of Decimal;
+        Count: array[4] of Integer;
+        TotAmount: Decimal;
+        TotCount: Integer;
+        CumAmtPct: Decimal;
+        CumCntPct: Decimal;
         LineNo: Integer;
+        Idx: Integer;
     begin
+        TempStats.Reset();
         TempStats.DeleteAll();
+
         TempPreview.Reset();
         if TempPreview.FindSet() then
             repeat
-                case TempPreview.Class of
-                    TempPreview.Class::A:
-                        begin
-                            ACount += 1;
-                            AAmount += TempPreview.Value;
-                        end;
-                    TempPreview.Class::B:
-                        begin
-                            BCount += 1;
-                            BAmount += TempPreview.Value;
-                        end;
-                    else begin
-                        CCount += 1;
-                        CAmount += TempPreview.Value;
-                    end;
-                end;
+                Idx := ClassIndex(TempPreview.Class);
+                Count[Idx] += 1;
+                Amount[Idx] += TempPreview.Value;
                 TotCount += 1;
                 TotAmount += TempPreview.Value;
             until TempPreview.Next() = 0;
 
-        AddLine(TempStats, LineNo, TempPreview.Class::A, ACount, AAmount, TotCount, TotAmount, CumCntPct, CumAmtPct);
-        AddLine(TempStats, LineNo, TempPreview.Class::B, BCount, BAmount, TotCount, TotAmount, CumCntPct, CumAmtPct);
-        AddLine(TempStats, LineNo, TempPreview.Class::C, CCount, CAmount, TotCount, TotAmount, CumCntPct, CumAmtPct);
+        AddLine(TempStats, LineNo, Enum::"GSO ABC Class"::A, Count[1], Amount[1], TotCount, TotAmount, CumCntPct, CumAmtPct);
+        AddLine(TempStats, LineNo, Enum::"GSO ABC Class"::B, Count[2], Amount[2], TotCount, TotAmount, CumCntPct, CumAmtPct);
+        AddLine(TempStats, LineNo, Enum::"GSO ABC Class"::C, Count[3], Amount[3], TotCount, TotAmount, CumCntPct, CumAmtPct);
+        if Count[4] > 0 then
+            AddLine(TempStats, LineNo, Enum::"GSO ABC Class"::D, Count[4], Amount[4], TotCount, TotAmount, CumCntPct, CumAmtPct);
     end;
 
-    local procedure AddLine(var TempStats: Record "GSO ABC Stats" temporary; var LineNo: Integer; C: Enum "GSO ABC Class"; Cnt: Integer; Amt: Decimal; TotCnt: Integer; TotAmt: Decimal; var CumCntPct: Decimal; var CumAmtPct: Decimal)
+    local procedure ClassIndex(Class: Enum "GSO ABC Class"): Integer
+    begin
+        case Class of
+            Class::A:
+                exit(1);
+            Class::B:
+                exit(2);
+            Class::D:
+                exit(4);
+            else
+                exit(3);
+        end;
+    end;
+
+    local procedure AddLine(var TempStats: Record "GSO ABC Stats" temporary; var LineNo: Integer; Class: Enum "GSO ABC Class"; Cnt: Integer; Amt: Decimal; TotCnt: Integer; TotAmt: Decimal; var CumCntPct: Decimal; var CumAmtPct: Decimal)
     var
-        AmtPct, CntPct : Decimal;
+        AmtPct: Decimal;
+        CntPct: Decimal;
     begin
         LineNo += 1;
-        if TotCnt > 0 then CntPct := Round(Cnt / TotCnt * 100, 0.00001);
-        if TotAmt > 0 then AmtPct := Round(AmountSafe(Amt) / TotAmt * 100, 0.00001);
+        if TotCnt > 0 then
+            CntPct := Round(Cnt / TotCnt * 100, 0.00001);
+        if TotAmt > 0 then
+            AmtPct := Round(Amt / TotAmt * 100, 0.00001);
         CumCntPct := Round(CumCntPct + CntPct, 0.00001);
         CumAmtPct := Round(CumAmtPct + AmtPct, 0.00001);
 
         TempStats.Init();
         TempStats."Line No." := LineNo;
-        TempStats.Class := C;
+        TempStats.Class := Class;
         TempStats."Item Count" := Cnt;
         TempStats."Count %" := CntPct;
-        TempStats.Amount := Round(AmountSafe(Amt), 0.01);
+        TempStats.Amount := Round(Amt, 0.01);
         TempStats."Amount %" := AmtPct;
         TempStats."Cum. Count %" := CumCntPct;
         TempStats."Cum. Amount %" := CumAmtPct;
         TempStats.Insert();
-    end;
-
-    local procedure AmountSafe(v: Decimal): Decimal
-    begin
-        if v < 0 then exit(0);
-        exit(v);
     end;
 }

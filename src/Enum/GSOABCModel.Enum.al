@@ -1,6 +1,6 @@
 enum 73030576 "GSO ABC Model"
 {
-    Extensible = true;
+    Extensible = false;
     Caption = 'ABC Model';
 
     value(0; Revenue) { Caption = 'Revenue'; }

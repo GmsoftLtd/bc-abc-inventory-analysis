@@ -5,8 +5,6 @@ report 73030579 "GSO ABC Comparison"
     ApplicationArea = All;
     DefaultLayout = RDLC;
     RDLCLayout = './src/Reports/Layouts/GSOABCComparison.rdl';
-    InherentPermissions = X;
-    InherentEntitlements = X;
 
     dataset
     {
@@ -14,93 +12,55 @@ report 73030579 "GSO ABC Comparison"
         {
             RequestFilterFields = "No.", "Item Category Code", "Gen. Prod. Posting Group";
 
-            column(CompanyName; CompanyProperty.DisplayName())
-            {
-            }
-            column(ReportTitle; ReportTitleLbl)
-            {
-            }
-            column(RunDate; Format(CurrentDateTime, 0, '<Standard Format,9>'))
-            {
-            }
-            column(RunByUser; UserId)
-            {
-            }
-            column(ItemNo; "No.")
-            {
-            }
-            column(Description; Description)
-            {
-            }
-            column(RevenueClass; Format("GSO Class (Revenue)"))
-            {
-            }
-            column(GrossProfitClass; Format("GSO Class (Gross Profit)"))
-            {
-            }
-            column(COGSClass; Format("GSO Class (COGS)"))
-            {
-            }
-            column(UsageValueClass; Format("GSO Class (Usage Value)"))
-            {
-            }
-            column(GMROIIClass; Format("GSO Class (GMROII)"))
-            {
-            }
-            column(PickFrequencyClass; Format("GSO Class (Pick Frequency)"))
-            {
-            }
-            column(RevenueValue; RevenueValue)
-            {
-            }
-            column(GrossProfitValue; GrossProfitValue)
-            {
-            }
-            column(COGSValue; COGSValue)
-            {
-            }
-            column(UsageValueValue; UsageValueValue)
-            {
-            }
-            column(GMROIIValue; GMROIIValue)
-            {
-            }
-            column(PickFrequencyValue; PickFrequencyValue)
-            {
-            }
-            column(ConsistencyIndicator; ConsistencyIndicator)
-            {
-            }
-            column(StartDate; Format(StartDate))
-            {
-            }
-            column(EndDate; Format(EndDate))
-            {
-            }
+            column(CompanyName; CompanyProperty.DisplayName()) { }
+            column(ReportTitle; ReportTitleLbl) { }
+            column(RunDate; Format(CurrentDateTime(), 0, '<Standard Format,9>')) { }
+            column(RunByUser; UserId()) { }
+            column(ItemNo; "No.") { }
+            column(Description; Description) { }
+            column(RevenueClass; Format("GSO Class (Revenue)")) { }
+            column(GrossProfitClass; Format("GSO Class (Gross Profit)")) { }
+            column(COGSClass; Format("GSO Class (COGS)")) { }
+            column(UsageValueClass; Format("GSO Class (Usage Value)")) { }
+            column(GMROIIClass; Format("GSO Class (GMROII)")) { }
+            column(PickFrequencyClass; Format("GSO Class (Pick Frequency)")) { }
+            column(RevenueValue; RevenueValue) { }
+            column(GrossProfitValue; GrossProfitValue) { }
+            column(COGSValue; COGSValue) { }
+            column(UsageValueValue; UsageValueValue) { }
+            column(GMROIIValue; GMROIIValue) { }
+            column(PickFrequencyValue; PickFrequencyValue) { }
+            column(ConsistencyIndicator; ConsistencyIndicator) { }
+            column(StartDate; Format(StartDate)) { }
+            column(EndDate; Format(EndDate)) { }
 
             trigger OnAfterGetRecord()
             begin
-                RevenueValue := CalculateItemValue(Item."No.", ModelEnum::Revenue, StartDate, EndDate);
-                GrossProfitValue := CalculateItemValue(Item."No.", ModelEnum::"Gross Profit", StartDate, EndDate);
-                COGSValue := CalculateItemValue(Item."No.", ModelEnum::COGS, StartDate, EndDate);
-                UsageValueValue := CalculateItemValue(Item."No.", ModelEnum::"Usage Value", StartDate, EndDate);
-                GMROIIValue := CalculateItemValue(Item."No.", ModelEnum::GMROII, StartDate, EndDate);
-                PickFrequencyValue := CalculateItemValue(Item."No.", ModelEnum::"Pick Frequency", StartDate, EndDate);
+                RevenueValue := Mgt.CalcItemValue(Enum::"GSO ABC Model"::Revenue, StartDate, EndDate, Item."No.");
+                GrossProfitValue := Mgt.CalcItemValue(Enum::"GSO ABC Model"::"Gross Profit", StartDate, EndDate, Item."No.");
+                COGSValue := Mgt.CalcItemValue(Enum::"GSO ABC Model"::COGS, StartDate, EndDate, Item."No.");
+                UsageValueValue := Mgt.CalcItemValue(Enum::"GSO ABC Model"::"Usage Value", StartDate, EndDate, Item."No.");
+                GMROIIValue := Mgt.CalcItemValue(Enum::"GSO ABC Model"::GMROII, StartDate, EndDate, Item."No.");
+                PickFrequencyValue := Mgt.CalcItemValue(Enum::"GSO ABC Model"::"Pick Frequency", StartDate, EndDate, Item."No.");
 
                 ConsistencyIndicator := GetConsistencyIndicator(Item);
 
-                // Skip items with no values
                 if (RevenueValue = 0) and (GrossProfitValue = 0) and (COGSValue = 0) and (UsageValueValue = 0) and
-                   (GMROIIValue = 0) and (PickFrequencyValue = 0) then
+                   (GMROIIValue = 0) and (PickFrequencyValue = 0)
+                then
                     CurrReport.Skip();
             end;
 
             trigger OnPreDataItem()
+            var
+                DefaultStart: Date;
+                DefaultEnd: Date;
             begin
+                Mgt.GetDefaultDates(Enum::"GSO ABC Model"::Revenue, DefaultStart, DefaultEnd);
                 if StartDate = 0D then
-                    StartDate := CalcDate('<-1Y>', WorkDate());
+                    StartDate := DefaultStart;
                 if EndDate = 0D then
-                    EndDate := WorkDate();
+                    EndDate := DefaultEnd;
             end;
         }
     }
@@ -118,26 +78,21 @@ report 73030579 "GSO ABC Comparison"
                     {
                         ApplicationArea = All;
                         Caption = 'Start Date';
-                        ToolTip = 'Start date for value calculation. If not specified, the system will calculate it as today minus the lookback days from setup.';
+                        ToolTip = 'Specifies the first posting date included. Leave blank to use the Revenue period configured in ABC Analysis Setup.';
                     }
                     field(EndDateField; EndDate)
                     {
                         ApplicationArea = All;
                         Caption = 'End Date';
-                        ToolTip = 'End date for value calculation. If not specified, the system will use today''s date.';
+                        ToolTip = 'Specifies the last posting date included. Leave blank to use the work date.';
                     }
-                }
-                group(Note)
-                {
-                    Caption = 'Note';
-                    InstructionalText = 'If dates are not specified, the system will use today as the end date and calculate the start date by subtracting the lookback days configured in ABC Analysis Setup.';
                 }
             }
         }
     }
 
     var
-        ModelEnum: Enum "GSO ABC Model";
+        Mgt: Codeunit "GSO ABC Analysis Mgt.";
         StartDate: Date;
         EndDate: Date;
         RevenueValue: Decimal;
@@ -148,136 +103,46 @@ report 73030579 "GSO ABC Comparison"
         PickFrequencyValue: Decimal;
         ConsistencyIndicator: Text[20];
         ReportTitleLbl: Label 'ABC Multi-Model Comparison';
+        ConsistentLbl: Label 'Consistent', MaxLength = 20;
+        MinorVarianceLbl: Label 'Minor Variance', MaxLength = 20;
+        InconsistentLbl: Label 'Inconsistent', MaxLength = 20;
+        NotComparableLbl: Label 'n/a', MaxLength = 20;
 
-    trigger OnPreReport()
-    begin
-        // No license check needed
-    end;
-
-    local procedure CalculateItemValue(ItemNo: Code[20]; ModelType: Enum "GSO ABC Model"; FromDate: Date; ToDate: Date): Decimal
-    var
-        VE: Record "Value Entry";
-        Total: Decimal;
-        Margin: Decimal;
-        AvgInv: Decimal;
-        Item: Record Item;
-        ILE: Record "Item Ledger Entry";
-        PickCount: Integer;
-    begin
-        Total := 0;
-        VE.SetRange("Item No.", ItemNo);
-
-        // Gross Profit should only use Sales entries
-        if ModelType = ModelType::"Gross Profit" then
-            VE.SetRange("Item Ledger Entry Type", VE."Item Ledger Entry Type"::Sale)
-        else
-            // Include: Sale, Consumption, Negative Adjmt (for scrap)
-            // Exclude: Output, Purchase, Positive Adjmt, Transfer, etc.
-            VE.SetFilter("Item Ledger Entry Type", '%1|%2|%3',
-                VE."Item Ledger Entry Type"::Sale,
-                VE."Item Ledger Entry Type"::Consumption,
-                VE."Item Ledger Entry Type"::"Negative Adjmt.");
-
-        VE.SetRange("Posting Date", FromDate, ToDate);
-
-        case ModelType of
-            ModelType::Revenue,
-            ModelType::"Gross Profit",
-            ModelType::COGS,
-            ModelType::"Usage Value":
-                begin
-                    if VE.FindSet() then
-                        repeat
-                            case ModelType of
-                                ModelType::Revenue:
-                                    Total += VE."Sales Amount (Actual)";
-                                ModelType::"Gross Profit":
-                                    Total += VE."Sales Amount (Actual)" + VE."Cost Amount (Actual)";
-                                ModelType::COGS:
-                                    if VE."Cost Amount (Actual)" < 0 then
-                                        Total += -VE."Cost Amount (Actual)";
-                                ModelType::"Usage Value":
-                                    if VE."Cost Amount (Actual)" < 0 then
-                                        Total += -VE."Cost Amount (Actual)";
-                            end;
-                        until VE.Next() = 0;
-                end;
-            ModelType::GMROII:
-                begin
-                    // Calculate GMROII = Gross Margin / Average Inventory Value
-                    Margin := 0;
-                    if VE.FindSet() then
-                        repeat
-                            Margin += VE."Sales Amount (Actual)" + VE."Cost Amount (Actual)";
-                        until VE.Next() = 0;
-
-                    if Item.Get(ItemNo) then begin
-                        Item.CalcFields(Inventory);
-                        AvgInv := Item.Inventory * Item."Unit Cost";
-                        if AvgInv > 0 then
-                            Total := (Margin / AvgInv) * 100
-                        else
-                            Total := 0;
-                    end;
-                end;
-            ModelType::"Pick Frequency":
-                begin
-                    // Count number of pick/issue transactions
-                    ILE.Reset();
-                    ILE.SetRange("Item No.", ItemNo);
-                    ILE.SetFilter("Entry Type", '%1|%2',
-                        ILE."Entry Type"::Sale,
-                        ILE."Entry Type"::Consumption);
-                    ILE.SetRange("Posting Date", FromDate, ToDate);
-                    PickCount := ILE.Count();
-                    Total := PickCount;
-                end;
-        end;
-        exit(Total);
-    end;
-
+    /// <summary>
+    /// Compares the classes that have actually been calculated. Models never applied (class blank) are ignored.
+    /// </summary>
     local procedure GetConsistencyIndicator(ItemRec: Record Item): Text[20]
     var
-        RevClass: Integer;
-        GPClass: Integer;
-        COGSClass: Integer;
-        UsageValueClass: Integer;
-        GMROIIClass: Integer;
-        PickFreqClass: Integer;
-        MaxDiff: Integer;
+        Classes: array[6] of Integer;
+        Idx: Integer;
+        Calculated: Integer;
+        MinClass: Integer;
+        MaxClass: Integer;
     begin
-        RevClass := ItemRec."GSO Class (Revenue)".AsInteger();
-        GPClass := ItemRec."GSO Class (Gross Profit)".AsInteger();
-        COGSClass := ItemRec."GSO Class (COGS)".AsInteger();
-        UsageValueClass := ItemRec."GSO Class (Usage Value)".AsInteger();
-        GMROIIClass := ItemRec."GSO Class (GMROII)".AsInteger();
-        PickFreqClass := ItemRec."GSO Class (Pick Frequency)".AsInteger();
+        Classes[1] := ItemRec."GSO Class (Revenue)".AsInteger();
+        Classes[2] := ItemRec."GSO Class (Gross Profit)".AsInteger();
+        Classes[3] := ItemRec."GSO Class (COGS)".AsInteger();
+        Classes[4] := ItemRec."GSO Class (Usage Value)".AsInteger();
+        Classes[5] := ItemRec."GSO Class (GMROII)".AsInteger();
+        Classes[6] := ItemRec."GSO Class (Pick Frequency)".AsInteger();
 
-        // Check if all classifications are the same
-        if (RevClass = GPClass) and (RevClass = COGSClass) and (RevClass = UsageValueClass) and
-           (RevClass = GMROIIClass) and (RevClass = PickFreqClass) then
-            exit('✓ Consistent')
-        else begin
-            // Calculate maximum difference between any two classifications
-            MaxDiff := 0;
-            MaxDiff := MaxInt(MaxDiff, Abs(RevClass - GPClass));
-            MaxDiff := MaxInt(MaxDiff, Abs(RevClass - COGSClass));
-            MaxDiff := MaxInt(MaxDiff, Abs(RevClass - UsageValueClass));
-            MaxDiff := MaxInt(MaxDiff, Abs(RevClass - GMROIIClass));
-            MaxDiff := MaxInt(MaxDiff, Abs(RevClass - PickFreqClass));
+        MinClass := 999;
+        MaxClass := 0;
+        for Idx := 1 to ArrayLen(Classes) do
+            if Classes[Idx] <> 0 then begin
+                Calculated += 1;
+                if Classes[Idx] < MinClass then
+                    MinClass := Classes[Idx];
+                if Classes[Idx] > MaxClass then
+                    MaxClass := Classes[Idx];
+            end;
 
-            if MaxDiff <= 1 then
-                exit('≈ Minor Variance')
-            else
-                exit('⚠ Inconsistent');
-        end;
-    end;
-
-    local procedure MaxInt(A: Integer; B: Integer): Integer
-    begin
-        if A > B then
-            exit(A)
-        else
-            exit(B);
+        if Calculated <= 1 then
+            exit(NotComparableLbl);
+        if MaxClass = MinClass then
+            exit(ConsistentLbl);
+        if MaxClass - MinClass <= 1 then
+            exit(MinorVarianceLbl);
+        exit(InconsistentLbl);
     end;
 }

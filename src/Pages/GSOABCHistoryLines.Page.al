@@ -35,7 +35,7 @@ page 73030584 "GSO ABC History Lines"
                 field(Value; Rec.Value)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Calculated value for this item based on the analysis model (Revenue, Gross Profit, or COGS).';
+                    ToolTip = 'Specifies the value calculated for this item by the model of the run.';
                 }
                 field("Value %"; Rec."Value %")
                 {

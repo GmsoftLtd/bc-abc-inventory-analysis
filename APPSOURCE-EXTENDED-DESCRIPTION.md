@@ -1,4 +1,4 @@
-# ABC Inventory Optimizer - AppSource Extended Description
+# ABC Inventory Analysis - AppSource Extended Description
 
 **Version**: 1.1.0.0
 **Publisher**: GMSOFT LIMITED
@@ -7,7 +7,7 @@
 
 ## Overview
 
-**ABC Inventory Optimizer** brings enterprise-grade inventory classification to Microsoft Dynamics 365 Business Central. Transform your inventory management with sophisticated ABC analysis combined with advanced analytics, helping you reduce inventory costs by 25-30% while improving service levels through data-driven insights.
+**ABC Inventory Analysis** brings enterprise-grade inventory classification to Microsoft Dynamics 365 Business Central. Transform your inventory management with sophisticated ABC analysis combined with advanced analytics, helping you reduce inventory costs by 25-30% while improving service levels through data-driven insights.
 
 ---
 
@@ -214,7 +214,7 @@ Schedule regular recalculations:
 - **No external data transmission**: All calculations occur within your Business Central environment
 - **No personal data collection**: App does not collect user information
 - **Secure storage**: All data stored in standard Business Central tables
-- **Role-based security**: Three permission sets (Administrator, Manager, User)
+- **Role-based security**: Two permission sets (Administrator, User)
 
 ### Performance
 
@@ -265,10 +265,9 @@ Schedule regular recalculations:
 - ABC Telemetry
 - ABC Install & Upgrade handlers
 
-### Permission Sets (3)
-- ABC Inventory Optimizer - Administrator (full access)
-- ABC Inventory Optimizer - Manager (calculation and reporting)
-- ABC Inventory Optimizer - User (read-only and analysis)
+### Permission Sets (2)
+- ABC Inventory Analysis - Administrator (setup, counting policies, history, job queue)
+- ABC Inventory Analysis - User (worksheet, reports, apply classes)
 
 ---
 
@@ -298,7 +297,7 @@ Schedule regular recalculations:
 
 ---
 
-## Why Choose ABC Inventory Optimizer?
+## Why Choose ABC Inventory Analysis?
 
 ### ✅ **Proven Methodology**
 
@@ -333,7 +332,7 @@ Achieve 25-30% inventory cost reduction with a one-time AppSource purchase. ROI 
 ## Frequently Asked Questions
 
 ### Q: Will this work with my existing Business Central customizations?
-**A**: Yes, ABC Inventory Optimizer extends standard Item and SKU tables using table extensions, maintaining compatibility with other apps and customizations.
+**A**: Yes, ABC Inventory Analysis extends standard Item and SKU tables using table extensions, maintaining compatibility with other apps and customizations.
 
 ### Q: How often should I recalculate ABC classifications?
 **A**: Monthly or quarterly recalculation is typical. Use job queue to automate this process based on your business cycle.
@@ -351,7 +350,7 @@ Achieve 25-30% inventory cost reduction with a one-time AppSource purchase. ROI 
 **A**: Yes, ABC class fields are standard Business Central fields accessible via Excel integration, Power BI connector, and APIs.
 
 ### Q: Does it require any special permissions in Business Central?
-**A**: Users need the ABC Inventory Optimizer permission set plus standard Item read/write permissions. Three permission sets are included for different roles.
+**A**: Users need the ABC Inventory Analysis permission set plus standard Item read/write permissions. Two permission sets are included: Administrator and User.
 
 ### Q: Will it slow down my Business Central performance?
 **A**: No, calculations are designed for efficiency. For large datasets (10,000+ items), schedule calculations during off-peak hours using job queue.
@@ -370,7 +369,7 @@ Available on Microsoft AppSource with flexible licensing options. Contact GMSOFT
 
 Transform your inventory management with data-driven ABC classification:
 
-1. **Visit**: [ABC Inventory Optimizer on AppSource](https://appsource.microsoft.com/)
+1. **Visit**: [ABC Inventory Analysis on AppSource](https://appsource.microsoft.com/)
 2. **Try**: Free trial available (if offered)
 3. **Buy**: One-click purchase through AppSource
 4. **Install**: Automatic deployment to your Business Central environment
@@ -394,7 +393,7 @@ GMSOFT LIMITED is a Microsoft Gold Partner specializing in Dynamics 365 Business
 - **Privacy Policy**: https://www.GMsoft.co.uk/privacy_statement/
 - **EULA**: https://www.GMsoft.co.uk/abc_eula/
 - **Publisher**: GMSOFT LIMITED
-- **App ID**: 8cea7497-4829-495d-8928-f065a0a5669a
+- **App ID**: fed0d995-8c8d-4fda-bd16-e10d112171fb
 
 ---
 

@@ -116,10 +116,9 @@ Combining both creates a 9-zone strategic matrix:
 After installation, assign permissions:
 
 1. Search → "Permission Sets"
-2. Find "GSO ABC ANALYSIS" permission sets:
+2. Find the ABC Inventory Analysis permission sets:
    - **GSO ABC ADMIN**: Full access (setup, analysis, reports)
    - **GSO ABC USER**: Standard user (run analysis, view reports)
-   - **GSO ABC VIEW**: Read-only access
 
 3. Assign to users:
    - Search → "Users"

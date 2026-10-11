@@ -3,21 +3,20 @@ report 73030577 "GSO ABC Analysis"
     UsageCategory = ReportsAndAnalysis;
     ApplicationArea = All;
     Caption = 'ABC Inventory Analysis';
+    DefaultLayout = RDLC;
     RDLCLayout = './src/Reports/Layouts/GSOAnalysis.rdl';
-    InherentPermissions = X;
-    InherentEntitlements = X;
 
     dataset
     {
-        dataitem(Previewabc; "GSO ABC Preview Line")
+        dataitem(PreviewABC; "GSO ABC Preview Line")
         {
             UseTemporary = true;
-            DataItemTableView = sorting(Value) order(Descending);
+            DataItemTableView = sorting(Value) order(descending);
 
             column(CompanyName; CompanyProperty.DisplayName()) { }
-            column(ReportTitle; 'ABC Inventory Analysis') { }
-            column(RunDate; Format(CurrentDateTime, 0, '<Standard Format,9>')) { }
-            column(RunByUser; UserId) { }
+            column(ReportTitle; ReportTitleLbl) { }
+            column(RunDate; Format(CurrentDateTime(), 0, '<Standard Format,9>')) { }
+            column(RunByUser; UserId()) { }
             column(LineNo; "Line No.") { }
             column(Item_No_; "Item No.") { }
             column(Description; Description) { }
@@ -31,7 +30,7 @@ report 73030577 "GSO ABC Analysis"
             var
                 Mgt: Codeunit "GSO ABC Analysis Mgt.";
             begin
-                Mgt.CalculatePreview(GSOdel, gStartDate, gEndDate, PreviewABC);
+                Mgt.CalculatePreview(SelectedModel, StartDate, EndDate, PreviewABC);
             end;
         }
     }
@@ -40,45 +39,50 @@ report 73030577 "GSO ABC Analysis"
     {
         layout
         {
-            area(content)
+            area(Content)
             {
                 group(Options)
                 {
-                    field(ModelField; GSOdel)
+                    Caption = 'Options';
+                    field(ModelField; SelectedModel)
                     {
                         ApplicationArea = All;
                         Caption = 'Model';
-                        ToolTip = 'Specifies the ABC classification model to use.';
+                        ToolTip = 'Specifies the ABC model used to rank items.';
                     }
-                    field(StartDateField; gStartDate)
+                    field(StartDateField; StartDate)
                     {
                         ApplicationArea = All;
                         Caption = 'Start Date';
-                        ToolTip = 'Specifies the start date for the analysis period. If not specified, the system will calculate it as today minus the lookback days from setup.';
+                        ToolTip = 'Specifies the first posting date included. Leave blank to use the period configured for the model in ABC Analysis Setup.';
                     }
-                    field(EndDateField; gEndDate)
+                    field(EndDateField; EndDate)
                     {
                         ApplicationArea = All;
                         Caption = 'End Date';
-                        ToolTip = 'Specifies the end date for the analysis period. If not specified, the system will use today''s date.';
+                        ToolTip = 'Specifies the last posting date included. Leave blank to use the work date.';
                     }
-                }
-                group(Note)
-                {
-                    Caption = 'Note';
-                    InstructionalText = 'If dates are not specified, the system will use today as the end date and calculate the start date by subtracting the lookback days configured in ABC Analysis Setup.';
                 }
             }
         }
     }
 
     var
-        gEndDate: Date;
-        gStartDate: Date;
-        GSOdel: Enum "GSO ABC Model";
+        SelectedModel: Enum "GSO ABC Model";
+        StartDate: Date;
+        EndDate: Date;
+        ReportTitleLbl: Label 'ABC Inventory Analysis';
 
     trigger OnPreReport()
+    var
+        Mgt: Codeunit "GSO ABC Analysis Mgt.";
+        DefaultStart: Date;
+        DefaultEnd: Date;
     begin
-        // No license check needed
+        Mgt.GetDefaultDates(SelectedModel, DefaultStart, DefaultEnd);
+        if StartDate = 0D then
+            StartDate := DefaultStart;
+        if EndDate = 0D then
+            EndDate := DefaultEnd;
     end;
 }

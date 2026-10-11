@@ -1,8 +1,8 @@
 {
-  "id": "8cea7497-4829-495d-8928-f065a0a5669a",
-  "name": "ABC Inventory Optimizer",
+  "id": "fed0d995-8c8d-4fda-bd16-e10d112171fb",
+  "name": "ABC Inventory Analysis",
   "publisher": "GMSOFT LIMITED",
-  "version": "1.2.0.0",
+  "version": "1.2.1.0",
   "brief": "Advanced ABC Analysis for Inventory Optimization",
   "description": "Transform your inventory management with sophisticated ABC classification. Reduce inventory costs by 25-30% while improving service levels through data-driven insights and strategic classification.",
   "privacyStatement": "https://www.GMsoft.co.uk/privacy_statement/",
@@ -34,10 +34,7 @@
   "supportedLocales": [
     "en-US",
     "el-GR",
-    "it-IT",
-    "de-DE",
-    "nl-NL",
-    "fr-FR"
+    "it-IT"
   ],
   "resourceExposurePolicy": {
     "allowDebugging": false,

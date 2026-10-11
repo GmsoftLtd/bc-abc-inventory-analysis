@@ -426,9 +426,6 @@
         <Field Name="COGSClass">
           <DataField>COGSClass</DataField>
         </Field>
-        <Field Name="SalesQtyClass">
-          <DataField>SalesQtyClass</DataField>
-        </Field>
         <Field Name="UsageValueClass">
           <DataField>UsageValueClass</DataField>
         </Field>

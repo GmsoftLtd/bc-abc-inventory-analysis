@@ -1,4 +1,4 @@
 {
   "mandatoryPrefix": "GSO ",
-  "supportedCountries": [ "GB", "GR", "IT", "DE", "NL", "FR" ]
+  "supportedCountries": [ "GB", "GR", "IT" ]
 }

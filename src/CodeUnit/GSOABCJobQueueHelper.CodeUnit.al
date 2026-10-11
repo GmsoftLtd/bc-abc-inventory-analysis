@@ -1,55 +1,46 @@
 codeunit 73030580 "GSO ABC Job Queue Helper"
 {
-    InherentPermissions = X;
-    InherentEntitlements = X;
+    var
+        JobDescriptionLbl: Label 'ABC Inventory Analysis - Recalculation';
+        CreatedMsg: Label 'A job queue entry was created and scheduled to run daily (ID: %1).', Comment = '%1 = Job Queue Entry ID';
+        FoundMsg: Label 'The existing job queue entry was scheduled (ID: %1).', Comment = '%1 = Job Queue Entry ID';
 
     procedure CreateOrEnableJob()
     var
-        JQ: Record "Job Queue Entry";
-        Enqueue: Codeunit "Job Queue - Enqueue"; // CU exposes EnqueueJobQueueEntry(...)
+        JobQueueEntry: Record "Job Queue Entry";
+        JobQueueEnqueue: Codeunit "Job Queue - Enqueue";
         Created: Boolean;
-        CodeunitId: Integer;
     begin
-        CodeunitId := Codeunit::"GSO ABC Analysis Job";
+        JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Codeunit);
+        JobQueueEntry.SetRange("Object ID to Run", Codeunit::"GSO ABC Analysis Job");
 
-        // Reuse any existing entry for this codeunit
-        JQ.Reset();
-        JQ.SetRange("Object Type to Run", JQ."Object Type to Run"::Codeunit);
-        JQ.SetRange("Object ID to Run", CodeunitId);
-
-        if not JQ.FindFirst() then begin
-            // Create a new entry (do NOT set Status/On Hold manually)
-            JQ.Init();
-            JQ."ID" := Format(CreateGuid());                 // PK should be GUID-like
-            JQ.Description := 'GSO ABC Analysis Recalculation';
-            JQ."Object Type to Run" := JQ."Object Type to Run"::Codeunit;
-            JQ."Object ID to Run" := CodeunitId;
-            JQ."User ID" := UserId;
-
-            // Recurrence & schedule
-            JQ."Recurring Job" := true;                      // correct field name
-            JQ."No. of Minutes between Runs" := 1440;        // daily
-            JQ."Earliest Start Date/Time" := CurrentDateTime;
-
-            JQ.Insert(true);
+        if not JobQueueEntry.FindFirst() then begin
+            JobQueueEntry.Init();
+            JobQueueEntry.ID := CreateGuid();
+            JobQueueEntry.Description := CopyStr(JobDescriptionLbl, 1, MaxStrLen(JobQueueEntry.Description));
+            JobQueueEntry."Object Type to Run" := JobQueueEntry."Object Type to Run"::Codeunit;
+            JobQueueEntry."Object ID to Run" := Codeunit::"GSO ABC Analysis Job";
+            JobQueueEntry."Recurring Job" := true;
+            JobQueueEntry."No. of Minutes between Runs" := 1440;
+            JobQueueEntry."Earliest Start Date/Time" := CurrentDateTime();
+            JobQueueEntry.Insert(true);
             Created := true;
         end else begin
-            // Make sure recurrence/schedule are sensible; leave status to Enqueue
-            if not JQ."Recurring Job" then
-                JQ."Recurring Job" := true;
-            if JQ."No. of Minutes between Runs" = 0 then
-                JQ."No. of Minutes between Runs" := 1440;
-            if JQ."Earliest Start Date/Time" = 0DT then
-                JQ."Earliest Start Date/Time" := CurrentDateTime;
-            JQ.Modify(true);
+            if not JobQueueEntry."Recurring Job" then
+                JobQueueEntry."Recurring Job" := true;
+            if JobQueueEntry."No. of Minutes between Runs" = 0 then
+                JobQueueEntry."No. of Minutes between Runs" := 1440;
+            if JobQueueEntry."Earliest Start Date/Time" = 0DT then
+                JobQueueEntry."Earliest Start Date/Time" := CurrentDateTime();
+            JobQueueEntry.Modify(true);
         end;
 
-        // Correct way to queue it (sets Status/On Hold internally)
-        Enqueue.Run(JQ);
+        // Sets status to Ready and validates the entry
+        JobQueueEnqueue.Run(JobQueueEntry);
 
         if Created then
-            Message('Job Queue Entry created and scheduled (ID: %1).', JQ."ID")
+            Message(CreatedMsg, JobQueueEntry.ID)
         else
-            Message('Job Queue Entry found and scheduled (ID: %1).', JQ."ID");
+            Message(FoundMsg, JobQueueEntry.ID);
     end;
 }

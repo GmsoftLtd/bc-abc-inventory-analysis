@@ -2,7 +2,7 @@
 
 ## Architecture Overview
 
-This is a **Business Central AL extension** (ID: `8cea7497-4829-495d-8928-f065a0a5669a`) for advanced ABC inventory classification with XYZ demand variability analysis. The extension uses ID range `73030575-73031574` for all objects.
+This is a **Business Central AL extension** (ID: `fed0d995-8c8d-4fda-bd16-e10d112171fb`) for advanced ABC inventory classification with XYZ demand variability analysis. The extension uses ID range `73030575-73031574` for all objects.
 
 ### Core Domain Model
 - **Three ABC Models**: Revenue, Gross Profit, and COGS (Value) - each with separate thresholds and calculation periods

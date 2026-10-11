@@ -25,7 +25,7 @@ page 73030585 "GSO ABC History Card"
                 {
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'ABC analysis model used for this run: Revenue, Gross Profit, or COGS.';
+                    ToolTip = 'Specifies the ABC model used for this run.';
                 }
                 field("Start Date"; Rec."Start Date")
                 {
@@ -49,7 +49,7 @@ page 73030585 "GSO ABC History Card"
                 {
                     ApplicationArea = All;
                     Editable = false;
-                    ToolTip = 'Total value (revenue, profit, or COGS) of all items analyzed in this run.';
+                    ToolTip = 'Specifies the total model value of all items analyzed in this run.';
                 }
                 field("Created By"; Rec."Created By")
                 {
@@ -157,10 +157,10 @@ page 73030585 "GSO ABC History Card"
                 begin
                     HistLine.SetRange("Entry No.", Rec."Entry No.");
                     if HistLine.IsEmpty() then
-                        Error('No lines to export.');
+                        Error(NoLinesErr);
 
                     TempExcelBuffer.DeleteAll();
-                    SheetName := CopyStr(StrSubstNo(SheetNameFormatLbl, Rec.Model, Rec."Entry No."), 1, 250);
+                    SheetName := CopyStr(StrSubstNo(SheetNameFormatLbl, Rec."Entry No."), 1, 31);
 
                     // Header row
                     TempExcelBuffer.NewRow();
@@ -184,7 +184,7 @@ page 73030585 "GSO ABC History Card"
                         until HistLine.Next() = 0;
 
                     TempExcelBuffer.CreateNewBook(SheetName);
-                    TempExcelBuffer.WriteSheet(SheetName, '', '');
+                    TempExcelBuffer.WriteSheet(SheetName, CompanyName(), UserId());
                     TempExcelBuffer.CloseBook();
                     TempExcelBuffer.OpenExcel();
                 end;
@@ -196,7 +196,8 @@ page 73030585 "GSO ABC History Card"
         AmtA, AmtB, AmtC : Decimal;
         ShareA, ShareB, ShareC : Decimal;
         CntA, CntB, CntC : Integer;
-        SheetNameFormatLbl: Label 'ABC %1 %2', Locked = true;
+        SheetNameFormatLbl: Label 'ABC History %1', Comment = '%1 = Entry No.';
+        NoLinesErr: Label 'There are no lines to export.';
 
     trigger OnAfterGetRecord()
     var

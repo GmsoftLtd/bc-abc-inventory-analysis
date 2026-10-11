@@ -1,6 +1,6 @@
 # BC Inventory Optimizer – Business Central | Plan Overview
 
-**App Name**: ABC Inventory Optimizer
+**App Name**: ABC Inventory Analysis
 **Publisher**: GMSOFT LIMITED
 **Category**: Supply Chain & Inventory Management
 

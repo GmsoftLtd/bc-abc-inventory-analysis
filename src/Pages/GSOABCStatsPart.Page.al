@@ -30,7 +30,7 @@ page 73030582 "GSO ABC Stats Part"
                 field(Amount; Rec.Amount)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Total value (Revenue/Profit/COGS) of all items in this ABC class.';
+                    ToolTip = 'Specifies the total model value of the items in this class.';
                 }
                 field("Amount %"; Rec."Amount %")
                 {

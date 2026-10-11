@@ -5,8 +5,6 @@ report 73030578 "GSO ABC Exceptions"
     ApplicationArea = All;
     DefaultLayout = RDLC;
     RDLCLayout = './src/Reports/Layouts/GSOABCExceptions.rdl';
-    InherentPermissions = X;
-    InherentEntitlements = X;
 
     dataset
     {
@@ -14,84 +12,61 @@ report 73030578 "GSO ABC Exceptions"
         {
             RequestFilterFields = "No.", "Item Category Code";
 
-            column(CompanyName; CompanyProperty.DisplayName())
-            {
-            }
-            column(ReportTitle; ReportTitleLbl)
-            {
-            }
-            column(RunDate; Format(CurrentDateTime, 0, '<Standard Format,9>'))
-            {
-            }
-            column(RunByUser; UserId)
-            {
-            }
-            column(ItemNo; "No.")
-            {
-            }
-            column(Description; Description)
-            {
-            }
-            column(ExceptionType; ExceptionType)
-            {
-            }
-            column(ExceptionDetails; ExceptionDetails)
-            {
-            }
-            column(RevenueClass; Format("GSO Class (Revenue)"))
-            {
-            }
-            column(GPClass; Format("GSO Class (Gross Profit)"))
-            {
-            }
-            column(COGSClass; Format("GSO Class (COGS)"))
-            {
-            }
-            column(SalesQtyClass; Format("GSO Class (Sales Qty)"))
-            {
-            }
-            column(UsageValueClass; Format("GSO Class (Usage Value)"))
-            {
-            }
-            column(LastCalcRev; Format("GSO Last Calc (Revenue)"))
-            {
-            }
+            column(CompanyName; CompanyProperty.DisplayName()) { }
+            column(ReportTitle; ReportTitleLbl) { }
+            column(RunDate; Format(CurrentDateTime(), 0, '<Standard Format,9>')) { }
+            column(RunByUser; UserId()) { }
+            column(ItemNo; "No.") { }
+            column(Description; Description) { }
+            column(ExceptionType; ExceptionType) { }
+            column(ExceptionDetails; ExceptionDetails) { }
+            column(RevenueClass; Format("GSO Class (Revenue)")) { }
+            column(GPClass; Format("GSO Class (Gross Profit)")) { }
+            column(COGSClass; Format("GSO Class (COGS)")) { }
+            column(UsageValueClass; Format("GSO Class (Usage Value)")) { }
+            column(LastCalcRev; Format("GSO Last Calc (Revenue)")) { }
 
             trigger OnAfterGetRecord()
             begin
                 ExceptionType := '';
                 ExceptionDetails := '';
 
-                // Exception 1: Never calculated
-                if IsNeverCalculated(Item) then begin
-                    ExceptionType := 'Never Calculated';
-                    ExceptionDetails := 'Item has never been classified';
-                end
-                // Exception 2: Outdated calculation (>90 days)
-                else
-                    if IsOutdated(Item) then begin
-                        ExceptionType := 'Outdated';
-                        ExceptionDetails := StrSubstNo(OutdatedDetailsLbl, DaysThreshold);
-                    end
-                    // Exception 3: Inconsistent classes across models
+                case true of
+                    IsNeverCalculated(Item):
+                        begin
+                            ExceptionType := NeverCalculatedLbl;
+                            ExceptionDetails := NeverCalculatedDetailsLbl;
+                        end;
+                    IsOutdated(Item):
+                        begin
+                            ExceptionType := OutdatedLbl;
+                            ExceptionDetails := CopyStr(StrSubstNo(OutdatedDetailsLbl, DaysThreshold), 1, MaxStrLen(ExceptionDetails));
+                        end;
+                    HasInconsistentClasses(Item):
+                        begin
+                            ExceptionType := InconsistentLbl;
+                            ExceptionDetails := InconsistentDetailsLbl;
+                        end;
+                    IsHighInventoryLowClass(Item):
+                        begin
+                            ExceptionType := InventoryMismatchLbl;
+                            ExceptionDetails := CopyStr(StrSubstNo(InventoryMismatchDetailsLbl, InventoryThreshold), 1, MaxStrLen(ExceptionDetails));
+                        end;
+                    HasZeroActivity(Item):
+                        begin
+                            ExceptionType := NoActivityLbl;
+                            ExceptionDetails := NoActivityDetailsLbl;
+                        end;
                     else
-                        if HasInconsistentClasses(Item) then begin
-                            ExceptionType := 'Inconsistent';
-                            ExceptionDetails := 'Different classes across models';
-                        end
-                        // Exception 4: High inventory but low class
-                        else
-                            if IsHighInventoryLowClass(Item) then begin
-                                ExceptionType := 'Inventory Mismatch';
-                                ExceptionDetails := 'High inventory value but Class C';
-                            end
-                            // Exception 5: Zero activity
-                            else
-                                if HasZeroActivity(Item) then begin
-                                    ExceptionType := 'No Activity';
-                                    ExceptionDetails := 'No sales/movement in analysis period';
-                                end else
-                                    CurrReport.Skip();
+                        CurrReport.Skip();
+                end;
+            end;
+
+            trigger OnPreDataItem()
+            var
+                Mgt: Codeunit "GSO ABC Analysis Mgt.";
+            begin
+                Mgt.GetDefaultDates(Enum::"GSO ABC Model"::Revenue, ActivityStartDate, ActivityEndDate);
             end;
         }
     }
@@ -109,19 +84,19 @@ report 73030578 "GSO ABC Exceptions"
                     {
                         ApplicationArea = All;
                         Caption = 'Outdated Threshold (Days)';
-                        ToolTip = 'Number of days after which calculation is considered outdated. Default: 90 days.';
+                        ToolTip = 'Specifies after how many days a classification counts as outdated. Default: 90.';
                     }
                     field(InventoryThresholdField; InventoryThreshold)
                     {
                         ApplicationArea = All;
                         Caption = 'Inventory Value Threshold';
-                        ToolTip = 'Minimum inventory value to flag as high inventory. Default: 10000.';
+                        ToolTip = 'Specifies the inventory value above which a class C item is flagged. Default: 10,000.';
                     }
                 }
                 group(Note)
                 {
                     Caption = 'Note';
-                    InstructionalText = 'This report identifies items with potential ABC classification issues: never calculated, outdated calculations, inconsistent classes across models, high inventory with low class, or zero activity.';
+                    InstructionalText = 'Lists items that were never classified, have an outdated classification, differ between models, carry high inventory with class C, or had no activity in the Revenue analysis period.';
                 }
             }
         }
@@ -130,90 +105,22 @@ report 73030578 "GSO ABC Exceptions"
     var
         DaysThreshold: Integer;
         InventoryThreshold: Decimal;
+        ActivityStartDate: Date;
+        ActivityEndDate: Date;
         ExceptionType: Text[50];
         ExceptionDetails: Text[250];
         ReportTitleLbl: Label 'ABC Exception Report';
-        OutdatedDetailsLbl: Label 'Last calculation more than %1 days ago', Locked = true;
-
-    local procedure IsNeverCalculated(ItemRec: Record Item): Boolean
-    begin
-        exit((ItemRec."GSO Last Calc (Revenue)" = 0DT) and
-             (ItemRec."GSO Last Calc (GP)" = 0DT) and
-             (ItemRec."GSO Last Calc (COGS)" = 0DT) and
-             (ItemRec."GSO Last Calc (Sales Qty)" = 0DT) and
-             (ItemRec."GSO Last Calc (Usage Value)" = 0DT) and
-             (ItemRec."GSO Last Calc (GMROII)" = 0DT) and
-             (ItemRec."GSO Last Calc (Pick Freq)" = 0DT));
-    end;
-
-    local procedure IsOutdated(ItemRec: Record Item): Boolean
-    var
-        LatestCalc: DateTime;
-        DaysSinceCalc: Integer;
-        MillisecondsPerDay: BigInteger;
-        TimeDifference: BigInteger;
-    begin
-        LatestCalc := ItemRec."GSO Last Calc (Revenue)";
-        if ItemRec."GSO Last Calc (GP)" > LatestCalc then
-            LatestCalc := ItemRec."GSO Last Calc (GP)";
-        if ItemRec."GSO Last Calc (COGS)" > LatestCalc then
-            LatestCalc := ItemRec."GSO Last Calc (COGS)";
-        if ItemRec."GSO Last Calc (Sales Qty)" > LatestCalc then
-            LatestCalc := ItemRec."GSO Last Calc (Sales Qty)";
-        if ItemRec."GSO Last Calc (Usage Value)" > LatestCalc then
-            LatestCalc := ItemRec."GSO Last Calc (Usage Value)";
-        if ItemRec."GSO Last Calc (GMROII)" > LatestCalc then
-            LatestCalc := ItemRec."GSO Last Calc (GMROII)";
-        if ItemRec."GSO Last Calc (Pick Freq)" > LatestCalc then
-            LatestCalc := ItemRec."GSO Last Calc (Pick Freq)";
-
-        if LatestCalc = 0DT then
-            exit(false);
-
-        // Calculate days difference to avoid overflow
-        // DateTime difference is in milliseconds: 1 day = 86,400,000 milliseconds
-        MillisecondsPerDay := 86400000;
-        TimeDifference := CurrentDateTime - LatestCalc;
-        DaysSinceCalc := TimeDifference div MillisecondsPerDay;
-
-        exit(DaysSinceCalc > DaysThreshold);
-    end;
-
-    local procedure HasInconsistentClasses(ItemRec: Record Item): Boolean
-    var
-        Classes: array[7] of Integer;
-    begin
-        Classes[1] := ItemRec."GSO Class (Revenue)".AsInteger();
-        Classes[2] := ItemRec."GSO Class (Gross Profit)".AsInteger();
-        Classes[3] := ItemRec."GSO Class (COGS)".AsInteger();
-        Classes[4] := ItemRec."GSO Class (Sales Qty)".AsInteger();
-        Classes[5] := ItemRec."GSO Class (Usage Value)".AsInteger();
-        Classes[6] := ItemRec."GSO Class (GMROII)".AsInteger();
-        Classes[7] := ItemRec."GSO Class (Pick Frequency)".AsInteger();
-
-        exit((Classes[1] <> Classes[2]) or (Classes[1] <> Classes[3]) or (Classes[1] <> Classes[4]) or
-             (Classes[1] <> Classes[5]) or (Classes[1] <> Classes[6]) or (Classes[1] <> Classes[7]));
-    end;
-
-    local procedure IsHighInventoryLowClass(ItemRec: Record Item): Boolean
-    var
-        InventoryValue: Decimal;
-    begin
-        ItemRec.CalcFields(Inventory);
-        InventoryValue := ItemRec.Inventory * ItemRec."Unit Cost";
-
-        exit((InventoryValue > InventoryThreshold) and
-             (ItemRec."GSO Class (Revenue)" = ItemRec."GSO Class (Revenue)"::C));
-    end;
-
-    local procedure HasZeroActivity(ItemRec: Record Item): Boolean
-    var
-        VE: Record "Value Entry";
-    begin
-        VE.SetRange("Item No.", ItemRec."No.");
-        VE.SetFilter("Posting Date", '%1..%2', CalcDate('<-1Y>', WorkDate()), WorkDate());
-        exit(VE.IsEmpty());
-    end;
+        NeverCalculatedLbl: Label 'Never Calculated', MaxLength = 50;
+        NeverCalculatedDetailsLbl: Label 'The item has never been classified.', MaxLength = 250;
+        OutdatedLbl: Label 'Outdated', MaxLength = 50;
+        OutdatedDetailsLbl: Label 'The last classification is more than %1 days old.', Comment = '%1 = number of days';
+        InconsistentLbl: Label 'Inconsistent', MaxLength = 50;
+        InconsistentDetailsLbl: Label 'The classes differ by more than one step between models.', MaxLength = 250;
+        InventoryMismatchLbl: Label 'Inventory Mismatch', MaxLength = 50;
+        InventoryMismatchDetailsLbl: Label 'Inventory value above %1 but Revenue class C.', Comment = '%1 = inventory value threshold';
+        NoActivityLbl: Label 'No Activity', MaxLength = 50;
+        NoActivityDetailsLbl: Label 'No value entries in the Revenue analysis period.', MaxLength = 250;
+        DateFormulaTok: Label '<-%1D>', Locked = true;
 
     trigger OnPreReport()
     begin
@@ -221,5 +128,84 @@ report 73030578 "GSO ABC Exceptions"
             DaysThreshold := 90;
         if InventoryThreshold = 0 then
             InventoryThreshold := 10000;
+    end;
+
+    local procedure IsNeverCalculated(ItemRec: Record Item): Boolean
+    begin
+        exit(GetLatestCalc(ItemRec) = 0DT);
+    end;
+
+    local procedure GetLatestCalc(ItemRec: Record Item) LatestCalc: DateTime
+    begin
+        LatestCalc := ItemRec."GSO Last Calc (Revenue)";
+        if ItemRec."GSO Last Calc (GP)" > LatestCalc then
+            LatestCalc := ItemRec."GSO Last Calc (GP)";
+        if ItemRec."GSO Last Calc (COGS)" > LatestCalc then
+            LatestCalc := ItemRec."GSO Last Calc (COGS)";
+        if ItemRec."GSO Last Calc (Usage Value)" > LatestCalc then
+            LatestCalc := ItemRec."GSO Last Calc (Usage Value)";
+        if ItemRec."GSO Last Calc (GMROII)" > LatestCalc then
+            LatestCalc := ItemRec."GSO Last Calc (GMROII)";
+        if ItemRec."GSO Last Calc (Pick Freq)" > LatestCalc then
+            LatestCalc := ItemRec."GSO Last Calc (Pick Freq)";
+    end;
+
+    local procedure IsOutdated(ItemRec: Record Item): Boolean
+    var
+        LatestCalc: DateTime;
+    begin
+        LatestCalc := GetLatestCalc(ItemRec);
+        if LatestCalc = 0DT then
+            exit(false);
+        exit(DT2Date(LatestCalc) < CalcDate(StrSubstNo(DateFormulaTok, DaysThreshold), Today()));
+    end;
+
+    /// <summary>
+    /// True when calculated classes differ by more than one step. Models never applied are ignored.
+    /// </summary>
+    local procedure HasInconsistentClasses(ItemRec: Record Item): Boolean
+    var
+        Classes: array[6] of Integer;
+        Idx: Integer;
+        MinClass: Integer;
+        MaxClass: Integer;
+    begin
+        Classes[1] := ItemRec."GSO Class (Revenue)".AsInteger();
+        Classes[2] := ItemRec."GSO Class (Gross Profit)".AsInteger();
+        Classes[3] := ItemRec."GSO Class (COGS)".AsInteger();
+        Classes[4] := ItemRec."GSO Class (Usage Value)".AsInteger();
+        Classes[5] := ItemRec."GSO Class (GMROII)".AsInteger();
+        Classes[6] := ItemRec."GSO Class (Pick Frequency)".AsInteger();
+
+        MinClass := 999;
+        MaxClass := 0;
+        for Idx := 1 to ArrayLen(Classes) do
+            if Classes[Idx] <> 0 then begin
+                if Classes[Idx] < MinClass then
+                    MinClass := Classes[Idx];
+                if Classes[Idx] > MaxClass then
+                    MaxClass := Classes[Idx];
+            end;
+
+        if MaxClass = 0 then
+            exit(false);
+        exit(MaxClass - MinClass > 1);
+    end;
+
+    local procedure IsHighInventoryLowClass(ItemRec: Record Item): Boolean
+    begin
+        if ItemRec."GSO Class (Revenue)" <> ItemRec."GSO Class (Revenue)"::C then
+            exit(false);
+        ItemRec.CalcFields(Inventory);
+        exit(ItemRec.Inventory * ItemRec."Unit Cost" > InventoryThreshold);
+    end;
+
+    local procedure HasZeroActivity(ItemRec: Record Item): Boolean
+    var
+        ValueEntry: Record "Value Entry";
+    begin
+        ValueEntry.SetRange("Item No.", ItemRec."No.");
+        ValueEntry.SetRange("Posting Date", ActivityStartDate, ActivityEndDate);
+        exit(ValueEntry.IsEmpty());
     end;
 }

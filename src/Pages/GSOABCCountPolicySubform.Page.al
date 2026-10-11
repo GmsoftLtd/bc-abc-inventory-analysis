@@ -18,17 +18,17 @@ page 73030577 "GSO ABC Count Policy Subform"
                 field(Model; Rec.Model)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'ABC model: Revenue, Gross Profit, or COGS.';
+                    ToolTip = 'Specifies the ABC model this line applies to.';
                 }
                 field(Class; Rec.Class)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'ABC Class A/B/C.';
+                    ToolTip = 'Specifies the ABC class this line applies to.';
                 }
                 field("Counting Period Code"; Rec."Counting Period Code")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Warehouse Physical Inventory Counting Period Code to assign for this (Model, Class).';
+                    ToolTip = 'Specifies the physical inventory counting period assigned to items with this model and class.';
                 }
             }
         }
@@ -37,7 +37,7 @@ page 73030577 "GSO ABC Count Policy Subform"
     // Correct way to stamp the parent key on new lines in a subpage
     trigger OnNewRecord(BelowxRec: Boolean)
     var
-        ParentHdr: Code[20];
+        ParentHdr: Code[10];
     begin
         // SubPageLink applies a filter on "Header Code" — read it and set FK
         ParentHdr := Rec.GetRangeMin("Header Code");

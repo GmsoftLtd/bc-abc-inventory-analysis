@@ -7,7 +7,7 @@ page 73030583 "GSO ABC History"
     UsageCategory = History;
     Editable = false;
     InsertAllowed = false;
-    DeleteAllowed = false;
+    DeleteAllowed = true;
     ModifyAllowed = false;
 
     layout
@@ -24,7 +24,7 @@ page 73030583 "GSO ABC History"
                 field(Model; Rec.Model)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'ABC analysis model used for this run: Revenue, Gross Profit, or COGS.';
+                    ToolTip = 'Specifies the ABC model used for this run.';
                 }
                 field("Start Date"; Rec."Start Date")
                 {
@@ -39,12 +39,12 @@ page 73030583 "GSO ABC History"
                 field("Items Count"; Rec."Items Count")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Total number of items included in this ABC analysis run.';
+                    ToolTip = 'Specifies the number of items included in this run.';
                 }
                 field("Total Amount"; Rec."Total Amount")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Total value (revenue, profit, or COGS) of all items analyzed in this run.';
+                    ToolTip = 'Specifies the total model value of all items analyzed in this run.';
                 }
                 field("Created By"; Rec."Created By")
                 {

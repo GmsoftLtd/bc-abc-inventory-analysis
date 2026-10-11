@@ -1,7 +1,7 @@
 enum 73030575 "GSO ABC Class"
 {
-    Extensible = true;
-    Caption = 'ABCClass';
+    Extensible = false;
+    Caption = 'ABC Class';
 
     value(0; Unknown) { Caption = ' '; }
     value(1; A) { Caption = 'A'; }

@@ -3,12 +3,10 @@ page 73030580 "GSO ABC Worksheet"
     PageType = Worksheet;
     SourceTable = "GSO ABC Preview Line";
     SourceTableTemporary = true;
+    SourceTableView = sorting(Value) order(descending);
     Caption = 'ABC Inventory - Worksheet';
     ApplicationArea = All;
     UsageCategory = Tasks;
-
-    SourceTableView = sorting(class) order(ascending);
-
     Editable = false;
     InsertAllowed = false;
     ModifyAllowed = false;
@@ -16,54 +14,84 @@ page 73030580 "GSO ABC Worksheet"
 
     layout
     {
-        area(content)
+        area(Content)
         {
+            group(Parameters)
+            {
+                Caption = 'Last Calculation';
+                Visible = HasLastParams;
+                field(LastModelField; LastModel)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Model';
+                    Editable = false;
+                    ToolTip = 'Specifies the model used for the current preview.';
+                }
+                field(LastStartDateField; LastStartDate)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Start Date';
+                    Editable = false;
+                    ToolTip = 'Specifies the first posting date included in the current preview.';
+                }
+                field(LastEndDateField; LastEndDate)
+                {
+                    ApplicationArea = All;
+                    Caption = 'End Date';
+                    Editable = false;
+                    ToolTip = 'Specifies the last posting date included in the current preview.';
+                }
+            }
             repeater(Lines)
             {
                 ShowCaption = false;
 
-                field("Line No."; Rec."Line No.")
+                field("Item No."; Rec."Item No.")
                 {
                     ApplicationArea = All;
-                    Visible = false;
-                    ToolTip = 'Internal line number for this preview calculation.';
+                    ToolTip = 'Specifies the item number.';
                 }
-                field("Item No."; Rec."Item No.") { ApplicationArea = All; ToolTip = 'Item number.'; }
-                field(Description; Rec.Description) { ApplicationArea = All; ToolTip = 'Item description.'; }
-                field(Model; Rec.Model) { ApplicationArea = All; ToolTip = 'ABC model used for this line.'; }
-                field(Value; Rec.Value) { ApplicationArea = All; ToolTip = 'Calculated value for the selected model and period.'; }
-                field("Value %"; Rec."Value %") { ApplicationArea = All; ToolTip = 'Share of the item value against the total (%).'; }
-                field("Cum. %"; Rec."Cum. %") { ApplicationArea = All; ToolTip = 'Cumulative percentage used for class breakpoints.'; }
-
-                // Single visual Class column (emoji + bold)
+                field(Description; Rec.Description)
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the item description.';
+                }
+                field(Value; Rec.Value)
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the calculated value for the selected model and period.';
+                }
+                field("Value %"; Rec."Value %")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the share of this item in the total value.';
+                }
+                field("Cum. %"; Rec."Cum. %")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the cumulative share used to decide the class.';
+                }
                 field(ClassDisplay; GetClassDisplayText())
                 {
                     ApplicationArea = All;
                     Caption = 'Class';
-                    ToolTip = 'ABC Class (colored and bold).';
+                    ToolTip = 'Specifies the ABC class that will be applied to the item.';
                     Style = Strong;
-                    StyleExpr = true;
                 }
+            }
+        }
+        area(FactBoxes)
+        {
+            part(StatsPart; "GSO ABC Stats Part")
+            {
+                ApplicationArea = All;
+                Caption = 'Statistics';
             }
         }
     }
 
     actions
     {
-        area(Promoted)
-        {
-            group(Category_Process)
-            {
-                Caption = 'Process';
-
-                actionref(Calc_Promoted; Calc)
-                {
-                }
-                actionref(Apply_Promoted; Apply)
-                {
-                }
-            }
-        }
         area(Processing)
         {
             action(Calc)
@@ -71,72 +99,96 @@ page 73030580 "GSO ABC Worksheet"
                 Caption = 'Calculate…';
                 Image = Calculate;
                 ApplicationArea = All;
-                ToolTip = 'Build the preview worksheet for a selected model and date range.';
+                ToolTip = 'Build the preview for a model and date range. Nothing is written to items until you choose Apply.';
                 trigger OnAction()
                 var
                     Mgt: Codeunit "GSO ABC Analysis Mgt.";
-                    EndDate: Date;
-                    StartDate: Date;
                     Model: Enum "GSO ABC Model";
+                    StartDate: Date;
+                    EndDate: Date;
                 begin
                     if not GetParams(Model, StartDate, EndDate) then
                         exit;
 
-                    Rec.DeleteAll();
                     Mgt.CalculatePreview(Model, StartDate, EndDate, Rec);
+                    Rec.SetCurrentKey(Value);
+                    Rec.Ascending(false);
 
                     LastModel := Model;
                     LastStartDate := StartDate;
                     LastEndDate := EndDate;
                     HasLastParams := true;
 
+                    RefreshStats();
                     CurrPage.Update(false);
-                    Message('Preview calculated: %1 lines.', GetTempCount());
+                    Message(PreviewCalculatedMsg, GetTempCount());
                 end;
             }
-
             action(Apply)
             {
-                Caption = 'Apply to Item/SKU';
+                Caption = 'Apply to Items/SKUs';
                 Image = Post;
                 ApplicationArea = All;
-                ToolTip = 'Write the previewed ABC classes to Items/SKUs.';
+                ToolTip = 'Write the previewed classes to items and stockkeeping units and record the run in ABC History.';
                 trigger OnAction()
                 var
                     TempPreviewLine: Record "GSO ABC Preview Line" temporary;
                     Mgt: Codeunit "GSO ABC Analysis Mgt.";
-                    EndDate: Date;
-                    StartDate: Date;
-                    Lines: Integer;
-                    Model: Enum "GSO ABC Model";
+                    Updated: Integer;
                 begin
-                    Lines := GetTempCount();
-                    if Lines = 0 then
-                        Error('No preview lines. Run Calculate first.');
+                    if GetTempCount() = 0 then
+                        Error(NoLinesErr);
+                    if not HasLastParams then
+                        Error(NoLinesErr);
 
-                    // Reuse last used params; otherwise ask once
-                    if HasLastParams then begin
-                        Model := LastModel;
-                        StartDate := LastStartDate;
-                        EndDate := LastEndDate;
-                    end else begin
-                        if not GetParams(Model, StartDate, EndDate) then
-                            exit;
-                        LastModel := Model;
-                        LastStartDate := StartDate;
-                        LastEndDate := EndDate;
-                        HasLastParams := true;
-                    end;
-
-                    if not Confirm('Apply the %1 preview (%2..%3) to Item/SKU?', false, GetModelText(Model), StartDate, EndDate) then
+                    if not Confirm(ApplyQst, false, Format(LastModel), LastStartDate, LastEndDate) then
                         exit;
 
-                    // 🔒 IMPORTANT: Copy page temp buffer to local temp before calling codeunit
-                    TempPreviewLine.Copy(Rec, true); // ShareTable = true keeps it lightweight, but temp → temp in same session
-                    Mgt.ApplyPreview(TempPreviewLine, Model, StartDate, EndDate);
-
-                    Message('Applied successfully: %1 items updated.', Lines);
+                    TempPreviewLine.Copy(Rec, true);
+                    Updated := Mgt.ApplyPreview(TempPreviewLine, LastModel, LastStartDate, LastEndDate);
+                    Message(AppliedMsg, Updated);
                 end;
+            }
+            action(ExportExcel)
+            {
+                Caption = 'Export to Excel';
+                Image = ExportToExcel;
+                ApplicationArea = All;
+                ToolTip = 'Export the preview lines and the class statistics to an Excel workbook.';
+                trigger OnAction()
+                var
+                    TempBuf: Record "GSO ABC Preview Line" temporary;
+                    TempStats: Record "GSO ABC Stats" temporary;
+                    Stats: Codeunit "GSO ABC Worksheet Stats";
+                    Export: Codeunit "GSO ABC Worksheet Export";
+                begin
+                    if GetTempCount() = 0 then
+                        Error(NoLinesErr);
+                    TempBuf.Copy(Rec, true);
+                    Stats.BuildStats(TempBuf, TempStats);
+                    TempBuf.Reset();
+                    TempBuf.SetCurrentKey(Value);
+                    TempBuf.Ascending(false);
+                    Export.ExportPreviewAndStats(TempBuf, TempStats);
+                end;
+            }
+            action(OpenSetup)
+            {
+                Caption = 'Setup';
+                Image = Setup;
+                ApplicationArea = All;
+                ToolTip = 'Open the ABC Analysis Setup to change thresholds and periods.';
+                RunObject = page "GSO ABC Analysis Setup";
+            }
+        }
+        area(Promoted)
+        {
+            group(Category_Process)
+            {
+                Caption = 'Process';
+                actionref(Calc_Promoted; Calc) { }
+                actionref(Apply_Promoted; Apply) { }
+                actionref(ExportExcel_Promoted; ExportExcel) { }
             }
         }
     }
@@ -145,39 +197,31 @@ page 73030580 "GSO ABC Worksheet"
         HasLastParams: Boolean;
         LastEndDate: Date;
         LastStartDate: Date;
-        LastModel: enum "GSO ABC Model";
+        LastModel: Enum "GSO ABC Model";
+        NoLinesErr: Label 'There are no preview lines. Choose Calculate first.';
+        PreviewCalculatedMsg: Label 'Preview calculated: %1 lines.', Comment = '%1 = number of lines';
+        AppliedMsg: Label 'Classes applied: %1 items updated.', Comment = '%1 = number of items';
+        ApplyQst: Label 'Apply the %1 preview (%2 to %3) to items and stockkeeping units?', Comment = '%1 = model, %2 = start date, %3 = end date';
 
-    trigger OnOpenPage()
-    begin
-        // No license check needed
-    end;
-
-    // ===================== Helpers =====================
-
-    local procedure GetParams(var ModelParam: enum "GSO ABC Model"; var StartDate: Date; var EndDate: Date): Boolean
+    local procedure GetParams(var ModelParam: Enum "GSO ABC Model"; var StartDate: Date; var EndDate: Date): Boolean
     var
         Dlg: Page "GSO ABC Worksheet Params";
     begin
-        if Dlg.RunModal() = Action::OK then begin
-            Dlg.GetParams(ModelParam, StartDate, EndDate);
-            exit(true);
-        end;
-        exit(false);
+        if Dlg.RunModal() <> Action::OK then
+            exit(false);
+        Dlg.GetParams(ModelParam, StartDate, EndDate);
+        exit(true);
     end;
 
-    local procedure GetModelText(ModelParam: Enum "GSO ABC Model"): Text
+    local procedure RefreshStats()
+    var
+        TempBuf: Record "GSO ABC Preview Line" temporary;
+        TempStats: Record "GSO ABC Stats" temporary;
+        Stats: Codeunit "GSO ABC Worksheet Stats";
     begin
-        case ModelParam of
-            ModelParam::Revenue:
-                exit('Revenue');
-            ModelParam::"Gross Profit":
-                exit('Gross Profit');
-            ModelParam::COGS:
-                exit('COGS');
-            ModelParam::"Usage Value":
-                exit('Usage Value');
-        end;
-        exit('');
+        TempBuf.Copy(Rec, true);
+        Stats.BuildStats(TempBuf, TempStats);
+        CurrPage.StatsPart.Page.SetStats(TempStats);
     end;
 
     local procedure GetTempCount(): Integer
@@ -196,8 +240,11 @@ page 73030580 "GSO ABC Worksheet"
                 exit('🟢 A');
             Rec.Class::B:
                 exit('🟡 B');
-            else
+            Rec.Class::C:
                 exit('🔴 C');
+            Rec.Class::D:
+                exit('⚪ D');
         end;
+        exit('');
     end;
 }

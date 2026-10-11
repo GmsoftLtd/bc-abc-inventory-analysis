@@ -5,67 +5,62 @@ report 73030575 "GSO ABC Distribution"
     ApplicationArea = All;
     DefaultLayout = RDLC;
     RDLCLayout = './src/Reports/Layouts/GSOABCDistribution.rdl';
-    InherentPermissions = X;
-    InherentEntitlements = X;
 
     dataset
     {
-        dataitem(ClassGroup; "Integer")
+        dataitem(ClassGroup; Integer)
         {
-            DataItemTableView = sorting(Number) where(Number = filter(0 .. 2));
+            // One row per class: 1 = A, 2 = B, 3 = C, 4 = D (enum ordinals)
+            DataItemTableView = sorting(Number) where(Number = filter(1 .. 4));
 
-            column(CompanyName; CompanyProperty.DisplayName())
-            {
-            }
-            column(ModelColumn; Format(Model))
-            {
-            }
-            column(ReportTitle; ReportTitleLbl)
-            {
-            }
-            column(RunDate; Format(CurrentDateTime, 0, '<Standard Format,9>'))
-            {
-            }
-            column(RunByUser; UserId)
-            {
-            }
-            column(FilterText; ItemFilter)
-            {
-            }
-            column(ClassName; ClassName)
-            {
-            }
-            column(ItemCount; ItemCount)
-            {
-            }
-            column(TotalValue; TotalValue)
-            {
-            }
-            column(ValuePercent; ValuePercent)
-            {
-            }
-            column(ItemPercent; ItemPercent)
-            {
-            }
+            column(CompanyName; CompanyProperty.DisplayName()) { }
+            column(ModelColumn; Format(Model)) { }
+            column(ReportTitle; ReportTitleLbl) { }
+            column(RunDate; Format(CurrentDateTime(), 0, '<Standard Format,9>')) { }
+            column(RunByUser; UserId()) { }
+            column(FilterText; ItemFilter) { }
+            column(ClassName; ClassName) { }
+            column(ItemCount; ItemCount) { }
+            column(TotalValue; TotalValue) { }
+            column(ValuePercent; ValuePercent) { }
+            column(ItemPercent; ItemPercent) { }
 
             trigger OnPreDataItem()
+            var
+                Mgt: Codeunit "GSO ABC Analysis Mgt.";
+                DefaultStart: Date;
+                DefaultEnd: Date;
             begin
+                Mgt.GetDefaultDates(Model, DefaultStart, DefaultEnd);
+                if StartDate = 0D then
+                    StartDate := DefaultStart;
+                if EndDate = 0D then
+                    EndDate := DefaultEnd;
+
+                Mgt.CalculatePreview(Model, StartDate, EndDate, TempPreview);
+                TempPreview.SetCurrentKey("Item No.");
+                ItemFilter := Item.GetFilters();
                 CalculateGrandTotals();
-                SetItemFilters();
             end;
 
             trigger OnAfterGetRecord()
+            var
+                Class: Enum "GSO ABC Class";
             begin
-                ClassName := GetClassName(Number);
-                CalculateClassMetrics(Number, ItemCount, TotalValue);
+                Class := Enum::"GSO ABC Class".FromInteger(Number);
+                ClassName := CopyStr(Format(Class), 1, MaxStrLen(ClassName));
+                CalculateClassMetrics(Class, ItemCount, TotalValue);
+
+                if (Class = Class::D) and (ItemCount = 0) then
+                    CurrReport.Skip();
 
                 if GrandTotalValue <> 0 then
-                    ValuePercent := (TotalValue / GrandTotalValue) * 100
+                    ValuePercent := TotalValue / GrandTotalValue * 100
                 else
                     ValuePercent := 0;
 
                 if GrandItemCount <> 0 then
-                    ItemPercent := (ItemCount / GrandItemCount) * 100
+                    ItemPercent := ItemCount / GrandItemCount * 100
                 else
                     ItemPercent := 0;
             end;
@@ -85,7 +80,19 @@ report 73030575 "GSO ABC Distribution"
                     {
                         ApplicationArea = All;
                         Caption = 'ABC Model';
-                        ToolTip = 'Select the ABC model to analyze.';
+                        ToolTip = 'Specifies the ABC model whose classes are summarized.';
+                    }
+                    field(StartDateField; StartDate)
+                    {
+                        ApplicationArea = All;
+                        Caption = 'Start Date';
+                        ToolTip = 'Specifies the first posting date included in the value. Leave blank to use the period configured for the model in ABC Analysis Setup.';
+                    }
+                    field(EndDateField; EndDate)
+                    {
+                        ApplicationArea = All;
+                        Caption = 'End Date';
+                        ToolTip = 'Specifies the last posting date included in the value. Leave blank to use the work date.';
                     }
                 }
                 group(Filters)
@@ -96,7 +103,7 @@ report 73030575 "GSO ABC Distribution"
                         ApplicationArea = All;
                         Caption = 'Item No.';
                         TableRelation = Item;
-                        ToolTip = 'Filter by item number.';
+                        ToolTip = 'Specifies an item number filter.';
 
                         trigger OnValidate()
                         begin
@@ -108,7 +115,7 @@ report 73030575 "GSO ABC Distribution"
                         ApplicationArea = All;
                         Caption = 'Item Category';
                         TableRelation = "Item Category";
-                        ToolTip = 'Filter by item category.';
+                        ToolTip = 'Specifies an item category filter.';
 
                         trigger OnValidate()
                         begin
@@ -122,7 +129,10 @@ report 73030575 "GSO ABC Distribution"
 
     var
         Item: Record Item;
+        TempPreview: Record "GSO ABC Preview Line" temporary;
         Model: Enum "GSO ABC Model";
+        StartDate: Date;
+        EndDate: Date;
         GrandTotalValue: Decimal;
         GrandItemCount: Integer;
         ItemCount: Integer;
@@ -133,32 +143,9 @@ report 73030575 "GSO ABC Distribution"
         ItemFilter: Text;
         ReportTitleLbl: Label 'ABC Class Distribution';
 
-    trigger OnPreReport()
-    begin
-        // No license check needed
-    end;
-
-    local procedure GetClassName(ClassNum: Integer): Text[10]
-    begin
-        case ClassNum of
-            0:
-                exit('A');
-            1:
-                exit('B');
-            2:
-                exit('C');
-        end;
-    end;
-
-    local procedure SetItemFilters()
-    begin
-        ItemFilter := Item.GetFilters();
-    end;
-
-    local procedure CalculateClassMetrics(ClassNum: Integer; var Count: Integer; var Value: Decimal)
+    local procedure CalculateClassMetrics(Class: Enum "GSO ABC Class"; var Count: Integer; var Value: Decimal)
     var
         ItemRec: Record Item;
-        ClassEnum: Enum "GSO ABC Class";
     begin
         Count := 0;
         Value := 0;
@@ -166,10 +153,9 @@ report 73030575 "GSO ABC Distribution"
         ItemRec.CopyFilters(Item);
         if ItemRec.FindSet() then
             repeat
-                ClassEnum := GetItemClass(ItemRec, Model);
-                if ClassEnum.AsInteger() = ClassNum then begin
+                if GetItemClass(ItemRec, Model) = Class then begin
                     Count += 1;
-                    Value += GetItemValue(ItemRec);
+                    Value += GetItemValue(ItemRec."No.");
                 end;
             until ItemRec.Next() = 0;
     end;
@@ -184,8 +170,10 @@ report 73030575 "GSO ABC Distribution"
         ItemRec.CopyFilters(Item);
         if ItemRec.FindSet() then
             repeat
-                GrandItemCount += 1;
-                GrandTotalValue += GetItemValue(ItemRec);
+                if GetItemClass(ItemRec, Model) <> Enum::"GSO ABC Class"::Unknown then begin
+                    GrandItemCount += 1;
+                    GrandTotalValue += GetItemValue(ItemRec."No.");
+                end;
             until ItemRec.Next() = 0;
     end;
 
@@ -207,9 +195,11 @@ report 73030575 "GSO ABC Distribution"
         end;
     end;
 
-    local procedure GetItemValue(ItemRec: Record Item): Decimal
+    local procedure GetItemValue(ItemNo: Code[20]): Decimal
     begin
-        ItemRec.CalcFields(Inventory);
-        exit(ItemRec.Inventory * ItemRec."Unit Cost");
+        TempPreview.SetRange("Item No.", ItemNo);
+        if TempPreview.FindFirst() then
+            exit(TempPreview.Value);
+        exit(0);
     end;
 }
