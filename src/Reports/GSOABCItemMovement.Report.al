@@ -1,4 +1,4 @@
-report 73030576 "GSO ABC Item Movement"
+report 73033671 "GSO ABC Item Movement"
 {
     Caption = 'ABC Item Movement Report';
     UsageCategory = ReportsAndAnalysis;

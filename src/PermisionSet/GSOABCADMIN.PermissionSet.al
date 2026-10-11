@@ -1,4 +1,4 @@
-permissionset 73030577 "GSO ABC ADMIN"
+permissionset 73033670 "GSO ABC ADMIN"
 {
     Assignable = true;
     Caption = 'ABC Inventory - Administrator';

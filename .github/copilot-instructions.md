@@ -1,6 +1,6 @@
 # ABC Inventory Analysis - AI coding guide
 
-Business Central AL extension (app ID `fed0d995-8c8d-4fda-bd16-e10d112171fb`, publisher GMSOFT LIMITED). Object range 73030575 to 73031574, mandatory prefix `GSO ` on object names and `GSO ` on extension fields. Platform 27, runtime 16, target Cloud. Free app: no licence or entitlement code anywhere.
+Business Central AL extension (app ID `fed0d995-8c8d-4fda-bd16-e10d112171fb`, publisher GMSOFT LIMITED). Object range 73033660 to 73033689, mandatory prefix `GSO ` on object names and `GSO ` on extension fields. Platform 27, runtime 16, target Cloud. Free app: no licence or entitlement code anywhere.
 
 ## Architecture
 

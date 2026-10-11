@@ -1,4 +1,4 @@
-table 73030578 "GSO ABC Counting Policy Line"
+table 73033672 "GSO ABC Counting Policy Line"
 {
     Caption = 'Counting Policy Line';
     Description = 'Specifies counting period assignments for each ABC class and model combination within a counting policy';

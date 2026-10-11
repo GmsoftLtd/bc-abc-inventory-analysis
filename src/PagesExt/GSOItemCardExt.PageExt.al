@@ -1,4 +1,4 @@
-pageextension 73030575 "GSO Item Card Ext." extends "Item Card"
+pageextension 73033670 "GSO Item Card Ext." extends "Item Card"
 {
     layout
     {

@@ -1,4 +1,4 @@
-codeunit 73030582 "GSO ABC Analysis Mgt."
+codeunit 73033674 "GSO ABC Analysis Mgt."
 {
     var
         NoLinesErr: Label 'There are no preview lines to apply. Run Calculate first.';

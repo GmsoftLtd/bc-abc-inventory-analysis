@@ -1,4 +1,4 @@
-page 73030575 "GSO ABC Analysis Setup"
+page 73033670 "GSO ABC Analysis Setup"
 {
     ContextSensitiveHelpPage = 'setup';
     Caption = 'ABC Analysis Setup';

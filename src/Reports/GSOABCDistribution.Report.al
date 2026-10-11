@@ -1,4 +1,4 @@
-report 73030575 "GSO ABC Distribution"
+report 73033670 "GSO ABC Distribution"
 {
     Caption = 'ABC Class Distribution Report';
     UsageCategory = ReportsAndAnalysis;

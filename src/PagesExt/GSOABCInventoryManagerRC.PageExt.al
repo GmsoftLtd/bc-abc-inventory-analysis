@@ -1,4 +1,4 @@
-pageextension 73030577 "GSO ABC Inventory Manager RC" extends "Whse. Basic Role Center"
+pageextension 73033672 "GSO ABC Inventory Manager RC" extends "Whse. Basic Role Center"
 {
     actions
     {

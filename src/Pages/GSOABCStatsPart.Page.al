@@ -1,4 +1,4 @@
-page 73030582 "GSO ABC Stats Part"
+page 73033676 "GSO ABC Stats Part"
 {
     ContextSensitiveHelpPage = 'worksheet';
     Caption = 'ABC Statistics';

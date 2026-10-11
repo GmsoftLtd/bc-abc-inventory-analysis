@@ -1,4 +1,4 @@
-codeunit 73030576 "GSO ABC Analysis Job"
+codeunit 73033670 "GSO ABC Analysis Job"
 {
     // Scheduled recalculation. Run this codeunit from a Job Queue Entry (see "Create/Enable Job Queue" on the setup page).
 

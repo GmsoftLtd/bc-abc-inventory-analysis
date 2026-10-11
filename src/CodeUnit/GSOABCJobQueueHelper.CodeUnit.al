@@ -1,4 +1,4 @@
-codeunit 73030580 "GSO ABC Job Queue Helper"
+codeunit 73033672 "GSO ABC Job Queue Helper"
 {
     var
         JobDescriptionLbl: Label 'ABC Inventory Analysis - Recalculation';

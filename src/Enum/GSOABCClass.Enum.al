@@ -1,4 +1,4 @@
-enum 73030575 "GSO ABC Class"
+enum 73033670 "GSO ABC Class"
 {
     Extensible = false;
     Caption = 'ABC Class';

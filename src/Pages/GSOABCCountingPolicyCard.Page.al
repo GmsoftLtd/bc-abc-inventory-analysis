@@ -1,4 +1,4 @@
-page 73030578 "GSO ABC Counting Policy Card"
+page 73033673 "GSO ABC Counting Policy Card"
 {
     ContextSensitiveHelpPage = 'counting-policies';
     Caption = 'ABC Inventory - Counting Policy';

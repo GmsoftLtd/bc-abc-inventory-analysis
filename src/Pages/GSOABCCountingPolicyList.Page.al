@@ -1,4 +1,4 @@
-page 73030576 "GSO ABC Counting Policy List"
+page 73033671 "GSO ABC Counting Policy List"
 {
     ContextSensitiveHelpPage = 'counting-policies';
     Caption = 'ABC Counting Policies';

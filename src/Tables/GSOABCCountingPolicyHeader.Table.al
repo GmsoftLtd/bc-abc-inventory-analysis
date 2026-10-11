@@ -1,4 +1,4 @@
-table 73030577 "GSO ABC Counting Policy Header"
+table 73033671 "GSO ABC Counting Policy Header"
 {
     Caption = 'ABC Counting Policy';
     Description = 'Defines counting policy templates that map ABC classifications to physical inventory counting frequencies';

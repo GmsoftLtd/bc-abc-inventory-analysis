@@ -1,4 +1,4 @@
-enum 73030576 "GSO ABC Model"
+enum 73033671 "GSO ABC Model"
 {
     Extensible = false;
     Caption = 'ABC Model';

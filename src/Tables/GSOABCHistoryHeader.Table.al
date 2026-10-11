@@ -1,4 +1,4 @@
-table 73030580 "GSO ABC History Header"
+table 73033674 "GSO ABC History Header"
 {
     Caption = 'ABC History';
     Description = 'Records historical ABC analysis runs with summary information including date range, model, and totals';
