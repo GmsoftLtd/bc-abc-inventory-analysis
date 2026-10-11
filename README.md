@@ -7,7 +7,7 @@ Free ABC classification for Microsoft Dynamics 365 Business Central. Rank items 
 - **Object range:** 73030575 to 73031574, prefix `GSO`
 - **Platform:** Business Central 27 and later, cloud
 - **Languages:** English, Greek, Italian
-- **Help:** https://gmsoft-limited.github.io/ABC/
+- **Help:** https://gmsoftdynamics.com/apps/free/abc-inventory-analysis/docs/
 
 ## Features
 
@@ -30,7 +30,7 @@ Free ABC classification for Microsoft Dynamics 365 Business Central. Rank items 
 4. Review the preview and the statistics factbox, then choose **Apply to Items/SKUs**.
 5. To keep classes current, choose **Create/Enable Job Queue** in setup.
 
-Full documentation is in the [docs](docs/) folder and published at https://gmsoft-limited.github.io/ABC/.
+The help pages are published at https://gmsoftdynamics.com/apps/free/abc-inventory-analysis/docs/.
 
 ## Repository layout
 
@@ -39,7 +39,7 @@ app.json                 App manifest
 src/                     AL source (tables, pages, codeunits, reports, permission sets)
 src/Reports/Layouts/     RDLC layouts
 Translations/            el-GR and it-IT translation files (the .g.xlf is generated)
-docs/                    User help, privacy statement and EULA, served by GitHub Pages
+docs/                    Source of the user help published on gmsoftdynamics.com
 APPSOURCE-LISTING.md     Marketing copy for the AppSource offer
 CHANGELOG.md             Release notes
 ```
