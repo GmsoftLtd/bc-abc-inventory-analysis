@@ -68,3 +68,22 @@ Logo for the offer: images/abc-logo-216.png. Files abc1 to abc5 in images/ are 1
 ## Release notes for the listing
 
 See CHANGELOG.md.
+
+## Notes for certification (paste on Review and submit, not saved between submissions)
+
+ABC Inventory Analysis is a free add-on for Business Central 27 and later. It requires no external accounts, API keys, licence keys or test credentials. All processing happens inside Business Central.
+
+Test setup: any demo company with posted sales, e.g. CRONUS. Assign the permission set "GSO ABC ADMIN" (ABC Inventory - Administrator) to the test user.
+
+Key scenario (5 minutes):
+1. Search "ABC Analysis Setup" - record exists with defaults (A 80 %, B 95 %, 365 days per model).
+2. Search "ABC Worksheet" > Calculate > model Revenue, Start Date 01/01/2020 > OK. Lines are ranked by value with Value %, Cumulative % and class A/B/C; items without sales are class D. Statistics FactBox shows totals per class.
+3. Apply to Items/SKUs > confirm. Message "Classes applied".
+4. Open the Item Card of the first line (CRONUS UK: 1896-S), group ABC Classification: ABC Class (Revenue) = A with timestamp.
+5. Search "ABC History" - one entry with lines.
+6. Reports: ABC Inventory Analysis, ABC Class Distribution, ABC Detail by Class, ABC Multi-Model Comparison, ABC Item Movement (Compare to Date = today), ABC Exception Report - all preview without error.
+7. Setup > Create/Enable Job Queue creates a daily job queue entry for codeunit "GSO ABC Analysis Job".
+
+Optional: counting policy (ABC Counting Policies > DEFAULT, map Revenue A/B/C to Phys. Invt. Counting Periods, enable "Update Phys. Invt. Counting Codes" in setup, apply again - item gets the counting period code).
+
+A step-by-step validation guide with expected results is attached under Supplemental content. Languages: en-US, el-GR, it-IT. Contact: gmavrogeorgis@gmsoft.co.uk.
