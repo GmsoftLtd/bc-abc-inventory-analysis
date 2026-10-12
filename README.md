@@ -50,4 +50,8 @@ Open the folder in VS Code with the AL Language extension, download symbols for 
 
 ## Support
 
-Open an issue at https://github.com/GMSOFT-LIMITED/ABC/issues. The app is provided free of charge without a support contract.
+See the support page at https://gmsoftdynamics.com/apps/free/abc-inventory-analysis/support/ (email, telephone, contact form), or open an issue at https://github.com/GMSOFT-LIMITED/ABC/issues. The app is free of charge and provided without a support contract.
+
+## Licence
+
+MIT. See [LICENSE](LICENSE). Copyright (c) 2025-2026 GMSOFT Limited.

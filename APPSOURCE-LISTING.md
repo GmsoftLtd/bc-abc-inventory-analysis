@@ -16,7 +16,7 @@ Text for the Partner Center offer. Character limits are the Partner Center limit
 | Industries | Distribution; Manufacturing; Retail and Consumer Goods |
 | Help link | https://gmsoftdynamics.com/apps/free/abc-inventory-analysis/docs/ |
 | Privacy policy link | https://gmsoftdynamics.com/privacy-statement-eu/ |
-| Support link | https://github.com/GMSOFT-LIMITED/ABC/issues |
+| Support link | https://gmsoftdynamics.com/apps/free/abc-inventory-analysis/support/ |
 
 ## Summary (100 characters)
 
