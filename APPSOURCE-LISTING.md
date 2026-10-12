@@ -61,9 +61,9 @@ ABC analysis, ABC classification, inventory classification, Pareto, cycle counti
 | 2 | ABC Analysis Setup, Revenue group in view | Six models, each with its own A and B thresholds and lookback period |
 | 3 | Item Card, ABC Classification group | One class and calculation date per model, directly on the item card |
 | 4 | Counting Policy card with periods filled in | Map classes to physical inventory counting periods and let the app set them on items |
-| 5 | ABC Class Distribution report | Reports show how value and item count concentrate in classes A, B and C |
+| 5 | ABC Detail by Class report | Detail by class ranks items by value and shows the cumulative share behind every class boundary |
 
-Logo for the offer: images/abc-logo-216.png. The four files abc1 to abc4 in images/ are from the old build and must be retaken.
+Logo for the offer: images/abc-logo-216.png. Files abc1 to abc5 in images/ are 1280 x 720 captures of the current build.
 
 ## Release notes for the listing
 
