@@ -53,12 +53,17 @@ Each model has its own A and B thresholds and its own lookback period. Items wit
 
 ABC analysis, ABC classification, inventory classification, Pareto, cycle counting, GMROII, pick frequency, inventory optimization
 
-## Screenshot captions
+## Screenshots (1280 x 720) and captions
 
-1. ABC Worksheet with preview lines and class statistics
-2. ABC Analysis Setup with per-model thresholds and periods
-3. Item card showing classes per model
-4. ABC Class Distribution report
+| # | Screen | Caption |
+|---|---|---|
+| 1 | ABC Worksheet after Calculate, statistics factbox visible | Preview every item with its value, share and cumulative share before you apply a single class |
+| 2 | ABC Analysis Setup, Revenue group in view | Six models, each with its own A and B thresholds and lookback period |
+| 3 | Item Card, ABC Classification group | One class and calculation date per model, directly on the item card |
+| 4 | Counting Policy card with periods filled in | Map classes to physical inventory counting periods and let the app set them on items |
+| 5 | ABC Class Distribution report | Reports show how value and item count concentrate in classes A, B and C |
+
+Logo for the offer: images/abc-logo-216.png. The four files abc1 to abc4 in images/ are from the old build and must be retaken.
 
 ## Release notes for the listing
 
