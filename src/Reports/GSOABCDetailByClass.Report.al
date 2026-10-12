@@ -8,10 +8,23 @@ report 73033675 "GSO ABC Detail by Class"
 
     dataset
     {
+        // Carries the request page filters only. It never outputs rows; the ranked preview below does.
         dataitem(Item; Item)
         {
             RequestFilterFields = "No.", "Item Category Code", "Gen. Prod. Posting Group";
             DataItemTableView = sorting("No.");
+
+            trigger OnPreDataItem()
+            begin
+                ItemFilterView := Item.GetView(false);
+                CurrReport.Break();
+            end;
+        }
+        // Items ranked by value for the model and period, so Value % and Cum. % read top down as in the worksheet.
+        dataitem(PreviewLine; "GSO ABC Preview Line")
+        {
+            UseTemporary = true;
+            DataItemTableView = sorting(Value) order(descending);
 
             column(CompanyName; CompanyProperty.DisplayName()) { }
             column(ModelColumn; Format(Model)) { }
@@ -20,7 +33,7 @@ report 73033675 "GSO ABC Detail by Class"
             column(RunByUser; UserId()) { }
             column(StartDate; Format(StartDate)) { }
             column(EndDate; Format(EndDate)) { }
-            column(ItemNo; "No.") { }
+            column(ItemNo; "Item No.") { }
             column(Description; Description) { }
             column(ABCClass; Format(ABCClass)) { }
             column(ItemValue; ItemValue) { }
@@ -28,27 +41,6 @@ report 73033675 "GSO ABC Detail by Class"
             column(CumulativePercent; CumulativePercent) { }
             column(LastCalculated; Format(LastCalculated)) { }
             column(ClassFilter; ClassFilterText) { }
-
-            trigger OnAfterGetRecord()
-            begin
-                ABCClass := GetItemClass(Item, Model);
-                if ClassFilter <> ClassFilter::Unknown then
-                    if ABCClass <> ClassFilter then
-                        CurrReport.Skip();
-
-                // Values and shares come from a full ranking of all items for the period,
-                // so Value % and Cumulative % are the same figures the worksheet shows.
-                TempPreview.SetRange("Item No.", Item."No.");
-                if not TempPreview.FindFirst() then
-                    CurrReport.Skip();
-                if TempPreview.Value = 0 then
-                    CurrReport.Skip();
-
-                ItemValue := TempPreview.Value;
-                ValuePercent := TempPreview."Value %";
-                CumulativePercent := TempPreview."Cum. %";
-                LastCalculated := GetItemLastCalc(Item, Model);
-            end;
 
             trigger OnPreDataItem()
             var
@@ -62,8 +54,31 @@ report 73033675 "GSO ABC Detail by Class"
                 if EndDate = 0D then
                     EndDate := DefaultEnd;
 
-                Mgt.CalculatePreview(Model, StartDate, EndDate, TempPreview);
-                TempPreview.SetCurrentKey("Item No.");
+                Mgt.CalculatePreview(Model, StartDate, EndDate, PreviewLine);
+                PreviewLine.SetCurrentKey(Value);
+                PreviewLine.Ascending(false);
+            end;
+
+            trigger OnAfterGetRecord()
+            var
+                ItemRec: Record Item;
+            begin
+                if PreviewLine.Value = 0 then
+                    CurrReport.Skip();
+                if not ItemRec.Get(PreviewLine."Item No.") then
+                    CurrReport.Skip();
+                if not ItemMatchesFilters(PreviewLine."Item No.") then
+                    CurrReport.Skip();
+
+                ABCClass := GetItemClass(ItemRec, Model);
+                if ClassFilter <> ClassFilter::Unknown then
+                    if ABCClass <> ClassFilter then
+                        CurrReport.Skip();
+
+                ItemValue := PreviewLine.Value;
+                ValuePercent := PreviewLine."Value %";
+                CumulativePercent := PreviewLine."Cum. %";
+                LastCalculated := GetItemLastCalc(ItemRec, Model);
             end;
         }
     }
@@ -108,7 +123,6 @@ report 73033675 "GSO ABC Detail by Class"
     }
 
     var
-        TempPreview: Record "GSO ABC Preview Line" temporary;
         Model: Enum "GSO ABC Model";
         ClassFilter: Enum "GSO ABC Class";
         ABCClass: Enum "GSO ABC Class";
@@ -119,6 +133,7 @@ report 73033675 "GSO ABC Detail by Class"
         CumulativePercent: Decimal;
         LastCalculated: DateTime;
         ClassFilterText: Text[20];
+        ItemFilterView: Text;
         ReportTitleLbl: Label 'ABC Detail by Class';
         AllClassesLbl: Label 'All', MaxLength = 20;
 
@@ -128,6 +143,17 @@ report 73033675 "GSO ABC Detail by Class"
             ClassFilterText := AllClassesLbl
         else
             ClassFilterText := CopyStr(Format(ClassFilter), 1, MaxStrLen(ClassFilterText));
+    end;
+
+    local procedure ItemMatchesFilters(ItemNo: Code[20]): Boolean
+    var
+        FilteredItem: Record Item;
+    begin
+        if ItemFilterView = '' then
+            exit(true);
+        FilteredItem.SetView(ItemFilterView);
+        FilteredItem.SetRange("No.", ItemNo);
+        exit(not FilteredItem.IsEmpty());
     end;
 
     local procedure GetItemClass(ItemRec: Record Item; ModelType: Enum "GSO ABC Model"): Enum "GSO ABC Class"
