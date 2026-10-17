@@ -1,13 +1,13 @@
 # Changelog
 
-## 1.2.1.0
+## 1.29.1.0
 
 First release of **ABC Inventory Analysis** as a free app, replacing the paid ABC Inventory Optimizer listing. New app ID, so it installs side by side with the old app and does not migrate its data.
 
 ### Added
 
 - Statistics factbox and Excel export on the ABC Worksheet
-- Greek and Italian translations
+- French, German, Greek, Italian and Spanish translations
 - Context-sensitive help for all pages and reports
 - Class D for items without activity in the analysis period, controlled by the setup
 - ABC History entries can be deleted from the list

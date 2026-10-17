@@ -48,4 +48,4 @@ Business data stays in Business Central. The app sends operational telemetry, su
 
 ## Where do I get help
 
-Open an issue at <https://github.com/GMSOFT-LIMITED/ABC/issues>. The app is free and provided without a support contract, but issues are read.
+Open an issue at <https://github.com/GmsoftLtd/bc-abc-inventory-analysis/issues>. The app is free and provided without a support contract, but issues are read.

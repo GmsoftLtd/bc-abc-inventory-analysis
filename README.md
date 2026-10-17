@@ -5,8 +5,8 @@ Free ABC classification for Microsoft Dynamics 365 Business Central. Rank items 
 - **Publisher:** GMSOFT LIMITED
 - **App ID:** `fed0d995-8c8d-4fda-bd16-e10d112171fb`
 - **Object range:** 73033660 to 73033689, prefix `GSO`
-- **Platform:** Business Central 27 and later, cloud
-- **Languages:** English, Greek, Italian
+- **Platform:** Business Central 29 and later, cloud
+- **Languages:** English, French, German, Greek, Italian, Spanish
 - **Help:** https://gmsoftdynamics.com/apps/free/abc-inventory-analysis/docs/
 
 ## Features
@@ -35,10 +35,10 @@ The help pages are published at https://gmsoftdynamics.com/apps/free/abc-invento
 ## Repository layout
 
 ```
-app.json                 App manifest
-src/                     AL source (tables, pages, codeunits, reports, permission sets)
-src/Reports/Layouts/     RDLC layouts
-Translations/            el-GR and it-IT translation files (the .g.xlf is generated)
+app/app.json                 App manifest
+app/src/                     AL source (tables, pages, codeunits, reports, permission sets)
+app/src/Reports/Layouts/     RDLC layouts
+Translations/            de-DE, el-GR, es-ES, fr-FR and it-IT translation files (the .g.xlf is generated)
 docs/                    Source of the user help published on gmsoftdynamics.com
 APPSOURCE-LISTING.md     Marketing copy for the AppSource offer
 CHANGELOG.md             Release notes
@@ -46,11 +46,11 @@ CHANGELOG.md             Release notes
 
 ## Building
 
-Open the folder in VS Code with the AL Language extension, download symbols for Business Central 27, and build with `Ctrl+Shift+B`. The project uses the CodeCop, UICop and AppSourceCop analyzers and builds without warnings. Sign the package with Azure Trusted Signing before submitting it to AppSource.
+Open the folder in VS Code with the AL Language extension, download symbols for Business Central 29, and build with `Ctrl+Shift+B`. The project uses the CodeCop, UICop and AppSourceCop analyzers and builds without warnings. Sign the package with Azure Trusted Signing before submitting it to AppSource.
 
 ## Support
 
-See the support page at https://gmsoftdynamics.com/apps/free/abc-inventory-analysis/support/ (email, telephone, contact form), or open an issue at https://github.com/GMSOFT-LIMITED/ABC/issues. The app is free of charge and provided without a support contract.
+See the support page at https://gmsoftdynamics.com/apps/free/abc-inventory-analysis/support/ (email, telephone, contact form), or open an issue at https://github.com/GmsoftLtd/bc-abc-inventory-analysis/issues. The app is free of charge and provided without a support contract.
 
 ## Licence
 

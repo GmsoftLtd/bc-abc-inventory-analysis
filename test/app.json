@@ -1,0 +1,42 @@
+{
+  "id": "c2f1d6e4-7a3b-4d58-9f0e-2a6b8c4d1e01",
+  "name": "ABC Inventory Analysis Tests",
+  "publisher": "GMSOFT LIMITED",
+  "version": "1.29.1.0",
+  "brief": "Automated tests for ABC Inventory Analysis",
+  "dependencies": [
+    {
+      "id": "fed0d995-8c8d-4fda-bd16-e10d112171fb",
+      "name": "ABC Inventory Analysis",
+      "publisher": "GMSOFT LIMITED",
+      "version": "1.29.1.0"
+    },
+    {
+      "id": "dd0be2ea-f733-4d65-bb34-a28f4624fb14",
+      "name": "Library Assert",
+      "publisher": "Microsoft",
+      "version": "29.0.0.0"
+    },
+    {
+      "id": "5d86850b-0d76-4eca-bd7b-951ad998e997",
+      "name": "Tests-TestLibraries",
+      "publisher": "Microsoft",
+      "version": "29.0.0.0"
+    }
+  ],
+  "idRanges": [
+    {
+      "from": 50000,
+      "to": 59999
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "platform": "29.0.0.0",
+  "application": "29.0.0.0",
+  "runtime": "18.0",
+  "target": "Cloud"
+}

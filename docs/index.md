@@ -62,4 +62,4 @@ Users also need their normal permissions on items, stockkeeping units, value ent
 
 ## Support
 
-Report problems or ask questions at <https://github.com/GMSOFT-LIMITED/ABC/issues>.
+Report problems or ask questions at <https://github.com/GmsoftLtd/bc-abc-inventory-analysis/issues>.

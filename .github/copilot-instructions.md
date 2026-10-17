@@ -15,7 +15,7 @@ Business Central AL extension (app ID `fed0d995-8c8d-4fda-bd16-e10d112171fb`, pu
   - `EnsureSetup`, `GetSetup` (no insert), `EnsurePolicyExists`.
 - **Worksheet** page `GSO ABC Worksheet` (temporary source) with `GSO ABC Worksheet Params` dialog, `GSO ABC Stats Part` factbox fed by codeunit `GSO ABC Worksheet Stats`, Excel export by `GSO ABC Worksheet Export`.
 - **Automation** codeunit `GSO ABC Analysis Job` is the job queue target; `GSO ABC Job Queue Helper` creates the entry. There is deliberately no posting event subscriber.
-- **Reports** 73033670 to 73033675, RDLC layouts in `src/Reports/Layouts`. Dataset column names are referenced by the layouts; renaming a column requires editing the RDL.
+- **Reports** 73033670 to 73033675, RDLC layouts in `app/src/Reports/Layouts`. Dataset column names are referenced by the layouts; renaming a column requires editing the RDL.
 - **Permission sets** `GSO ABC ADMIN` and `GSO ABC USER`. Add every new object to both.
 
 ## Conventions

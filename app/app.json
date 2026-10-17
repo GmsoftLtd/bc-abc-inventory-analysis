@@ -1,0 +1,46 @@
+{
+  "id": "fed0d995-8c8d-4fda-bd16-e10d112171fb",
+  "name": "ABC Inventory Analysis",
+  "publisher": "GMSOFT LIMITED",
+  "version": "1.29.1.0",
+  "brief": "ABC classification of items by revenue, profit, cost, usage, GMROII or pick frequency",
+  "description": "Rank items with six ABC models, preview the result in a worksheet, and write the class to items and stockkeeping units. Drive physical inventory counting periods from the class. Free, no item limit.",
+  "privacyStatement": "https://gmsoftdynamics.com/privacy-statement-eu/",
+  "EULA": "https://gmsoftdynamics.com/eula/",
+  "help": "https://gmsoftdynamics.com/apps/free/abc-inventory-analysis/docs/",
+  "contextSensitiveHelpUrl": "https://gmsoftdynamics.com/apps/free/abc-inventory-analysis/docs/",
+  "url": "https://gmsoftdynamics.com/apps/free/abc-inventory-analysis/",
+  "logo": "../../listing/logo/icon.png",
+  "target": "Cloud",
+  "dependencies": [],
+  "screenshots": [],
+  "platform": "29.0.0.0",
+  "application": "29.0.0.0",
+  "idRanges": [
+    {
+      "from": 73033660,
+      "to": 73033689
+    }
+  ],
+  "features": [
+    "NoImplicitWith",
+    "TranslationFile"
+  ],
+  "supportedLocales": [
+    "en-US",
+    "de-DE",
+    "el-GR",
+    "es-ES",
+    "fr-FR",
+    "it-IT"
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": false,
+    "allowDownloadingSource": false,
+    "includeSourceInSymbolFile": false
+  },
+  "runtime": "18.0",
+  "applicationInsightsConnectionString": "InstrumentationKey=8b1f3b1e-2f1e-4dcb-8f7c-5f3d2f5e4c8a;IngestionEndpoint=https://westeurope-1.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/",
+  "keyVaultUrls": [],
+  "propagateDependencies": false
+}

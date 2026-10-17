@@ -23,8 +23,6 @@ TestResults.xml
 #AL test runner state
 .altestrunner/
 
-#Signing tools restored from NuGet
-build/.tools/
 
 #Local Claude Code settings
 .claude/settings.local.json

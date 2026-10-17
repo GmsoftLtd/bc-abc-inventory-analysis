@@ -1,0 +1,30 @@
+{
+    "folders": [
+        {
+            "name": "ABC Inventory Analysis (App)",
+            "path": "app"
+        },
+        {
+            "name": "ABC Inventory Analysis (Demo Data)",
+            "path": "demo"
+        },
+        {
+            "name": "ABC Inventory Analysis (Tests)",
+            "path": "test"
+        }
+    ],
+    "settings": {
+        "al.enableCodeAnalysis": true,
+        "al.incrementalBuild": true,
+        "search.exclude": {
+            "**/.alpackages": true,
+            "**/.alcache": true,
+            "**/.altestrunner": true
+        }
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-dynamics-smb.al"
+        ]
+    }
+}
