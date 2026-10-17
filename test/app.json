@@ -18,8 +18,8 @@
       "version": "29.0.0.0"
     },
     {
-      "id": "5d86850b-0d76-4eca-bd7b-951ad998e997",
-      "name": "Tests-TestLibraries",
+      "id": "d852d5d2-a39d-4179-baeb-f99a19e32510",
+      "name": "Application Test Library",
       "publisher": "Microsoft",
       "version": "29.0.0.0"
     }
