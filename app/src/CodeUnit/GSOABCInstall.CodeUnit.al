@@ -18,6 +18,6 @@ codeunit 73033671 "GSO ABC Install"
         Mgt.EnsurePolicyExists(Setup."Counting Code Mapping ID");
         if not UpgradeTag.HasUpgradeTag(UpgradeTags.GetDefaultPolicyUpgradeTag()) then
             UpgradeTag.SetUpgradeTag(UpgradeTags.GetDefaultPolicyUpgradeTag());
-        Tlm.LogInfo('GSO-INSTALL', 'ABC Inventory Analysis installed with default setup.');
+        Tlm.LogInstalled();
     end;
 }

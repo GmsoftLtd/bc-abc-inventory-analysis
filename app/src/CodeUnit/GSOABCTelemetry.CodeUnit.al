@@ -3,8 +3,8 @@ namespace GMSoft.ABCInventoryAnalysis;
 /// <summary>
 /// Central telemetry emitter for ABC Inventory Analysis. All signals use the ExtensionPublisher scope so
 /// they reach the publisher's Application Insights, not the customer's.
-/// Event IDs: GSO-INSTALL and GSO-UPGRADE (kept from earlier releases), ABC-00xx for newer signals.
-/// Custom dimensions carry counts, codes and flags only.
+/// Event IDs: ABC-00xx (unique across GMSOFT apps, which share one Application Insights resource).
+/// Custom dimensions carry counts, codes, versions and flags only.
 /// </summary>
 codeunit 73033673 "GSO ABC Telemetry"
 {
@@ -12,16 +12,39 @@ codeunit 73033673 "GSO ABC Telemetry"
 
     var
         CategoryLbl: Label 'GSO.ABC', Locked = true;
+        InstalledTxt: Label 'ABC: installed with default setup.', Locked = true;
+        UpgradedTxt: Label 'ABC: upgraded to %1.', Locked = true;
         ClassesAppliedTxt: Label 'ABC: classes applied for model %1 - %2 preview line(s), %3 item(s) updated, counting codes %4.', Locked = true;
         ApplyFailedTxt: Label 'ABC: apply stopped for model %1 - no preview lines.', Locked = true;
         ScheduledRunTxt: Label 'ABC: scheduled recalculation finished - %1 model(s) processed, apply changes %2.', Locked = true;
         ScheduledSkippedTxt: Label 'ABC: scheduled recalculation skipped - analysis disabled in setup.', Locked = true;
 
+    /// <summary>Emits a signal when the app is installed in a company.</summary>
+    procedure LogInstalled()
+    var
+        Dimensions: Dictionary of [Text, Text];
+    begin
+        Dimensions.Add('Category', CategoryLbl);
+        Session.LogMessage('ABC-0001', InstalledTxt, Verbosity::Normal, DataClassification::SystemMetadata, TelemetryScope::ExtensionPublisher, Dimensions);
+    end;
+
+    /// <summary>Emits a signal when a company is upgraded to a new app version.</summary>
+    procedure LogUpgraded(AppVersion: Version)
+    var
+        Dimensions: Dictionary of [Text, Text];
+    begin
+        Dimensions.Add('Category', CategoryLbl);
+        Dimensions.Add('appVersion', Format(AppVersion));
+        Session.LogMessage('ABC-0002', StrSubstNo(UpgradedTxt, AppVersion), Verbosity::Normal, DataClassification::SystemMetadata, TelemetryScope::ExtensionPublisher, Dimensions);
+    end;
+
+    [Obsolete('Use the specific Log procedures (LogInstalled, LogUpgraded, LogClassesApplied ...); free-text events are not allowed.', '29.1')]
     procedure LogInfo(EventId: Text[50]; MessageTxt: Text[250])
     begin
         Session.LogMessage(EventId, MessageTxt, Verbosity::Normal, DataClassification::SystemMetadata, TelemetryScope::ExtensionPublisher, 'Category', CategoryLbl);
     end;
 
+    [Obsolete('Use the specific Log procedures (LogApplyFailed ...); free-text events are not allowed.', '29.1')]
     procedure LogError(EventId: Text[50]; MessageTxt: Text[250])
     begin
         Session.LogMessage(EventId, MessageTxt, Verbosity::Error, DataClassification::SystemMetadata, TelemetryScope::ExtensionPublisher, 'Category', CategoryLbl);

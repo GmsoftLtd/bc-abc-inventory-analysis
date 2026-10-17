@@ -9,7 +9,7 @@ codeunit 73033678 "GSO ABC Upgrade Tags"
 
     procedure GetDefaultPolicyUpgradeTag(): Code[250]
     begin
-        exit('GSO-ABC-DefaultCountingPolicy-20261017');
+        exit('GSO-ABC-DefaultCountingPolicy-1.29');
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Upgrade Tag", 'OnGetPerCompanyUpgradeTags', '', false, false)]

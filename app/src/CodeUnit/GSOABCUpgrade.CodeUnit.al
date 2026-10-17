@@ -6,9 +6,6 @@ codeunit 73033677 "GSO ABC Upgrade"
 {
     Subtype = Upgrade;
 
-    var
-        UpgradedTelemetryLbl: Label 'ABC Inventory Analysis upgraded to %1.', Comment = '%1 = app version', Locked = true;
-
     trigger OnUpgradePerCompany()
     var
         Setup: Record "GSO ABC Analysis Setup";
@@ -23,7 +20,7 @@ codeunit 73033677 "GSO ABC Upgrade"
         Setup."Last Upgraded To" := CopyStr(Format(ModInfo.AppVersion), 1, MaxStrLen(Setup."Last Upgraded To"));
         Setup.Modify();
 
-        Tlm.LogInfo('GSO-UPGRADE', CopyStr(StrSubstNo(UpgradedTelemetryLbl, ModInfo.AppVersion), 1, 250));
+        Tlm.LogUpgraded(ModInfo.AppVersion);
     end;
 
     local procedure UpgradeDefaultPolicy(Setup: Record "GSO ABC Analysis Setup")
