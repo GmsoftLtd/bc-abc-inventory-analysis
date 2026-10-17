@@ -42,6 +42,7 @@ permissionset 73033671 "GSO ABC USER"
         report "GSO ABC Comparison" = X,
 
         codeunit "GSO ABC Analysis Mgt." = X,
+        codeunit "GSO ABC Telemetry" = X,
         codeunit "GSO ABC Worksheet Stats" = X,
         codeunit "GSO ABC Worksheet Export" = X;
 }

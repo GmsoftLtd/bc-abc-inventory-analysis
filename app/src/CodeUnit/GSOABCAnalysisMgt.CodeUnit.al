@@ -89,6 +89,7 @@ codeunit 73033674 "GSO ABC Analysis Mgt."
         Item: Record Item;
         HistHdr: Record "GSO ABC History Header";
         HistLine: Record "GSO ABC History Line";
+        Telemetry: Codeunit "GSO ABC Telemetry";
         NowDT: DateTime;
         TotalAmt: Decimal;
         PeriodCode: Code[10];
@@ -100,8 +101,10 @@ codeunit 73033674 "GSO ABC Analysis Mgt."
 
         TempBuf.Copy(TempPreview, true);
         TempBuf.Reset();
-        if TempBuf.IsEmpty() then
+        if TempBuf.IsEmpty() then begin
+            Telemetry.LogApplyFailed(Model);
             Error(NoLinesErr);
+        end;
 
         NowDT := CurrentDateTime();
 
@@ -150,6 +153,8 @@ codeunit 73033674 "GSO ABC Analysis Mgt."
 
         Setup."Last Run" := NowDT;
         Setup.Modify(true);
+
+        Telemetry.LogClassesApplied(Model, HistHdr."Items Count", Updated, Setup."Update Counting Codes");
     end;
 
     /// <summary>
@@ -158,8 +163,10 @@ codeunit 73033674 "GSO ABC Analysis Mgt."
     procedure RecalculateAllModels(ApplyChanges: Boolean)
     var
         TempPreview: Record "GSO ABC Preview Line" temporary;
+        Telemetry: Codeunit "GSO ABC Telemetry";
         Model: Enum "GSO ABC Model";
         Ordinal: Integer;
+        ModelsProcessed: Integer;
         StartDate: Date;
         EndDate: Date;
     begin
@@ -169,7 +176,9 @@ codeunit 73033674 "GSO ABC Analysis Mgt."
             CalculatePreview(Model, StartDate, EndDate, TempPreview);
             if ApplyChanges and not TempPreview.IsEmpty() then
                 ApplyPreview(TempPreview, Model, StartDate, EndDate);
+            ModelsProcessed += 1;
         end;
+        Telemetry.LogScheduledRun(ModelsProcessed, ApplyChanges);
     end;
 
     /// <summary>
