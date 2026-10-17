@@ -40,7 +40,7 @@
     "includeSourceInSymbolFile": false
   },
   "runtime": "18.0",
-  "applicationInsightsConnectionString": "InstrumentationKey=8b1f3b1e-2f1e-4dcb-8f7c-5f3d2f5e4c8a;IngestionEndpoint=https://westeurope-1.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/",
+  "applicationInsightsConnectionString": "InstrumentationKey=a46c32ec-b1ff-4165-a3c0-c422b3baf32c;IngestionEndpoint=https://uksouth-1.in.applicationinsights.azure.com/;LiveEndpoint=https://uksouth.livediagnostics.monitor.azure.com/;ApplicationId=9349f3ff-11ab-4e86-95f5-b4e9383be443",
   "keyVaultUrls": [],
   "propagateDependencies": false
 }
