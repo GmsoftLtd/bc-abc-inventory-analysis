@@ -2,14 +2,14 @@
   "id": "c2f1d6e4-7a3b-4d58-9f0e-2a6b8c4d1e01",
   "name": "ABC Inventory Analysis Tests",
   "publisher": "GMSOFT LIMITED",
-  "version": "1.29.1.0",
+  "version": "1.29.1.1",
   "brief": "Automated tests for ABC Inventory Analysis",
   "dependencies": [
     {
       "id": "fed0d995-8c8d-4fda-bd16-e10d112171fb",
       "name": "ABC Inventory Analysis",
       "publisher": "GMSOFT LIMITED",
-      "version": "1.29.1.0"
+      "version": "1.29.1.1"
     },
     {
       "id": "dd0be2ea-f733-4d65-bb34-a28f4624fb14",

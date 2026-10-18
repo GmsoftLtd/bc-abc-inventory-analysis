@@ -2,14 +2,14 @@
   "id": "d3a2e7f5-8b4c-4e69-a01f-3b7c9d5e2f02",
   "name": "ABC Inventory Analysis Demo Data",
   "publisher": "GMSOFT LIMITED",
-  "version": "1.29.1.0",
+  "version": "1.29.1.1",
   "brief": "Demo data for ABC Inventory Analysis",
   "dependencies": [
     {
       "id": "fed0d995-8c8d-4fda-bd16-e10d112171fb",
       "name": "ABC Inventory Analysis",
       "publisher": "GMSOFT LIMITED",
-      "version": "1.29.1.0"
+      "version": "1.29.1.1"
     }
   ],
   "idRanges": [
