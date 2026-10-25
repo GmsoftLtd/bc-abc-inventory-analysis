@@ -1,5 +1,7 @@
 # ABC Inventory Analysis for Business Central
 
+**Product page and documentation:** https://gmsoftdynamics.com/apps/free/abc-inventory-analysis/ | **All GMSOFT apps for Business Central:** https://gmsoftdynamics.com/apps/compare/
+
 Free ABC classification for Microsoft Dynamics 365 Business Central. Rank items by revenue, gross profit, cost of goods sold, usage value, GMROII or pick frequency, preview the result, and write the class to items and stockkeeping units. Optionally drive physical inventory counting periods from the class.
 
 - **Publisher:** GMSOFT LIMITED
